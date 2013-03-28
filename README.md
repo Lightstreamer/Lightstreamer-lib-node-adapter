@@ -89,6 +89,9 @@ lsClient.connect();
 
 note that the "PROXY_NODE" string is taken from the adapters.xml
 
+### API reference ###
+At the time of writing API docs are not deployed anywhere so you have to generate it yourself (see below how to do so). We will deploy them somewhere online at some point.
+
 ## Develop ##
 This section is dedicated to developers who want to extend/modify the library itself, if you're simply looking to use it, ignore it.
 
@@ -117,7 +120,7 @@ First install nodeunit
 npm -g install nodeunit
 ```
 
-the -g unit will install it on the system instead of installing it locally
+the -g unit will install it on the system instead of installing it locally, you may remove it if you prefer a local installation
   
 Go to the test folder and run the following commands
 ```
@@ -128,5 +131,10 @@ nodeunit metadataprovider.test.js
 ```
 
 ### Generate Documentation ###
-TODO
-        
+1.    Get [JSDoc 3](https://github.com/jsdoc3/jsdoc "JSDoc 3")
+2.    Assuming you have the jsdoc folder in your path, go to this project folder and call
+```
+jsdoc --recurse --destination docs lib
+```
+
+The API documentation will be available in the docs folder.
