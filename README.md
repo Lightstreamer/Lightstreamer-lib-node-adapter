@@ -1,4 +1,6 @@
 # Lightstreamer SDK for Node Adapters #
+Compatible with Adapter Remoting Infrastructure since 1.4.3
+
 This package includes the resources needed to write Data Adapters and Metadata Adapters for Lightstreamer Server in a node environment. 
 The adapters will run in a separate process, communicating with the Server through the Adapter Remoting Infrastructure.
 
