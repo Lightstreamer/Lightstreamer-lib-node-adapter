@@ -1,5 +1,4 @@
 # Lightstreamer SDK for Node Adapters #
-Compatible with Adapter Remoting Infrastructure since 1.4.3
 
 This package includes the resources needed to write Data Adapters and Metadata Adapters for Lightstreamer Server in a node environment. 
 The adapters will run in a separate process, communicating with the Server through the Adapter Remoting Infrastructure.
@@ -144,3 +143,6 @@ The API documentation will be available in the docs folder.
 ## See Also ##
 * [Adapter Remoting Infrastructure Network Protocol Specification](http://www.lightstreamer.com/latest/Lightstreamer_Allegro-Presto-Vivace_5_1_Colosseo/Lightstreamer/DOCS-SDKs/sdk_adapter_remoting_infrastructure/doc/ARI%20Protocol.pdf "Lightstreamer ARI protocol")
 * [Lightstreamer Chat Demo adapter for Node](https://github.com/Weswit/Lightstreamer-example-Chat-adapter-node "Lightstreamer Chat Demo adapter for Node")
+
+## Lightstreamer Compatibility Notes ##
+Compatible with Adapter Remoting Infrastructure since 1.4.3
