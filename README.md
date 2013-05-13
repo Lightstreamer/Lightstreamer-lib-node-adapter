@@ -3,6 +3,8 @@
 This package includes the resources needed to write Data Adapters and Metadata Adapters for [Lightstreamer](http://www.lightstreamer.com/ "Lightstreamer") Server in a [Node.js](http://nodejs.org/ "Node.js") environment. 
 The adapters will run in a separate process, communicating with the Server through the Adapter Remoting Infrastructure.
 
+![architecture](architecture.png)
+
 ## Use ##
 Install the package using npm
 ```
