@@ -14,7 +14,7 @@ Copyright 2013 Weswit s.r.l.
    limitations under the License.
 */
 
-var MetadataProvider = require('lightstreamer-adapter').MetadataProvider,
+var MetadataProvider = require('../lib/lightstreamer-adapter').MetadataProvider,
     TestStream = require('./utils/teststream').TestStream;
 
 exports.tests = {

@@ -14,7 +14,7 @@ Copyright 2013 Weswit s.r.l.
    limitations under the License.
 */
 
-var DataProvider = require('lightstreamer-adapter').DataProvider,
+var DataProvider = require('../lib/lightstreamer-adapter').DataProvider,
     TestStream = require('./utils/teststream').TestStream;
 
 exports.tests = {
