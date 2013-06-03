@@ -83,6 +83,11 @@ exports.dataWrites = {
 		test.equal(msg.substring(13), "|EOS|S|AnItemId|S|FAKEID\n");
 		test.done();
 	},
+	"Clear snapshot write" : function(test) {
+		var msg = dataProto.writeClearSnapshot("FAKEID","AnItemId");
+		test.equal(msg.substring(13), "|CLS|S|AnItemId|S|FAKEID\n");
+		test.done();
+	},
 	"Write an update by hash" : function(test) {
 		var msg = dataProto.writeUpdate("FAKEID","AnItemName", true,
 			{

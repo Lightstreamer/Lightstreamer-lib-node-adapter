@@ -250,6 +250,36 @@ exports.tests = {
         }, Error);
         test.done();
     },       
+    "Update by hash, then clear snapshot" : function(test) {
+        var dataProvider = this.dataProvider,
+            reqRespStream = this.reqRespStream,
+            notifyStream = this.notifyStream;
+        test.expect(3);
+
+        dataProvider.on('subscribe', function(itemName, response) {
+            response.success();
+            dataProvider.update("AnItemName", true,
+                {
+                    "field1" : "A string",
+                    "field2" : "",
+                    "field3" : null,
+                    "field4" : 12.4,
+                    "field5" : true
+                });
+            dataProvider.clearSnapshot("AnItemName");
+            data = notifyStream.popTestData();
+            test.equal(data.substring(13), "|EOS|S|AnItemName|S|FAKEID\n");
+            data = notifyStream.popTestData();
+            test.equal(data.substring(13), "|UD3|S|AnItemName|S|FAKEID|B|1|" +
+                "S|field1|S|A+string|S|field2|S|$|S|field3|S|#|" +
+                "S|field4|S|12.4|S|field5|S|true\n");
+            data = notifyStream.popTestData();
+            test.equal(data.substring(13), "|CLS|S|AnItemName|S|FAKEID\n");
+            test.done();
+        });
+
+        reqRespStream.pushTestData("FAKEID|SUB|S|AnItemName\r\n");
+    },
     "Subscribe with double success" : function(test) {
         var reqRespStream = this.reqRespStream;
         test.expect(2);
