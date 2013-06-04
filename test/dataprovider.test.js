@@ -25,6 +25,10 @@ exports.tests = {
         callback();
     },
 	"Subscribe with snapshot" : function(test) {
+        this.reqRespStream = new TestStream();
+            // we cannot keep the old reqRespStream, because it already has a 'data' handler
+            // for this.dataProvider, and, after attaching it to a new DataProvider below,
+            // the handler would have still been invoked
         var reqRespStream = this.reqRespStream;
         test.expect(3);
         this.dataProvider = new DataProvider(
@@ -41,6 +45,10 @@ exports.tests = {
         this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
 	},
     "Subscribe without snapshot" : function(test) {
+        this.reqRespStream = new TestStream();
+            // we cannot keep the old reqRespStream, because it already has a 'data' handler
+            // for this.dataProvider, and, after attaching it to a new DataProvider below,
+            // the handler would have still been invoked
         var reqRespStream = this.reqRespStream,
             notifyStream = this.notifyStream;
         test.expect(2);
