@@ -31,7 +31,7 @@ exports.metadataReads = {
 	},
 	"Read a valid notify user" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|NUS|S|user|S|password|S|header1|S|value+1|S|header+2|S|value+2|S|REQUEST_ID|S|FAKEREQID\r\n");
+		reader.parse("FAKEID|NUS|S|user|S|password|S|header1|S|value+1|S|header+2|S|value+2\r\n");
 		var msg = reader.pop();
 		test.equal(msg.verb, "notifyUser");
 		test.equal(msg.id, "FAKEID");
@@ -39,12 +39,11 @@ exports.metadataReads = {
 		test.equal(msg.userPassword, "password");
 		test.equal(msg.headers["header1"], "value 1");
 		test.equal(msg.headers["header 2"], "value 2");
-		test.equal(msg.requestId, "FAKEREQID");
 		test.done();
 	},
 	"Read a valid notify user auth" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|NUA|S|user|S|password|S|principal|S|header1|S|value+1|S|header+2|S|value+2|S|REQUEST_ID|S|FAKEREQID\r\n");
+		reader.parse("FAKEID|NUA|S|user|S|password|S|principal|S|header1|S|value+1|S|header+2|S|value+2\r\n");
 		var msg = reader.pop();
 		test.equal(msg.verb, "notifyUserAuth");
 		test.equal(msg.id, "FAKEID");
@@ -53,7 +52,6 @@ exports.metadataReads = {
 		test.equal(msg.clientPrincipal, "principal");
 		test.equal(msg.headers["header1"], "value 1");
 		test.equal(msg.headers["header 2"], "value 2");
-		test.equal(msg.requestId, "FAKEREQID");
 		test.done();
 	},
 	"Read a valid get schema" : function(test) {
