@@ -65,6 +65,16 @@ exports.tests = {
 
         this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
     },
+	"Failed subscribe" : function(test) {
+        var reqRespStream = this.reqRespStream;
+        test.expect(1);
+        this.dataProvider.on('subscribe', function(itemName, response) {
+            response.error("An exception", "subscription");
+            test.equal(reqRespStream.popTestData(), "FAKEID|SUB|EU|An+exception\n");
+            test.done();
+        });
+        this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
+	},
     "Unsubscribe" : function(test) {
         var reqRespStream = this.reqRespStream;
         test.expect(2);

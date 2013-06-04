@@ -60,6 +60,11 @@ exports.dataWrites = {
 	},
 	"Subscribe write with exception" : function(test) {
 		var msg = dataProto.writeSubscribeException("FAKEID","An exception");
+		test.equal(msg, "FAKEID|SUB|E|An+exception\n");
+		test.done();
+	},
+	"Subscribe write with subscription exception" : function(test) {
+		var msg = dataProto.writeSubscribeException("FAKEID","An exception","subscription");
 		test.equal(msg, "FAKEID|SUB|EU|An+exception\n");
 		test.done();
 	},
@@ -70,6 +75,11 @@ exports.dataWrites = {
 	},
 	"Unsubscribe write with exception" : function(test) {
 		var msg = dataProto.writeUnsubscribeException("FAKEID","An exception");
+		test.equal(msg, "FAKEID|USB|E|An+exception\n");
+		test.done();
+	},
+	"Unsubscribe write with subscription exception" : function(test) {
+		var msg = dataProto.writeUnsubscribeException("FAKEID","An exception","subscription");
 		test.equal(msg, "FAKEID|USB|EU|An+exception\n");
 		test.done();
 	},
