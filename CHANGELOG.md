@@ -6,8 +6,6 @@ Extended the "error" method of the DataResponse class, to make it similar to the
 In order to issue an exception of type Subscription, a second argument valued "subscription" should be passed.
 This changes the current behavior: with no second argument, a generic exception will now be issued.
 
-Introduced the changelog.
-
 ### Lightstreamer Compatibility Notes ###
 
 Compatible with Adapter Remoting Infrastructure since 1.5
