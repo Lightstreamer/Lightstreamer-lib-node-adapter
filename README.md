@@ -148,3 +148,4 @@ The API documentation will be available in the docs folder.
 
 ## Lightstreamer Compatibility Notes ##
 Compatible with Adapter Remoting Infrastructure since 1.5
+Still compatible with 1.4.3 if "clearSnapshot" is not used.
