@@ -18,9 +18,19 @@ var metadataProto = require('../lib/metadataprotocol').metadata,
 	MetadataReader = require('../lib/metadataprotocol').MetadataReader;
 
 exports.metadataReads = {
+	"Read a valid init" : function(test) {
+		var reader = new MetadataReader();
+		reader.parse("FAKEID|MPI|S|P1|S|V1|S|P2|S|V2\r\n", true);
+		var msg = reader.pop();
+		test.equal(msg.verb, "init");
+		test.equal(msg.id, "FAKEID");
+		test.equal(msg.parameters["P1"], "V1");
+		test.equal(msg.parameters["P2"], "V2");
+		test.done();
+	},
 	"Read a valid get item data" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|GIT|S|An+Item+Name1|S|An+Item+Name2\r\n");
+		reader.parse("FAKEID|GIT|S|An+Item+Name1|S|An+Item+Name2\r\n", false);
 		var msg = reader.pop();
 		test.equal(msg.verb, "getItemData");
 		test.equal(msg.id, "FAKEID");
@@ -31,7 +41,7 @@ exports.metadataReads = {
 	},
 	"Read a valid notify user" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|NUS|S|user|S|password|S|header1|S|value+1|S|header+2|S|value+2\r\n");
+		reader.parse("FAKEID|NUS|S|user|S|password|S|header1|S|value+1|S|header+2|S|value+2\r\n", false);
 		var msg = reader.pop();
 		test.equal(msg.verb, "notifyUser");
 		test.equal(msg.id, "FAKEID");
@@ -43,7 +53,7 @@ exports.metadataReads = {
 	},
 	"Read a valid notify user auth" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|NUA|S|user|S|password|S|principal|S|header1|S|value+1|S|header+2|S|value+2\r\n");
+		reader.parse("FAKEID|NUA|S|user|S|password|S|principal|S|header1|S|value+1|S|header+2|S|value+2\r\n", false);
 		var msg = reader.pop();
 		test.equal(msg.verb, "notifyUserAuth");
 		test.equal(msg.id, "FAKEID");
@@ -56,7 +66,7 @@ exports.metadataReads = {
 	},
 	"Read a valid get schema" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|GSC|S|user|S|group|S|schema|S|FAKESESSID\r\n");
+		reader.parse("FAKEID|GSC|S|user|S|group|S|schema|S|FAKESESSID\r\n", false);
 		var msg = reader.pop();
 		test.equal(msg.verb, "getSchema");
 		test.equal(msg.id, "FAKEID");
@@ -68,7 +78,7 @@ exports.metadataReads = {
 	},
 	"Read a valid get items" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|GIS|S|user|S|group|S|FAKESESSID\r\n");
+		reader.parse("FAKEID|GIS|S|user|S|group|S|FAKESESSID\r\n", false);
 		var msg = reader.pop();
 		test.equal(msg.verb, "getItems");
 		test.equal(msg.id, "FAKEID");
@@ -79,7 +89,7 @@ exports.metadataReads = {
 	},
 	"Read a valid get user item data" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|GUI|S|user|S|item+1|S|item+2\r\n");
+		reader.parse("FAKEID|GUI|S|user|S|item+1|S|item+2\r\n", false);
 		var msg = reader.pop();
 		test.equal(msg.verb, "getUserItemData");
 		test.equal(msg.id, "FAKEID");
@@ -91,7 +101,7 @@ exports.metadataReads = {
 	},
 	"Read a valid notify user message" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|NUM|S|user|S|FAKESESSID|S|This+is+a+message\r\n");
+		reader.parse("FAKEID|NUM|S|user|S|FAKESESSID|S|This+is+a+message\r\n", false);
 		var msg = reader.pop();
 		test.equal(msg.verb, "notifyUserMessage");
 		test.equal(msg.id, "FAKEID");
@@ -102,7 +112,7 @@ exports.metadataReads = {
 	},
 	"Read a valid notify new session" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|NNS|S|user|S|FAKESESSID|S|prop1|S|val1|S|prop2|S|val2\r\n");
+		reader.parse("FAKEID|NNS|S|user|S|FAKESESSID|S|prop1|S|val1|S|prop2|S|val2\r\n", false);
 		var msg = reader.pop();
 		test.equal(msg.verb, "notifyNewSession");
 		test.equal(msg.id, "FAKEID");
@@ -114,7 +124,7 @@ exports.metadataReads = {
 	},
 	"Read a valid notify session close" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|NSC|S|FAKESESSID\n");
+		reader.parse("FAKEID|NSC|S|FAKESESSID\n", false);
 		var msg = reader.pop();
 		test.equal(msg.verb, "notifySessionClose");
 		test.equal(msg.id, "FAKEID");
@@ -132,7 +142,7 @@ exports.metadataReads = {
 			"|I|1|M|C|S|group4|S|schema4|I|1|I|5|S|#" +
 			"\n";
 		
-		reader.parse(inMsg);
+		reader.parse(inMsg, false);
 		msg = reader.pop();
 		
 		test.equal(msg.verb, "notifyNewTables");
@@ -170,7 +180,7 @@ exports.metadataReads = {
 			"|I|1|M|R|S|group2|S|schema2|I|1|I|5|S|selector" +
 			"\n";
 		
-		reader.parse(inMsg);
+		reader.parse(inMsg, false);
 		msg = reader.pop();
 		
 		test.equal(msg.verb, "notifyTablesClose");
@@ -195,6 +205,11 @@ exports.metadataReads = {
 };
 
 exports.metadataWrites = {
+	"Init write" : function(test) {
+		var msg = metadataProto.writeInit("FAKEID");
+		test.equal(msg, "FAKEID|MPI|V\n");
+		test.done();
+	},
 	"Write a valid get schema response" : function(test) {
 		var msg = metadataProto.writeGetSchema("FAKEID",["Field 1","Field 2"]);
 		test.equal(msg, "FAKEID|GSC|S|Field+1|S|Field+2\n");
@@ -254,6 +269,11 @@ exports.metadataWrites = {
 };
 
 exports.metadataExceptionWrites = {
+	"Write generic exception for init" : function(test) {
+		var msg = metadataProto.writeInitException("FAKEID","A Message");
+		test.equal(msg, "FAKEID|MPI|E|A+Message\n");
+		test.done();
+	},
 	"Write generic exception for getItemData" : function(test) {
 		var msg = metadataProto.writeGetItemDataException("FAKEID","A Message");
 		test.equal(msg, "FAKEID|GIT|E|A+Message\n");
@@ -307,6 +327,12 @@ exports.metadataExceptionWrites = {
 	"Write generic exception for notifyTablesClose" : function(test) {
 		var msg = metadataProto.writeNotifyTablesCloseException("FAKEID","A Message");
 		test.equal(msg, "FAKEID|NTC|E|A+Message\n");
+		test.done();
+	},
+
+	"Write metadata exception for init" : function(test) {
+		var msg = metadataProto.writeInitException("FAKEID","A Message","metadata");
+		test.equal(msg, "FAKEID|MPI|EM|A+Message\n");
 		test.done();
 	},
 	"Write access exception for notifyUser" : function(test) {

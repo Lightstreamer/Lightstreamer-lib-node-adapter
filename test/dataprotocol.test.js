@@ -18,9 +18,19 @@ var dataProto = require('../lib/dataprotocol').data,
 	DataReader = require('../lib/dataprotocol').DataReader;
 
 exports.dataReads = {
+	"Read a valid init" : function(test) {
+		var reader = new DataReader();
+		reader.parse("FAKEID|DPI|S|P1|S|V1|S|P2|S|V2\r\n", true);
+		var msg = reader.pop();
+		test.equal(msg.verb, "init");
+		test.equal(msg.id, "FAKEID");
+		test.equal(msg.parameters["P1"], "V1");
+		test.equal(msg.parameters["P2"], "V2");
+		test.done();
+	},
 	"Read a valid subscribe" : function(test) {
 		var reader = new DataReader();
-		reader.parse("FAKEID|SUB|S|An+Item+Name\r\n");
+		reader.parse("FAKEID|SUB|S|An+Item+Name\r\n", false);
 		var msg = reader.pop();
 		test.equal(msg.verb, "subscribe");
 		test.equal(msg.id, "FAKEID");
@@ -29,7 +39,7 @@ exports.dataReads = {
 	},
 	"Read a valid unsubscribe" : function(test) {
 		var reader = new DataReader();
-		reader.parse("FAKEID|USB|S|An+Item+Name\n");
+		reader.parse("FAKEID|USB|S|An+Item+Name\n", false);
 		var msg = reader.pop();
 		test.equal(msg.verb, "unsubscribe");
 		test.equal(msg.id, "FAKEID");
@@ -39,20 +49,35 @@ exports.dataReads = {
 	"Read an unknown message" : function(test) {
 		test.throws(function() {
 			var reader = new DataReader();
-			reader.parse("FAKEID|WHAT|S|An+Item+Name\n");
+			reader.parse("FAKEID|WHAT|S|An+Item+Name\n", false);
 		}, Error);
 		test.done();
 	},
 	"Read an invalid message" : function(test) {
 		test.throws(function() {
 			var reader = new DataReader();
-			reader.parse("FAKEID|WHAT|An+Item+Name\r\n");
+			reader.parse("FAKEID|WHAT|An+Item+Name\r\n", false);
 		}, Error);
 		test.done();
 	}
 };
 
 exports.dataWrites = {
+	"Init write" : function(test) {
+		var msg = dataProto.writeInit("FAKEID");
+		test.equal(msg, "FAKEID|DPI|V\n");
+		test.done();
+	},
+	"Init write with exception" : function(test) {
+		var msg = dataProto.writeInitException("FAKEID","An exception");
+		test.equal(msg, "FAKEID|DPI|E|An+exception\n");
+		test.done();
+	},
+	"Init write with data exception" : function(test) {
+		var msg = dataProto.writeInitException("FAKEID","An exception","data");
+		test.equal(msg, "FAKEID|DPI|ED|An+exception\n");
+		test.done();
+	},
 	"Subscribe write" : function(test) {
 		var msg = dataProto.writeSubscribe("FAKEID");
 		test.equal(msg, "FAKEID|SUB|V\n");
