@@ -18,19 +18,66 @@ var DataProvider = require('../lib/lightstreamer-adapter').DataProvider,
     TestStream = require('./utils/teststream').TestStream;
 
 exports.tests = {
-	setUp: function (callback) {
+    setUp: function (callback) {
         this.reqRespStream = new TestStream();
         this.notifyStream = new TestStream();
         this.dataProvider = new DataProvider(this.reqRespStream, this.notifyStream);
         callback();
     },
-	"Subscribe with snapshot" : function(test) {
+    "Initialization" : function(test) {
+        var reqRespStream = this.reqRespStream;
+        test.expect(3);
+        this.dataProvider.on('init', function(parameters, response) {
+            test.equal(parameters["P1"], "V1");
+            test.equal(parameters["P2"], "V2");
+            response.success();
+            test.equal(reqRespStream.popTestData(), "ID0|DPI|V\n");
+            test.done();                        
+        });
+        this.reqRespStream.pushTestData("ID0|DPI|S|P1|S|V1|S|P2|S|V2\r\n");
+    },
+    "Failed initialization" : function(test) {
+        var reqRespStream = this.reqRespStream;
+        test.expect(1);
+        this.dataProvider.on('init', function(parameters, response) {
+            response.error("An exception", "data");
+            test.equal(reqRespStream.popTestData(), "ID0|DPI|ED|An+exception\n");
+            test.done();                        
+        });
+        this.reqRespStream.pushTestData("ID0|DPI\r\n");
+    },
+    "Missing initialization" : function(test) {
+        var reqRespStream = this.reqRespStream;
+        test.expect(1);
+        this.dataProvider.on('init', function(parameters, response) {
+            response.success();
+            test.equal(reqRespStream.popTestData(), "ID0|DPI|V\n");
+        });
+        test.throws(function () {
+            this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
+        }, Error);
+        test.done();                        
+    },
+    "Late initialization" : function(test) {
+        var reqRespStream = this.reqRespStream;
+        test.expect(2);
+        this.dataProvider.on('init', function(parameters, response) {
+            response.success();
+            test.equal(reqRespStream.popTestData(), "ID0|DPI|V\n");
+        });
+        this.reqRespStream.pushTestData("ID0|DPI\r\n");
+        test.throws(function () {
+            this.reqRespStream.pushTestData("ID0|DPI\r\n");
+        }, Error);
+        test.done();                        
+    },
+    "Subscribe with snapshot" : function(test) {
         this.reqRespStream = new TestStream();
             // we cannot keep the old reqRespStream, because it already has a 'data' handler
             // for this.dataProvider, and, after attaching it to a new DataProvider below,
             // the handler would have still been invoked
         var reqRespStream = this.reqRespStream;
-        test.expect(3);
+        test.expect(4);
         this.dataProvider = new DataProvider(
             this.reqRespStream, this.notifyStream, function(itemName) {
                 test.equal(itemName, "An Item Name");
@@ -39,11 +86,13 @@ exports.tests = {
         this.dataProvider.on('subscribe', function(itemName, response) {
             test.equal(itemName, "An Item Name");
             response.success();
+            test.equal(reqRespStream.popTestData(), "ID0|DPI|V\n");
             test.equal(reqRespStream.popTestData(), "FAKEID|SUB|V\n");
             test.done();                        
         });
+        this.reqRespStream.pushTestData("ID0|DPI\r\n");
         this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
-	},
+    },
     "Subscribe without snapshot" : function(test) {
         this.reqRespStream = new TestStream();
             // we cannot keep the old reqRespStream, because it already has a 'data' handler
@@ -51,39 +100,45 @@ exports.tests = {
             // the handler would have still been invoked
         var reqRespStream = this.reqRespStream,
             notifyStream = this.notifyStream;
-        test.expect(2);
+        test.expect(3);
         this.dataProvider = new DataProvider(
             this.reqRespStream, this.notifyStream, function(itemName) {return false;});
 
         this.dataProvider.on('subscribe', function(itemName, response) {
             response.success();
+            test.equal(reqRespStream.popTestData(), "ID0|DPI|V\n");
             test.equal(reqRespStream.popTestData(), "FAKEID|SUB|V\n");
             var data = notifyStream.popTestData();
             test.ok(data.substring(13), "|EOS|S|An+Item+Name|S|FAKEID\n");
             test.done();            
         });
 
+        this.reqRespStream.pushTestData("ID0|DPI\r\n");
         this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
     },
-	"Failed subscribe" : function(test) {
+    "Failed subscribe" : function(test) {
         var reqRespStream = this.reqRespStream;
-        test.expect(1);
+        test.expect(2);
         this.dataProvider.on('subscribe', function(itemName, response) {
             response.error("An exception", "subscription");
+            test.equal(reqRespStream.popTestData(), "ID0|DPI|V\n");
             test.equal(reqRespStream.popTestData(), "FAKEID|SUB|EU|An+exception\n");
             test.done();
         });
+        this.reqRespStream.pushTestData("ID0|DPI\r\n");
         this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
-	},
+    },
     "Unsubscribe" : function(test) {
         var reqRespStream = this.reqRespStream;
-        test.expect(2);
+        test.expect(3);
         this.dataProvider.on('unsubscribe', function(itemName, response) {
             test.equal(itemName, "An Item Name");
             response.success();
+            test.equal(reqRespStream.popTestData(), "ID0|DPI|V\n");
             test.equal(reqRespStream.popTestData(), "FAKEID|USB|V\n");
             test.done();
         });
+        this.reqRespStream.pushTestData("ID0|DPI\r\n");
         this.reqRespStream.pushTestData("FAKEID|USB|S|An+Item+Name\r\n");
     },
     "Late subscribe" : function(test) {
@@ -91,7 +146,11 @@ exports.tests = {
         var dataProvider = this.dataProvider;
         var subNum = 0, unsubNum = 0, subNumQ = 0, unsubNumQ = 0;
         var sub1Response;
-        test.expect(14);
+        test.expect(15);
+        dataProvider.on('init', function(parameters, response) {
+            response.success();
+            test.equal(reqRespStream.popTestData(), "ID0|DPI|V\n");
+        });
         dataProvider.on('subscribe', function(itemName, response) {
             subNum++;
             test.ok(true, subNum + ") subscribe has been called");
@@ -136,6 +195,7 @@ exports.tests = {
             test.ok(true, subNumQ + ") subscribe in queue");
             // console.log(subNumQ + ") subscribe in queue " + itemName);
         });
+        this.reqRespStream.pushTestData("ID0|DPI\r\n");
         this.reqRespStream.pushTestData("ID1|SUB|S|item1\n");
         this.reqRespStream.pushTestData("ID2|USB|S|item1\n");
         this.reqRespStream.pushTestData("ID3|SUB|S|item1\n");
@@ -149,7 +209,11 @@ exports.tests = {
         var dataProvider = this.dataProvider;
         var subNum = 0, unsubNum = 0, subNumQ = 0, unsubNumQ = 0;
         var subDelayedResp;
-        test.expect(16);
+        test.expect(17);
+        dataProvider.on('init', function(parameters, response) {
+            response.success();
+            test.equal(reqRespStream.popTestData(), "ID0|DPI|V\n");
+        });
         dataProvider.on('subscribe', function(itemName, response) {
             subNum++;
             test.ok(true, subNum + ") subscribe has been called");
@@ -198,6 +262,7 @@ exports.tests = {
             test.ok(true, subNumQ + ") subscribe in queue");
             // console.log(subNumQ  + ") subscribe in queue " + itemName);
         });
+        this.reqRespStream.pushTestData("ID0|DPI\r\n");
         this.reqRespStream.pushTestData("ID1|SUB|S|item1\n");
         this.reqRespStream.pushTestData("ID2|USB|S|item1\n");
         this.reqRespStream.pushTestData("ID3|SUB|S|item1\n");
@@ -225,6 +290,7 @@ exports.tests = {
             test.equal(data.substring(13), "|EOS|S|An+Item+Name|S|FAKEID\n");
             test.done();
         });
+        reqRespStream.pushTestData("ID0|DPI\r\n");
         reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
     },
     "End of snapshot with an unsubscribed item" : function(test) {
@@ -259,6 +325,7 @@ exports.tests = {
             test.done();
         });
 
+        reqRespStream.pushTestData("ID0|DPI\r\n");
         reqRespStream.pushTestData("FAKEID|SUB|S|AnItemName\r\n");
     },
     "Update by hash with an unsubscribed item" : function(test) {
@@ -296,6 +363,7 @@ exports.tests = {
             test.done();
         });
 
+        reqRespStream.pushTestData("ID0|DPI\r\n");
         reqRespStream.pushTestData("FAKEID|SUB|S|AnItemName\r\n");
     },
     "Subscribe with double success" : function(test) {
@@ -309,6 +377,7 @@ exports.tests = {
             }, Error);
             test.done();                        
         });
+        this.reqRespStream.pushTestData("ID0|DPI\r\n");
         this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
     },
     "Subscribe with double error" : function(test) {
@@ -322,6 +391,7 @@ exports.tests = {
             }, Error);
             test.done();                        
         });
+        this.reqRespStream.pushTestData("ID0|DPI\r\n");
         this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
     },
 };
