@@ -27,9 +27,9 @@ exports.tests = {
     "Initialization" : function(test) {
         var reqRespStream = this.reqRespStream;
         test.expect(3);
-        this.dataProvider.on('init', function(parameters, response) {
-            test.equal(parameters["P1"], "V1");
-            test.equal(parameters["P2"], "V2");
+        this.dataProvider.on('init', function(message, response) {
+            test.equal(message.parameters["P1"], "V1");
+            test.equal(message.parameters["P2"], "V2");
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|V\n");
             test.done();                        
@@ -39,7 +39,7 @@ exports.tests = {
     "Failed initialization" : function(test) {
         var reqRespStream = this.reqRespStream;
         test.expect(1);
-        this.dataProvider.on('init', function(parameters, response) {
+        this.dataProvider.on('init', function(message, response) {
             response.error("An exception", "data");
             test.equal(reqRespStream.popTestData(), "ID0|DPI|ED|An+exception\n");
             test.done();                        
@@ -49,7 +49,7 @@ exports.tests = {
     "Missing initialization" : function(test) {
         var reqRespStream = this.reqRespStream;
         test.expect(1);
-        this.dataProvider.on('init', function(parameters, response) {
+        this.dataProvider.on('init', function(message, response) {
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|V\n");
         });
@@ -61,7 +61,7 @@ exports.tests = {
     "Late initialization" : function(test) {
         var reqRespStream = this.reqRespStream;
         test.expect(2);
-        this.dataProvider.on('init', function(parameters, response) {
+        this.dataProvider.on('init', function(message, response) {
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|V\n");
         });
@@ -147,7 +147,7 @@ exports.tests = {
         var subNum = 0, unsubNum = 0, subNumQ = 0, unsubNumQ = 0;
         var sub1Response;
         test.expect(15);
-        dataProvider.on('init', function(parameters, response) {
+        dataProvider.on('init', function(message, response) {
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|V\n");
         });
@@ -210,7 +210,7 @@ exports.tests = {
         var subNum = 0, unsubNum = 0, subNumQ = 0, unsubNumQ = 0;
         var subDelayedResp;
         test.expect(17);
-        dataProvider.on('init', function(parameters, response) {
+        dataProvider.on('init', function(message, response) {
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|V\n");
         });
