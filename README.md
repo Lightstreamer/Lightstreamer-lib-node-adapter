@@ -1,4 +1,4 @@
-# Lightstreamer SDK for Node Adapters 1.1.1 #
+# Lightstreamer SDK for Node Adapters 1.2.0 #
 
 This package includes the resources needed to write Data Adapters and Metadata Adapters for [Lightstreamer](http://www.lightstreamer.com/ "Lightstreamer") Server in a [Node.js](http://nodejs.org/ "Node.js") environment. 
 The adapters will run in a separate process, communicating with the Server through the Adapter Remoting Infrastructure.
@@ -147,6 +147,4 @@ The API documentation will be available in the docs folder.
 * [Lightstreamer Chat Demo adapter for Node](https://github.com/Weswit/Lightstreamer-example-Chat-adapter-node "Lightstreamer Chat Demo adapter for Node")
 
 ## Lightstreamer Compatibility Notes ##
-Compatible with Adapter Remoting Infrastructure since 1.5
-
-Still compatible with 1.4.3 if "clearSnapshot" is not used.
+Compatible with Adapter Remoting Infrastructure since 1.6
