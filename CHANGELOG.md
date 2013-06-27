@@ -1,3 +1,21 @@
+## 1.2.0 (27 Jun 2013) ##
+
+### New Features ###
+
+Added the support for Remote Adapter initialization requests introduced in
+ARI protocol version 1.6 and actually issued by the Proxy Adapters.
+Hence, a "init" event has been added to both the MetadataProvider and
+DataProvider objects. The events can be left unhandled, so no code changed
+are needed.
+Note that the various unit tests have been complicated somewhat, in order
+to account for the protocol extension.
+
+### Lightstreamer Compatibility Notes ###
+
+Compatible with Adapter Remoting Infrastructure since 1.6
+
+
+
 ## 1.1.1 (18 Jun 2013) ##
 
 ### New Features ###
