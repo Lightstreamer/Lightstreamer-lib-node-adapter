@@ -17,7 +17,10 @@
     "url" : "http://github.com/Weswit/Lightstreamer-lib-node-adapter.git" 
   },
   
-  "bugs": "http://forum.lightstreamer.com",
+  "bugs": { 
+    "url" : "http://forum.lightstreamer.com/",
+    "email" : "support@lightstreamer.com"
+  },
   
   "author": { 
     "name" : "Weswit Srl",
