@@ -1,3 +1,15 @@
+## 1.0.2 (3 Feb 2014) ##
+
+### New Features ###
+
+Improved the format for publishing on npm.
+
+### Lightstreamer Compatibility Notes ###
+
+Compatible with Adapter Remoting Infrastructure since 1.4.3
+
+
+
 ## 1.0.1 (1 Oct 2013) ##
 
 ### New Features ###
