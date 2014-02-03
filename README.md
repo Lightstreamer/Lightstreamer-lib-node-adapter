@@ -35,7 +35,7 @@ npm install lightstreamer-adapter
 
 5.    Take note of the ports configured in the adapters.xml file as those are needed to write the remote part of the adapters.
 
-### Write The Adapters ###
+### Write the Adapters ###
 Create a .js file, let's call it "adapters.js"
 
 1.    Get the net package and create the connections to Lightstreamer server. Note that the ports are the same used in the above file; LIGHTSTREAMER_SERVER_HOST is the host of the Lightstreamer server e.g.: "localhost".
@@ -84,7 +84,7 @@ From the command line call
 node adapters.js
 ```
 
-### Connect A Client ###
+### Connect a Client ###
 ```js
 var lsClient = new LightstreamerClient(LIGHTSTREAMER_SERVER_HOST,"PROXY_NODE");
 lsClient.connect();
@@ -92,8 +92,8 @@ lsClient.connect();
 
 note that the "PROXY_NODE" string is taken from the adapters.xml
 
-### API reference ###
-At the time of writing API docs are not deployed anywhere so you have to generate it yourself (see below how to do so). We will deploy them somewhere online at some point.
+### API Reference ###
+See the [detailed API reference documentation] (http://www.lightstreamer.com/docs/adapter_nodejs_api/index.html).
 
 ## Develop ##
 This section is dedicated to developers who want to extend/modify the library itself, if you're simply looking to use it, ignore it.
