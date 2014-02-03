@@ -24,7 +24,7 @@
     "email" : "support@lightstreamer.com"
   },
   
-  "files": ["README.md","index.js","lib","test"],  
+  "files": ["README.md","index.js","architecture.png","CHANGELOG.md","LICENSE","lib","test"],  
   
   "main": "index",
     
