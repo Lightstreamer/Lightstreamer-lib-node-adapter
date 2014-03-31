@@ -21,11 +21,13 @@ npm install lightstreamer-adapter
 <adapters_conf id="PROXY_NODE">
         <metadata_provider>
                 <adapter_class>com.lightstreamer.adapters.remote.metadata.RobustNetworkedMetadataProvider</adapter_class>
+                <classloader>log-enabled</classloader>
                 <param name="request_reply_port">8003</param>
                 <param name="timeout">36000000</param>
         </metadata_provider>
         <data_provider>
                 <adapter_class>com.lightstreamer.adapters.remote.data.RobustNetworkedDataProvider</adapter_class>
+                <classloader>log-enabled</classloader>
                 <param name="request_reply_port">8001</param>
                 <param name="notify_port">8002</param>
                 <param name="timeout">36000000</param>
