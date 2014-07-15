@@ -124,17 +124,23 @@ exports.dataWrites = {
 		test.done();
 	},
 	"Write an update by hash" : function(test) {
+	  var fake = "";
 		var msg = dataProto.writeUpdate("FAKEID","AnItemName", true,
 			{
 				"field1" : "A string",
 				"field2" : "",
 				"field3" : null,
 				"field4" : 12.4,
-				"field5" : true
+				"field5" : true,
+				"field6" : 0,
+				"field7" : NaN,
+				"field8" : fake.undef, //fake does not have an undef property
+				"field9" : false
 			});
 		test.equal(msg.substring(13), "|UD3|S|AnItemName|S|FAKEID|B|1|" +
 			"S|field1|S|A+string|S|field2|S|$|S|field3|S|#|" +
-			"S|field4|S|12.4|S|field5|S|true\n");
+			"S|field4|S|12.4|S|field5|S|true|S|field6|S|0|" +
+			"S|field7|S|NaN|S|field8|S|undefined|S|field9|S|false\n");
 		test.done();
 	}
 };
