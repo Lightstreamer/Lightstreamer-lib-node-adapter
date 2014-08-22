@@ -134,17 +134,17 @@ exports.metadataReads = {
 	"Read a valid notify new tables" : function(test) {
 		var reader = new MetadataReader();
 		var inMsg, msg, i;
-		
+
 		inMsg = "FAKEID|NNT|S|user|S|FAKESESSID" +
 			"|I|1|M|M|S|group1|S|schema1|I|1|I|5|S|#" +
 			"|I|1|M|R|S|group2|S|schema2|I|1|I|5|S|selector" +
 			"|I|1|M|D|S|group3|S|schema3|I|1|I|5|S|#" +
 			"|I|1|M|C|S|group4|S|schema4|I|1|I|5|S|#" +
 			"\n";
-		
+
 		reader.parse(inMsg, false);
 		msg = reader.pop();
-		
+
 		test.equal(msg.verb, "notifyNewTables");
 		test.equal(msg.id, "FAKEID");
 		test.equal(msg.userName, "user");
@@ -162,7 +162,7 @@ exports.metadataReads = {
 
 		test.strictEqual(msg.tableInfos[1].selector, "selector");
 		test.ok(msg.tableInfos[1].pubModes["raw"]);
-		
+
 		test.ok(msg.tableInfos[2].pubModes["distinct"]);
 
 		test.ok(msg.tableInfos[3].pubModes["command"]);
@@ -174,15 +174,15 @@ exports.metadataReads = {
 	"Read a valid notify tables close" : function(test) {
 		var reader = new MetadataReader();
 		var inMsg, msg, i;
-		
+
 		inMsg = "FAKEID|NTC|S|FAKESESSID" +
 			"|I|1|M|M|S|group1|S|schema1|I|1|I|5|S|#" +
 			"|I|1|M|R|S|group2|S|schema2|I|1|I|5|S|selector" +
 			"\n";
-		
+
 		reader.parse(inMsg, false);
 		msg = reader.pop();
-		
+
 		test.equal(msg.verb, "notifyTablesClose");
 		test.equal(msg.id, "FAKEID");
 		test.equal(msg.sessionId, "FAKESESSID");
@@ -199,6 +199,127 @@ exports.metadataReads = {
 
 		test.strictEqual(msg.tableInfos[1].selector, "selector");
 		test.ok(msg.tableInfos[1].pubModes["raw"]);
+
+		test.done();
+	},
+	"Read a valid notify MPN device access" : function(test) {
+		var reader = new MetadataReader();
+		var inMsg, msg, i;
+
+		inMsg = "FAKEID|MDA|S|user" +
+		    "|P|A|S|appID|S|deviceToken" +
+			"\n";
+
+		reader.parse(inMsg, false);
+		msg = reader.pop();
+
+		test.equal(msg.verb, "notifyMpnDeviceAccess");
+		test.equal(msg.id, "FAKEID");
+		test.equal(msg.userName, "user");
+		test.equal(msg.device.mpnPlatformType, "A");
+		test.equal(msg.device.applicationId, "appID");
+		test.equal(msg.device.deviceToken, "deviceToken");
+
+		test.done();
+	},
+	"Read a valid notify MPN APNS subscription activation" : function(test) {
+		var reader = new MetadataReader();
+		var inMsg, msg, i;
+
+		inMsg = "FAKEID|MSA|S|user|S|FAKESESSID" +
+		    "|I|1|M|M|S|group1|S|schema1|I|1|I|2" +
+		    "|PA|2|2|P|A|S|appID|S|deviceToken|S|triggerExpression|S|sound|S|badge|S|locActionKey|S|launghImage" +
+		    "|S|format|S|locFormatKey|S|arg1|S|arg2|S|customKey1|S|customValue1|S|customKey2|S|customValue2" +
+			"\n";
+
+		reader.parse(inMsg, false);
+		msg = reader.pop();
+
+		test.equal(msg.verb, "notifyMpnSubscriptionActivation");
+		test.equal(msg.id, "FAKEID");
+		test.equal(msg.userName, "user");
+		test.equal(msg.sessionId, "FAKESESSID");
+
+		test.strictEqual(msg.tableInfo.winIndex, 1);
+		test.ok(msg.tableInfo.pubModes["merge"]);
+		test.equal(msg.tableInfo.groupName, "group1");
+		test.equal(msg.tableInfo.schemaName, "schema1");
+		test.strictEqual(msg.tableInfo.firstItemIndex, 1);
+		test.strictEqual(msg.tableInfo.lastItemIndex, 2);
+
+		test.equal(msg.mpnSubscription.device.mpnPlatformType, "A");
+		test.equal(msg.mpnSubscription.device.applicationId, "appID");
+		test.equal(msg.mpnSubscription.device.deviceToken, "deviceToken");
+		test.equal(msg.mpnSubscription.trigger, "triggerExpression");
+
+		test.equal(msg.mpnSubscription.sound, "sound");
+		test.equal(msg.mpnSubscription.badge, "badge");
+		test.equal(msg.mpnSubscription.localizedActionKey, "locActionKey");
+		test.equal(msg.mpnSubscription.launchImage, "launghImage");
+		test.equal(msg.mpnSubscription.format, "format");
+		test.equal(msg.mpnSubscription.localizedFormatKey, "locFormatKey");
+		test.equal(msg.mpnSubscription.localizedFormatArguments.length, 2);
+		test.equal(msg.mpnSubscription.localizedFormatArguments[0], "arg1");
+		test.equal(msg.mpnSubscription.localizedFormatArguments[1], "arg2");
+		test.equal(msg.mpnSubscription.customData["customKey2"], "customValue2");
+
+		test.done();
+	},
+	"Read a valid notify MPN GCM subscription activation" : function(test) {
+		var reader = new MetadataReader();
+		var inMsg, msg, i;
+
+		inMsg = "FAKEID|MSA|S|user|S|FAKESESSID" +
+		    "|I|1|M|M|S|group1|S|schema1|I|1|I|2" +
+		    "|PG|3|P|G|S|appID|S|deviceToken|S|triggerExpression|S|collapseKey|S|key1|S|value1|S|key2|S|value2|S|key3|S|value3|S|false|S|30" +
+			"\n";
+
+		reader.parse(inMsg, false);
+		msg = reader.pop();
+
+		test.equal(msg.verb, "notifyMpnSubscriptionActivation");
+		test.equal(msg.id, "FAKEID");
+		test.equal(msg.userName, "user");
+		test.equal(msg.sessionId, "FAKESESSID");
+
+		test.strictEqual(msg.tableInfo.winIndex, 1);
+		test.ok(msg.tableInfo.pubModes["merge"]);
+		test.equal(msg.tableInfo.groupName, "group1");
+		test.equal(msg.tableInfo.schemaName, "schema1");
+		test.strictEqual(msg.tableInfo.firstItemIndex, 1);
+		test.strictEqual(msg.tableInfo.lastItemIndex, 2);
+
+		test.equal(msg.mpnSubscription.device.mpnPlatformType, "G");
+		test.equal(msg.mpnSubscription.device.applicationId, "appID");
+		test.equal(msg.mpnSubscription.device.deviceToken, "deviceToken");
+		test.equal(msg.mpnSubscription.trigger, "triggerExpression");
+
+		test.equal(msg.mpnSubscription.collapseKey, "collapseKey");
+		test.equal(msg.mpnSubscription.data["key1"], "value1");
+		test.equal(msg.mpnSubscription.data["key2"], "value2");
+		test.equal(msg.mpnSubscription.data["key3"], "value3");
+		test.equal(msg.mpnSubscription.delayWhileIdle, "false");
+		test.equal(msg.mpnSubscription.timeToLive, "30");
+
+		test.done();
+	},
+	"Read a valid notify MPN device token change" : function(test) {
+		var reader = new MetadataReader();
+		var inMsg, msg, i;
+
+		inMsg = "FAKEID|MDC|S|user|P|G|S|appID|S|deviceToken|S|deviceToken2" +
+			"\n";
+
+		reader.parse(inMsg, false);
+		msg = reader.pop();
+
+		test.equal(msg.verb, "notifyMpnDeviceTokenChange");
+		test.equal(msg.id, "FAKEID");
+		test.equal(msg.userName, "user");
+		test.equal(msg.device.mpnPlatformType, "G");
+		test.equal(msg.device.applicationId, "appID");
+		test.equal(msg.device.deviceToken, "deviceToken");
+		test.equal(msg.newDeviceToken, "deviceToken2");
 
 		test.done();
 	}
@@ -265,6 +386,21 @@ exports.metadataWrites = {
 		var msg = metadataProto.writeNotifyTablesClose("FAKEID");
 		test.equal(msg, "FAKEID|NTC|V\n");
 		test.done();
+	},
+	"Write a valid notify MPN device access response" : function(test) {
+		var msg = metadataProto.writeNotifyMpnDeviceAccess("FAKEID");
+		test.equal(msg, "FAKEID|MDA|V\n");
+		test.done();
+	},
+	"Write a valid notify MPN subscription activation response" : function(test) {
+		var msg = metadataProto.writeNotifyMpnSubscriptionActivation("FAKEID");
+		test.equal(msg, "FAKEID|MSA|V\n");
+		test.done();
+	},
+	"Write a valid notify MPN device token change" : function(test) {
+		var msg = metadataProto.writeNotifyMpnDeviceTokenChange("FAKEID");
+		test.equal(msg, "FAKEID|MDC|V\n");
+		test.done();
 	}
 };
 
@@ -329,7 +465,21 @@ exports.metadataExceptionWrites = {
 		test.equal(msg, "FAKEID|NTC|E|A+Message\n");
 		test.done();
 	},
-
+	"Write credits exception for notifyMpnDeviceAccess" : function(test) {
+		var msg = metadataProto.writeNotifyMpnDeviceAccessException("FAKEID","A Message","credits");
+		test.equal(msg, "FAKEID|MDA|EC|A+Message\n");
+		test.done();
+	},
+	"Write credits exception for notifyMpnSubscriptionActivation" : function(test) {
+		var msg = metadataProto.writeNotifyMpnSubscriptionActivationException("FAKEID","A Message","credits");
+		test.equal(msg, "FAKEID|MSA|EC|A+Message\n");
+		test.done();
+	},
+	"Write credits exception for notifyMpnDeviceTokenChange" : function(test) {
+		var msg = metadataProto.writeNotifyMpnDeviceTokenChangeException("FAKEID","A Message","credits");
+		test.equal(msg, "FAKEID|MDC|EC|A+Message\n");
+		test.done();
+	},
 	"Write metadata exception for init" : function(test) {
 		var msg = metadataProto.writeInitException("FAKEID","A Message","metadata");
 		test.equal(msg, "FAKEID|MPI|EM|A+Message\n");
