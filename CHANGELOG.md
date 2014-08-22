@@ -1,3 +1,18 @@
+## 1.2.0 (22 Aug 2014) ##
+
+### New Features ###
+
+Extended the MetadataProvider object to support the new Push Notification Service
+(aka MPN Module). When enabled, the new events will be issued in order to validate
+client requests related with the service. See the docs for details.
+Note that the MPN Module cannot be enabled in Moderato edition.
+
+### Lightstreamer Compatibility Notes ###
+
+Compatible with Adapter Remoting Infrastructure since 1.7
+
+
+
 ## 1.2.0 (27 Jun 2013) ##
 
 ### New Features ###
