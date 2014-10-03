@@ -92,7 +92,7 @@ var lsClient = new LightstreamerClient(LIGHTSTREAMER_SERVER_HOST,"PROXY_NODE");
 lsClient.connect();
 ```
 
-note that the "PROXY_NODE" string is taken from the adapters.xml
+Note that the "PROXY_NODE" string is taken from the adapters.xml
 
 ### API Reference ###
 http://www.lightstreamer.com/latest/Lightstreamer_Allegro-Presto-Vivace_6_0_Colosseo/Lightstreamer/DOCS-SDKs/sdk_adapter_nodejs/doc/API-reference/index.html
@@ -102,7 +102,7 @@ This section is dedicated to developers who want to extend/modify the library it
 
 ### Linking ###
 We want to write code to use our package by requiring "lightstreamer-adapter" without having to specify the full path. 
-On the other hand during development we do not want to install the package from the repo as we want in fact test it before put it on the repo for everyone else to enjoy.
+On the other hand, during development, we do not want to install the package from the repo as we want to, in fact, test it before putting it on the repo for everyone else to enjoy.
 So:
 
 1.    Go to the root of this project
@@ -117,7 +117,7 @@ npm link
 npm link lightstreamer-adapter
 ```
 
-NOTE: you can't globally link the package (using -g) to make it available everywhere   
+NOTE: You can't globally link the package (using -g) to make it available everywhere   
 
 ### Testing ###
 First install nodeunit
@@ -125,7 +125,7 @@ First install nodeunit
 npm -g install nodeunit
 ```
 
-the -g unit will install it on the system instead of installing it locally, you may remove it if you prefer a local installation
+The -g unit will install it on the system instead of installing it locally; you may remove it if you prefer a local installation
   
 Go to the test folder and run the following commands
 ```
