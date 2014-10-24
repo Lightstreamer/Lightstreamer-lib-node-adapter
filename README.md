@@ -95,7 +95,7 @@ lsClient.connect();
 Note that the "PROXY_NODE" string is taken from the adapters.xml
 
 ### API Reference ###
-http://www.lightstreamer.com/latest/Lightstreamer_Allegro-Presto-Vivace_6_0_Colosseo/Lightstreamer/DOCS-SDKs/sdk_adapter_nodejs/doc/API-reference/index.html
+http://www.lightstreamer.com/distros/Lightstreamer_Allegro-Presto-Vivace_6_0_b1_Colosseo_20140801/Lightstreamer/DOCS-SDKs/sdk_adapter_nodejs/doc/API-reference/index.html
 
 ## Develop ##
 This section is dedicated to developers who want to extend/modify the library itself, if you're simply looking to use it, ignore it.
@@ -145,8 +145,8 @@ jsdoc --recurse --destination docs lib
 The API documentation will be available in the docs folder.
 
 ## See Also ##
-* [Adapter Remoting Infrastructure Network Protocol Specification](http://www.lightstreamer.com/latest/Lightstreamer_Allegro-Presto-Vivace_5_1_Colosseo/Lightstreamer/DOCS-SDKs/sdk_adapter_remoting_infrastructure/doc/ARI%20Protocol.pdf "Lightstreamer ARI protocol")
+* [Adapter Remoting Infrastructure Network Protocol Specification](http://www.lightstreamer.com/distros/Lightstreamer_Allegro-Presto-Vivace_6_0_b1_Colosseo_20140801/Lightstreamer/DOCS-SDKs/sdk_adapter_remoting_infrastructure/doc/ARI%20Protocol.pdf "Lightstreamer ARI protocol")
 * [Lightstreamer Chat Demo adapter for Node](https://github.com/Weswit/Lightstreamer-example-Chat-adapter-node "Lightstreamer Chat Demo adapter for Node")
 
 ## Lightstreamer Compatibility Notes ##
-Compatible with Adapter Remoting Infrastructure since 1.6
+Compatible with Adapter Remoting Infrastructure version 1.6
