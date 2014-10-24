@@ -149,4 +149,5 @@ The API documentation will be available in the docs folder.
 * [Lightstreamer Chat Demo adapter for Node](https://github.com/Weswit/Lightstreamer-example-Chat-adapter-node "Lightstreamer Chat Demo adapter for Node")
 
 ## Lightstreamer Compatibility Notes ##
-Compatible with Adapter Remoting Infrastructure version 1.6
+* Compatible with Adapter Remoting Infrastructure version 1.6
+- For a version of this library compatible with Adapter Remoting Infrastructure version 1.4.3, please refer to [this tag](https://github.com/Weswit/Lightstreamer-lib-node-adapter/tree/version-1.0.2).
