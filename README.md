@@ -13,20 +13,19 @@ npm install lightstreamer-adapter
 
 ### Configure Lightstreamer ###
 1.    Download and install Lightstreamer
-2.    Go to the "adapters" folder of your Lightstreamer Server installation. Create a new folder to deploy the remote adapters in, let's call it "NodeAdapter", and a "lib" folder inside it.
-3.    Copy the "ls-proxy-adapters.jar" file from "Lightstreamer/DOCS-SDKs/sdk_adapter_remoting_infrastructure/lib" in the newly created "lib" folder.
-4.    Create an "adapters.xml" file inside the "NodeAdapter" folder and use the following contents (this is an example configuration, you can modify it to your liking by following the adapter remoting infrastructure documentation):
+2.    Go to the "adapters" folder of your Lightstreamer Server installation. Create a new folder to deploy the remote adapters in, let's call it "NodeAdapter".
+3.    Create an "adapters.xml" file inside the "NodeAdapter" folder and use the following contents (this is an example configuration, you can modify it to your liking by following the adapter remoting infrastructure documentation):
 ```xml      
 <?xml version="1.0"?>
 <adapters_conf id="PROXY_NODE">
         <metadata_provider>
-                <adapter_class>com.lightstreamer.adapters.remote.metadata.RobustNetworkedMetadataProvider</adapter_class>
+                <adapter_class>ROBUST_PROXY_FOR_REMOTE_ADAPTER</adapter_class>
                 <classloader>log-enabled</classloader>
                 <param name="request_reply_port">8003</param>
                 <param name="timeout">36000000</param>
         </metadata_provider>
         <data_provider>
-                <adapter_class>com.lightstreamer.adapters.remote.data.RobustNetworkedDataProvider</adapter_class>
+                <adapter_class>ROBUST_PROXY_FOR_REMOTE_ADAPTER</adapter_class>
                 <classloader>log-enabled</classloader>
                 <param name="request_reply_port">8001</param>
                 <param name="notify_port">8002</param>
@@ -35,7 +34,7 @@ npm install lightstreamer-adapter
 </adapters_conf>
 ```
 
-5.    Take note of the ports configured in the adapters.xml file as those are needed to write the remote part of the adapters.
+4.    Take note of the ports configured in the adapters.xml file as those are needed to write the remote part of the adapters.
 
 ### Write the Adapters ###
 Create a .js file, let's call it "adapters.js"
@@ -145,8 +144,9 @@ jsdoc --recurse --destination docs lib
 The API documentation will be available in the docs folder.
 
 ## See Also ##
-* [Adapter Remoting Infrastructure Network Protocol Specification](http://www.lightstreamer.com/latest/Lightstreamer_Allegro-Presto-Vivace_5_1_Colosseo/Lightstreamer/DOCS-SDKs/sdk_adapter_remoting_infrastructure/doc/ARI%20Protocol.pdf "Lightstreamer ARI protocol")
+* [Adapter Remoting Infrastructure Network Protocol Specification](http://www.lightstreamer.com/latest/Lightstreamer_Allegro-Presto-Vivace_6_0_Colosseo/Lightstreamer/DOCS-SDKs/sdk_adapter_remoting_infrastructure/doc/ARI%20Protocol.pdf "Lightstreamer ARI protocol")
 * [Lightstreamer Chat Demo adapter for Node](https://github.com/Weswit/Lightstreamer-example-Chat-adapter-node "Lightstreamer Chat Demo adapter for Node")
 
 ## Lightstreamer Compatibility Notes ##
-Compatible with Adapter Remoting Infrastructure since 1.7 (to be released)
+Compatible with Adapter Remoting Infrastructure since 1.7
+- For a version of this library compatible with Adapter Remoting Infrastructure version 1.4.3, please refer to [this tag](https://github.com/Weswit/Lightstreamer-lib-node-adapter/tree/version-1.0.2).
