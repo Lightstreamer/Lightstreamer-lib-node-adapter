@@ -1,3 +1,19 @@
+## 1.3.1 (3 Nov 2014) ##
+
+### New Features ###
+
+Introduced suitable documentation for the default behavior of the
+MetadataProvider object.
+
+Fixed the documentation of some cases in the MetadataResponse class, which were
+confused with the corresponding requests.
+
+### Lightstreamer Compatibility Notes ###
+
+Compatible with Adapter Remoting Infrastructure since 1.7
+
+
+
 ## 1.3.0 (22 Aug 2014) ##
 
 ### New Features ###
