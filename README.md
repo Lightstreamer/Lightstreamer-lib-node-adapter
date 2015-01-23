@@ -144,7 +144,7 @@ jsdoc --recurse --destination docs lib
 The API documentation will be available in the docs folder.
 
 ## See Also ##
-* [Adapter Remoting Infrastructure Network Protocol Specification](http://www.lightstreamer.com/docs/ARI_base/ARI%20Protocol.pdf "Lightstreamer ARI protocol")
+* [Adapter Remoting Infrastructure Network Protocol Specification](http://www.lightstreamer.com/docs/adapter_generic_base/ARI%20Protocol.pdf "Lightstreamer ARI protocol")
 * [Lightstreamer Chat Demo adapter for Node](https://github.com/Weswit/Lightstreamer-example-Chat-adapter-node "Lightstreamer Chat Demo adapter for Node")
 
 ## Lightstreamer Compatibility Notes ##
