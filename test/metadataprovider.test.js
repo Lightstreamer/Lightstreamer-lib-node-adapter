@@ -31,7 +31,7 @@ exports.tests = {
             test.equal(msg.parameters["P2"], "V2");
             resp.success();
             test.equal(s.popTestData(), "ID0|MPI|V\n");
-            test.done();                        
+            test.done();
         });
         s.pushTestData("ID0|MPI|S|P1|S|V1|S|P2|S|V2\r\n");
     },
@@ -41,7 +41,7 @@ exports.tests = {
         mp.on('init', function(msg, resp) {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|E|An+error\n");
-            test.done();                        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
     },
@@ -51,7 +51,7 @@ exports.tests = {
         mp.on('init', function(msg, resp) {
             resp.error("An error", "metadata");
             test.equal(s.popTestData(), "ID0|MPI|EM|An+error\n");
-            test.done();                        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
     },
@@ -65,7 +65,7 @@ exports.tests = {
         test.throws(function () {
             s.pushTestData("FAKEID|NUS|S|user|S|password|S|header1|S|value+1|S|header+2|S|value+2\n");
         }, Error);
-        test.done();                        
+        test.done();
     },
     "Late initialization" : function(test) {
         var d, s = this.stream, mp = this.metadataProvider;
@@ -78,7 +78,7 @@ exports.tests = {
         test.throws(function () {
             s.pushTestData("ID0|MPI\r\n");
         }, Error);
-        test.done();                        
+        test.done();
     },
     "getItemData success" : function(test) {
         var d, s = this.stream, mp = this.metadataProvider;
@@ -91,7 +91,7 @@ exports.tests = {
             ]);
             test.equal(s.popTestData(), "ID0|MPI|V\n");
             test.equal(s.popTestData(), "FAKEID|GIT|I|10|D|0.5|M|RM|I|5|D|0|M|D\n");
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|GIT|S|An+Item+Name1|S|An+Item+Name2\n");
@@ -103,7 +103,7 @@ exports.tests = {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|V\n");
             test.equal(s.popTestData(), "FAKEID|GIT|E|An+error\n");
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|GIT|S|An+Item+Name1|S|An+Item+Name2\n");
@@ -116,7 +116,7 @@ exports.tests = {
             resp.success(12.34, true);
             test.equal(s.popTestData(), "ID0|MPI|V\n");
             test.equal(s.popTestData(), "FAKEID|NUS|D|12.34|B|1\n");
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|NUS|S|user|S|password|S|header1|S|value+1|S|header+2|S|value+2|S|REQUEST_ID|S|FAKEREQID\n");
@@ -128,7 +128,7 @@ exports.tests = {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|V\n");
             test.equal(s.popTestData(), "FAKEID|NUS|E|An+error\n");
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|NUS|S|user|S|password|S|header1|S|value+1|S|header+2|S|value+2|S|REQUEST_ID|S|FAKEREQID\n");
@@ -140,7 +140,7 @@ exports.tests = {
             resp.error("An error", "access");
             test.equal(s.popTestData(), "ID0|MPI|V\n");
             test.equal(s.popTestData(), "FAKEID|NUS|EA|An+error\n");
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|NUS|S|user|S|password|S|header1|S|value+1|S|header+2|S|value+2|S|REQUEST_ID|S|FAKEREQID\n");
@@ -153,7 +153,7 @@ exports.tests = {
             resp.success(12.34, true);
             test.equal(s.popTestData(), "ID0|MPI|V\n");
             test.equal(s.popTestData(), "FAKEID|NUA|D|12.34|B|1\n");
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|NUA|S|user|S|password|S|principal|S|header1|S|value+1|S|header+2|S|value+2|S|REQUEST_ID|S|FAKEREQID\n");
@@ -165,7 +165,7 @@ exports.tests = {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|V\n");
             test.equal(s.popTestData(), "FAKEID|NUA|E|An+error\n");
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|NUA|S|user|S|password|S|principal|S|header1|S|value+1|S|header+2|S|value+2|S|REQUEST_ID|S|FAKEREQID\n");
@@ -178,7 +178,7 @@ exports.tests = {
             resp.success(["Field 1","Field 2"]);
             test.equal(s.popTestData(), "ID0|MPI|V\n");
             test.equal(s.popTestData(), "FAKEID|GSC|S|Field+1|S|Field+2\n");
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|GSC|S|user|S|group|S|schema|S|FAKESESSID\n");
@@ -190,7 +190,7 @@ exports.tests = {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|V\n");
             test.equal(s.popTestData(), "FAKEID|GSC|E|An+error\n");
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|GSC|S|user|S|group|S|schema|S|FAKESESSID\n");
@@ -203,7 +203,7 @@ exports.tests = {
             resp.success(["Item 1","Item 2"]);
             test.equal(s.popTestData(), "ID0|MPI|V\n");
             test.equal(s.popTestData(), "FAKEID|GIS|S|Item+1|S|Item+2\n");
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|GIS|S|user|S|group|S|FAKESESSID\n");
@@ -215,7 +215,7 @@ exports.tests = {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|V\n");
             test.equal(s.popTestData(), "FAKEID|GIS|E|An+error\n");
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|GIS|S|user|S|group|S|FAKESESSID\n");
@@ -231,7 +231,7 @@ exports.tests = {
             ]);
             test.equal(s.popTestData(), "ID0|MPI|V\n");
             test.equal(s.popTestData(), "FAKEID|GUI|I|30|D|3|M|RMDC|I|40|D|2.25|M|M\n");
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|GUI|S|user|S|item+1|S|item+2\n");
@@ -243,7 +243,7 @@ exports.tests = {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|V\n");
             test.equal(s.popTestData(), "FAKEID|GUI|E|An+error\n");
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|GUI|S|user|S|item+1|S|item+2\n");
@@ -256,7 +256,7 @@ exports.tests = {
             resp.success();
             test.equal(s.popTestData(), "ID0|MPI|V\n");
             test.equal(s.popTestData(), "FAKEID|NUM|V\n");
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|NUM|S|user|S|FAKESESSID|S|This+is+a+message\n");
@@ -268,7 +268,7 @@ exports.tests = {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|V\n");
             test.equal(s.popTestData(), "FAKEID|NUM|E|An+error\n");
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|NUM|S|user|S|FAKESESSID|S|This+is+a+message\n");
@@ -281,7 +281,7 @@ exports.tests = {
             resp.success();
             test.equal(s.popTestData(), "ID0|MPI|V\n");
             test.equal(s.popTestData(), "FAKEID|NNS|V\n");
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|NNS|S|user|S|FAKESESSID|S|prop1|S|val1|S|prop2|S|val2\n");
@@ -293,7 +293,7 @@ exports.tests = {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|V\n");
             test.equal(s.popTestData(), "FAKEID|NNS|E|An+error\n");
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|NNS|S|user|S|FAKESESSID|S|prop1|S|val1|S|prop2|S|val2\n");
@@ -306,7 +306,7 @@ exports.tests = {
             resp.success();
             test.equal(s.popTestData(), "ID0|MPI|V\n");
             test.equal(s.popTestData(), "FAKEID|NSC|V\n");
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|NSC|S|FAKESESSID\n");
@@ -318,7 +318,7 @@ exports.tests = {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|V\n");
             test.equal(s.popTestData(), "FAKEID|NSC|E|An+error\n");
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|NSC|S|FAKESESSID\n");
@@ -331,7 +331,7 @@ exports.tests = {
             resp.success();
             test.equal(s.popTestData(), "ID0|MPI|V\n");
             test.equal(s.popTestData(), "FAKEID|NNT|V\n");
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|NNT|S|user|S|FAKESESSID|I|1|M|M|S|group1|S|schema1|I|1|I|5|S|#\n");
@@ -343,7 +343,7 @@ exports.tests = {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|V\n");
             test.equal(s.popTestData(), "FAKEID|NNT|E|An+error\n");
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|NNT|S|user|S|FAKESESSID|I|1|M|M|S|group1|S|schema1|I|1|I|5|S|#\n");
@@ -356,7 +356,7 @@ exports.tests = {
             resp.success();
             test.equal(s.popTestData(), "ID0|MPI|V\n");
             test.equal(s.popTestData(), "FAKEID|NTC|V\n");
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|NTC|S|FAKESESSID|I|1|M|M|S|group1|S|schema1|I|1|I|5|S|#\n");
@@ -368,7 +368,7 @@ exports.tests = {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|V\n");
             test.equal(s.popTestData(), "FAKEID|NTC|E|An+error\n");
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|NTC|S|FAKESESSID|I|1|M|M|S|group1|S|schema1|I|1|I|5|S|#\n");
@@ -382,7 +382,7 @@ exports.tests = {
             test.throws(function () {
                 resp.success();
             }, Error);
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|NUM|S|user|S|FAKESESSID|S|This+is+a+message\n");
@@ -396,9 +396,84 @@ exports.tests = {
             test.throws(function () {
                 resp.error();
             }, Error);
-            test.done();        
+            test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
         s.pushTestData("FAKEID|NUM|S|user|S|FAKESESSID|S|This+is+a+message\n");
+    },
+    "notifyMpnDeviceAccess success" : function(test) {
+        var d, s = this.stream, mp = this.metadataProvider;
+        test.expect(3);
+        mp.on("notifyMpnDeviceAccess", function(msg, resp) {
+            test.equal(msg.verb, "notifyMpnDeviceAccess");
+            resp.success();
+            test.equal(s.popTestData(), "ID0|MPI|V\n");
+            test.equal(s.popTestData(), "FAKEID|MDA|V\n");
+            test.done();
+        });
+        s.pushTestData("ID0|MPI\r\n");
+        s.pushTestData("FAKEID|MDA|S|user|P|A|S|appID|S|deviceToken\n");
+    },
+    "notifyMpnDeviceAccess failure" : function(test) {
+        var d, s = this.stream, mp = this.metadataProvider;
+        test.expect(2);
+        mp.on("notifyMpnDeviceAccess", function(msg, resp) {
+            resp.error("An error", "credits");
+            test.equal(s.popTestData(), "ID0|MPI|V\n");
+            test.equal(s.popTestData(), "FAKEID|MDA|EC|An+error\n");
+            test.done();
+        });
+        s.pushTestData("ID0|MPI\r\n");
+        s.pushTestData("FAKEID|MDA|S|user|P|A|S|appID|S|deviceToken\n");
+    },
+    "notifyMpnSubscriptionActivation success" : function(test) {
+        var d, s = this.stream, mp = this.metadataProvider;
+        test.expect(3);
+        mp.on("notifyMpnSubscriptionActivation", function(msg, resp) {
+            test.equal(msg.verb, "notifyMpnSubscriptionActivation");
+            resp.success();
+            test.equal(s.popTestData(), "ID0|MPI|V\n");
+            test.equal(s.popTestData(), "FAKEID|MSA|V\n");
+            test.done();
+        });
+        s.pushTestData("ID0|MPI\r\n");
+        s.pushTestData("FAKEID|MSA|S|user|S|FAKESESSID|I|1|M|M|S|group1|S|schema1|I|1|I|2|PA|2|2|P|A|S|appID|S|deviceToken|S|triggerExpression|S|sound|S|badge|S|locActionKey|S|launghImage|S|format|S|locFormatKey|S|arg1|S|arg2|S|customKey1|S|customValue1|S|customKey2|S|customValue2\n");
+    },
+    "notifyMpnSubscriptionActivation failure" : function(test) {
+        var d, s = this.stream, mp = this.metadataProvider;
+        test.expect(2);
+        mp.on("notifyMpnSubscriptionActivation", function(msg, resp) {
+            resp.error("An error", "credits");
+            test.equal(s.popTestData(), "ID0|MPI|V\n");
+            test.equal(s.popTestData(), "FAKEID|MSA|EC|An+error\n");
+            test.done();
+        });
+        s.pushTestData("ID0|MPI\r\n");
+        s.pushTestData("FAKEID|MSA|S|user|S|FAKESESSID|I|1|M|M|S|group1|S|schema1|I|1|I|2|PA|2|2|P|A|S|appID|S|deviceToken|S|triggerExpression|S|sound|S|badge|S|locActionKey|S|launghImage|S|format|S|locFormatKey|S|arg1|S|arg2|S|customKey1|S|customValue1|S|customKey2|S|customValue2\n");
+    },
+    "notifyMpnDeviceTokenChange success" : function(test) {
+        var d, s = this.stream, mp = this.metadataProvider;
+        test.expect(3);
+        mp.on("notifyMpnDeviceTokenChange", function(msg, resp) {
+            test.equal(msg.verb, "notifyMpnDeviceTokenChange");
+            resp.success();
+            test.equal(s.popTestData(), "ID0|MPI|V\n");
+            test.equal(s.popTestData(), "FAKEID|MDC|V\n");
+            test.done();
+        });
+        s.pushTestData("ID0|MPI\r\n");
+        s.pushTestData("FAKEID|MDC|S|user|P|G|S|appID|S|deviceToken|S|deviceToken2\n");
+    },
+    "notifyMpnDeviceTokenChange failure" : function(test) {
+        var d, s = this.stream, mp = this.metadataProvider;
+        test.expect(2);
+        mp.on("notifyMpnDeviceTokenChange", function(msg, resp) {
+            resp.error("An error", "credits");
+            test.equal(s.popTestData(), "ID0|MPI|V\n");
+            test.equal(s.popTestData(), "FAKEID|MDC|EC|An+error\n");
+            test.done();
+        });
+        s.pushTestData("ID0|MPI\r\n");
+        s.pushTestData("FAKEID|MDC|S|user|P|G|S|appID|S|deviceToken|S|deviceToken2\n");
     },
 };
