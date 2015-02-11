@@ -40,44 +40,44 @@ npm install lightstreamer-adapter
 Create a .js file, let's call it "adapters.js"
 
 1.    Get the net package and create the connections to Lightstreamer server. Note that the ports are the same used in the above file; LIGHTSTREAMER_SERVER_HOST is the host of the Lightstreamer server e.g.: "localhost".
-```js
-var net = require('net'),
-    reqRespStream = net.createConnection(8001, LIGHTSTREAMER_SERVER_HOST),
-    notifyStream = net.createConnection(8002, LIGHTSTREAMER_SERVER_HOST),
-    metadataStream = net.createConnection(8003, LIGHTSTREAMER_SERVER_HOST);
-```
+    ```
+    var net = require('net'),
+        reqRespStream = net.createConnection(8001, LIGHTSTREAMER_SERVER_HOST),
+        notifyStream = net.createConnection(8002, LIGHTSTREAMER_SERVER_HOST),
+        metadataStream = net.createConnection(8003, LIGHTSTREAMER_SERVER_HOST);
+    ```
 
 2.    Get the adapter classes and create the needed instances
-```js
-var MetadataProvider = require('lightstreamer-adapter').MetadataProvider,
-DataProvider = require('lightstreamer-adapter').DataProvider,
-dataProvider = new DataProvider(reqRespStream, notifyStream),
-metadataProvider = new MetadataProvider(metadataStream);
-```
+    ```js
+    var MetadataProvider = require('lightstreamer-adapter').MetadataProvider,
+    DataProvider = require('lightstreamer-adapter').DataProvider,
+    dataProvider = new DataProvider(reqRespStream, notifyStream),
+    metadataProvider = new MetadataProvider(metadataStream);
+    ```
 
 3.    Now you can register the events to respond to the adapters duties; see the documentation for the details
-```js
-dataProvider.on('subscribe', function(itemName, response) {
+    ```js
+    dataProvider.on('subscribe', function(itemName, response) {
         //HERE start sending updates for the itemName item
         response.success();
-});
-dataProvider.on('unsubscribe', function(itemName, response) {
+    });
+    dataProvider.on('unsubscribe', function(itemName, response) {
         //HERE stop sending updates for the itemName item
         response.success();
-});
-metadataProvider.on('notifyUserMessage', function(request, response) {
+    });
+    metadataProvider.on('notifyUserMessage', function(request, response) {
         //HERE handle user message
         response.success();
-});
-```
+    });
+    ```
 
 4.    Send updates for an item:
-```js
-dataProvider.update(itemName, false, {
+    ```js
+    dataProvider.update(itemName, false, {
         'field1': valField1,
         'field2': valField2
-});
-```
+    });
+    ```
 
 ### Run ###
 From the command line call
@@ -106,9 +106,9 @@ So:
 
 1.    Go to the root of this project
 2.    Call
-```
-npm link
-```
+    ```
+    npm link
+    ```
 
 3.    Go to the project where you need to use the development version of the package
 4.    Call
