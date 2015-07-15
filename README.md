@@ -71,7 +71,8 @@ Create a .js file, let's call it "adapters.js"
     });
     ```
 
-4.    Send updates for an item:
+4.    Send updates for an item. Note that sending updates for items no one has subscribed to will result in an error,
+hence this calls must be bound to the "start/stop sending updates" comments int he subscribe/unsubscribe events:
     ```js
     dataProvider.update(itemName, false, {
         'field1': valField1,
