@@ -14,7 +14,7 @@
 
   "repository" : {
     "type" : "git",
-    "url" : "http://github.com/Weswit/Lightstreamer-lib-node-adapter.git"
+    "url" : "http://github.com/Lightstreamer/Lightstreamer-lib-node-adapter.git"
   },
 
   "bugs": {
