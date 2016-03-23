@@ -15,9 +15,9 @@ npm install lightstreamer-adapter
 1.    Download and install Lightstreamer
 2.    Go to the "adapters" folder of your Lightstreamer Server installation. Create a new folder to deploy the remote adapters in, let's call it "NodeAdapter".
 3.    Create an "adapters.xml" file inside the "NodeAdapter" folder and use the following contents (this is an example configuration, you can modify it to your liking by using the generic template, `DOCS-SDKs/adapter_remoting_infrastructure/doc/adapter_conf_template/adapters.xml` or `DOCS-SDKs/adapter_remoting_infrastructure/doc/adapter_robust_conf_template/adapters.xml`, as a reference):
-```xml      
-<?xml version="1.0"?>
-<adapters_conf id="PROXY_NODE">
+  ```xml      
+   <?xml version="1.0"?>
+   <adapters_conf id="PROXY_NODE">
         <metadata_provider>
                 <adapter_class>ROBUST_PROXY_FOR_REMOTE_ADAPTER</adapter_class>
                 <classloader>log-enabled</classloader>
@@ -31,9 +31,9 @@ npm install lightstreamer-adapter
                 <param name="notify_port">8002</param>
                 <param name="timeout">36000000</param>
         </data_provider>
-</adapters_conf>
-```
-
+   </adapters_conf>
+  ```
+   
 4.    Take note of the ports configured in the adapters.xml file as those are needed to write the remote part of the adapters.
 
 ### Write the Adapters ###
