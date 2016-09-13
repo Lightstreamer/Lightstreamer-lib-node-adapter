@@ -1,3 +1,16 @@
+## 1.3.2 (13 Sep 2016) ##
+
+### New Features ###
+
+Fixed a bug in the parsing of requests that could lead to incorrect results 
+in case of two or more simultaneous requests.
+
+### Lightstreamer Compatibility Notes ###
+
+Compatible with Adapter Remoting Infrastructure since 1.7
+
+
+
 ## 1.3.1 (3 Nov 2014) ##
 
 ### New Features ###
