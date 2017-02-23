@@ -468,18 +468,21 @@ exports.metadataExceptionWrites = {
 		test.done();
 	},
 	"Write credits exception for notifyMpnDeviceAccess" : function(test) {
-		var msg = metadataProto.writeNotifyMpnDeviceAccessException("FAKEID","A Message","credits");
-		test.equal(msg, "FAKEID|MDA|EC|A+Message\n");
+		var excData = {clientCode: -1, clientMessage: "Message for client"};
+		var msg = metadataProto.writeNotifyMpnDeviceAccessException("FAKEID","A Message","credits",excData);
+		test.equal(msg, "FAKEID|MDA|EC|A+Message|-1|Message+for+client\n");
 		test.done();
 	},
 	"Write credits exception for notifyMpnSubscriptionActivation" : function(test) {
-		var msg = metadataProto.writeNotifyMpnSubscriptionActivationException("FAKEID","A Message","credits");
-		test.equal(msg, "FAKEID|MSA|EC|A+Message\n");
+		var excData = {clientCode: -1, clientMessage: "Message for client"};
+		var msg = metadataProto.writeNotifyMpnSubscriptionActivationException("FAKEID","A Message","credits",excData);
+		test.equal(msg, "FAKEID|MSA|EC|A+Message|-1|Message+for+client\n");
 		test.done();
 	},
 	"Write credits exception for notifyMpnDeviceTokenChange" : function(test) {
-		var msg = metadataProto.writeNotifyMpnDeviceTokenChangeException("FAKEID","A Message","credits");
-		test.equal(msg, "FAKEID|MDC|EC|A+Message\n");
+		var excData = {clientCode: -1, clientMessage: "Message for client"};
+		var msg = metadataProto.writeNotifyMpnDeviceTokenChangeException("FAKEID","A Message","credits",excData);
+		test.equal(msg, "FAKEID|MDC|EC|A+Message|-1|Message+for+client\n");
 		test.done();
 	},
 	"Write metadata exception for init" : function(test) {
@@ -493,13 +496,15 @@ exports.metadataExceptionWrites = {
 		test.done();
 	},
 	"Write credits exception for notifyUser" : function(test) {
-		var msg = metadataProto.writeNotifyUserException("FAKEID","A Message","credits");
-		test.equal(msg, "FAKEID|NUS|EC|A+Message\n");
+		var excData = {clientCode: -1, clientMessage: "Message for client"};
+		var msg = metadataProto.writeNotifyUserException("FAKEID","A Message","credits",excData);
+		test.equal(msg, "FAKEID|NUS|EC|A+Message|-1|Message+for+client\n");
 		test.done();
 	},
 	"Write conflicting session exception for notifyNewSession" : function(test) {
-		var msg = metadataProto.writeNotifyNewSessionException("FAKEID","A Message","conflictingSession");
-		test.equal(msg, "FAKEID|NNS|EX|A+Message\n");
+		var excData = {clientCode: -1, clientMessage: "Message for client", conflictingSessionId: "SXXXXXXXXXXXXXXXXX"};
+		var msg = metadataProto.writeNotifyNewSessionException("FAKEID","A Message","conflictingSession",excData);
+		test.equal(msg, "FAKEID|NNS|EX|A+Message|-1|Message+for+client|SXXXXXXXXXXXXXXXXX\n");
 		test.done();
 	},
 	"Write notification exception for notifyNewSession" : function(test) {

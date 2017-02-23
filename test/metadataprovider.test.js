@@ -418,9 +418,10 @@ exports.tests = {
         var d, s = this.stream, mp = this.metadataProvider;
         test.expect(2);
         mp.on("notifyMpnDeviceAccess", function(msg, resp) {
-            resp.error("An error", "credits");
+            var excData = {clientCode: -2, clientMessage: "Message for the client"};
+            resp.error("An error", "credits", excData);
             test.equal(s.popTestData(), "ID0|MPI|V\n");
-            test.equal(s.popTestData(), "FAKEID|MDA|EC|An+error\n");
+            test.equal(s.popTestData(), "FAKEID|MDA|EC|An+error|-2|Message+for+the+client\n");
             test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
@@ -443,9 +444,10 @@ exports.tests = {
         var d, s = this.stream, mp = this.metadataProvider;
         test.expect(2);
         mp.on("notifyMpnSubscriptionActivation", function(msg, resp) {
-            resp.error("An error", "credits");
+            var excData = {clientCode: -2, clientMessage: "Message for the client"};
+            resp.error("An error", "credits", excData);
             test.equal(s.popTestData(), "ID0|MPI|V\n");
-            test.equal(s.popTestData(), "FAKEID|MSA|EC|An+error\n");
+            test.equal(s.popTestData(), "FAKEID|MSA|EC|An+error|-2|Message+for+the+client\n");
             test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
@@ -468,9 +470,10 @@ exports.tests = {
         var d, s = this.stream, mp = this.metadataProvider;
         test.expect(2);
         mp.on("notifyMpnDeviceTokenChange", function(msg, resp) {
-            resp.error("An error", "credits");
+            var excData = {clientCode: -2, clientMessage: "Message for the client"};
+            resp.error("An error", "credits", excData);
             test.equal(s.popTestData(), "ID0|MPI|V\n");
-            test.equal(s.popTestData(), "FAKEID|MDC|EC|An+error\n");
+            test.equal(s.popTestData(), "FAKEID|MDC|EC|An+error|-2|Message+for+the+client\n");
             test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
