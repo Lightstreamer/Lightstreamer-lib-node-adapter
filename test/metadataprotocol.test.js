@@ -89,7 +89,7 @@ exports.metadataReads = {
 	},
 	"Read a valid get user item data" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|GUI|S|user|S|item+1|S|item+2\r\n", false);
+		reader.parse("FAKEID|GUI|S|user|S|item+1|S|item+2\r\nFAKEID|GUI|S|user|S|item+7\r\n", false);
 		var msg = reader.pop();
 		test.equal(msg.verb, "getUserItemData");
 		test.equal(msg.id, "FAKEID");
@@ -97,6 +97,8 @@ exports.metadataReads = {
 		test.equal(msg.itemNames.length, 2);
 		test.equal(msg.itemNames[0], "item 1");
 		test.equal(msg.itemNames[1], "item 2");
+		var msg = reader.pop();
+		test.equal(msg.itemNames[0], "item 7");
 		test.done();
 	},
 	"Read a valid notify user message" : function(test) {
