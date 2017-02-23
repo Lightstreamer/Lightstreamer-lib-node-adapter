@@ -497,17 +497,17 @@ exports.metadataExceptionWrites = {
 		test.equal(msg, "FAKEID|NUS|EC|A+Message\n");
 		test.done();
 	},
-	"Write credits exception for notifyNewSession" : function(test) {
+	"Write conflicting session exception for notifyNewSession" : function(test) {
 		var msg = metadataProto.writeNotifyNewSessionException("FAKEID","A Message","conflictingSession");
 		test.equal(msg, "FAKEID|NNS|EX|A+Message\n");
 		test.done();
 	},
-	"Write credits exception for notifyNewSession" : function(test) {
+	"Write notification exception for notifyNewSession" : function(test) {
 		var msg = metadataProto.writeNotifyNewSessionException("FAKEID","A Message","notification");
 		test.equal(msg, "FAKEID|NNS|EN|A+Message\n");
 		test.done();
 	},
-	"Write credits exception for notifyNewSession" : function(test) {
+	"Write notification exception for notifyNewSession" : function(test) {
 		var msg = metadataProto.writeNotifyNewSessionException("FAKEID","A Message","notification");
 		test.equal(msg, "FAKEID|NNS|EN|A+Message\n");
 		test.done();
