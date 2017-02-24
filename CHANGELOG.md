@@ -1,3 +1,21 @@
+## 1.3.3 (24 Feb 2017) ##
+
+### Bug Fixes ###
+
+Fixed the error() method of the MetadataResponse class, whose support for the
+"credits" and "conflictingSession" response was incomplete; sending such
+a response would have caused a wrong message to be sent to the Server and the
+message would have been refused.
+The new optional exceptionData argument has been added; see the API docs for
+details. Sending a "credits" or "conflictingSession" response now requires the
+new argument; if omitted or wrong, an exception will be thrown.
+
+### Lightstreamer Compatibility Notes ###
+
+Compatible with Adapter Remoting Infrastructure since 1.7
+
+
+
 ## 1.3.2 (13 Sep 2016) ##
 
 ### New Features ###
