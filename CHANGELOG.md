@@ -1,3 +1,15 @@
+## 1.3.4 (20 Apr 2017) ##
+
+### Bug Fixes ###
+
+Fixed the formatting of the README.md page, for which a new version is required.
+
+### Lightstreamer Compatibility Notes ###
+
+Compatible with Adapter Remoting Infrastructure since 1.7
+
+
+
 ## 1.3.3 (24 Feb 2017) ##
 
 ### Bug Fixes ###

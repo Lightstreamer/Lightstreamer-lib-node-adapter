@@ -1,4 +1,4 @@
-# Lightstreamer SDK for Node Adapters 1.3.3 #
+# Lightstreamer SDK for Node Adapters 1.3.4 #
 
 This package includes the resources needed to write Data Adapters and Metadata Adapters for [Lightstreamer](http://www.lightstreamer.com/ "Lightstreamer") Server in a [Node.js](http://nodejs.org/ "Node.js") environment.
 The adapters will run in a separate process, communicating with the Server through the Adapter Remoting Infrastructure.
