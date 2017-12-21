@@ -412,7 +412,7 @@ exports.tests = {
             test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
-        s.pushTestData("FAKEID|MDA|S|user|P|A|S|appID|S|deviceToken\n");
+        s.pushTestData("FAKEID|MDA|S|user|S|FAKESESSID|P|A|S|appID|S|deviceToken\n");
     },
     "notifyMpnDeviceAccess failure" : function(test) {
         var d, s = this.stream, mp = this.metadataProvider;
@@ -425,7 +425,7 @@ exports.tests = {
             test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
-        s.pushTestData("FAKEID|MDA|S|user|P|A|S|appID|S|deviceToken\n");
+        s.pushTestData("FAKEID|MDA|S|user|S|FAKESESSID|P|A|S|appID|S|deviceToken\n");
     },
     "notifyMpnSubscriptionActivation success" : function(test) {
         var d, s = this.stream, mp = this.metadataProvider;
@@ -438,7 +438,7 @@ exports.tests = {
             test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
-        s.pushTestData("FAKEID|MSA|S|user|S|FAKESESSID|I|1|M|M|S|group1|S|schema1|I|1|I|2|PA|2|2|P|A|S|appID|S|deviceToken|S|triggerExpression|S|sound|S|badge|S|locActionKey|S|launghImage|S|format|S|locFormatKey|S|arg1|S|arg2|S|customKey1|S|customValue1|S|customKey2|S|customValue2\n");
+        s.pushTestData("FAKEID|MSA|S|user|S|FAKESESSID|I|1|M|M|S|group1|S|schema1|I|1|I|2|P|A|S|appID|S|deviceToken|S|triggerExpression|S|%7B%22aps%22%3A%7B%22alert%22%3A%22%24%7Bmessage%7D%22%2C%22badge%22%3A%22AUTO%22%7D%2C%22acme2%22%3A%5B%22%24%7Btag1%7D%22%2C%22%24%7Btag2%7D%22%5D%7D\n");
     },
     "notifyMpnSubscriptionActivation failure" : function(test) {
         var d, s = this.stream, mp = this.metadataProvider;
@@ -451,7 +451,7 @@ exports.tests = {
             test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
-        s.pushTestData("FAKEID|MSA|S|user|S|FAKESESSID|I|1|M|M|S|group1|S|schema1|I|1|I|2|PA|2|2|P|A|S|appID|S|deviceToken|S|triggerExpression|S|sound|S|badge|S|locActionKey|S|launghImage|S|format|S|locFormatKey|S|arg1|S|arg2|S|customKey1|S|customValue1|S|customKey2|S|customValue2\n");
+        s.pushTestData("FAKEID|MSA|S|user|S|FAKESESSID|I|1|M|M|S|group1|S|schema1|I|1|I|2|P|G|S|appID|S|deviceToken|S|triggerExpression|S|%7B%22priority%22%3A%22NORMAL%22%2C%22notification%22%3A%7B%22icon%22%3A%22my_icon%22%2C%22body%22%3A%22my_body%22%2C%22title%22%3A%22my_title%22%7D%7D\n");
     },
     "notifyMpnDeviceTokenChange success" : function(test) {
         var d, s = this.stream, mp = this.metadataProvider;
@@ -464,7 +464,7 @@ exports.tests = {
             test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
-        s.pushTestData("FAKEID|MDC|S|user|P|G|S|appID|S|deviceToken|S|deviceToken2\n");
+        s.pushTestData("FAKEID|MDC|S|user|S|FAKESESSID|P|G|S|appID|S|deviceToken|S|deviceToken2\n");
     },
     "notifyMpnDeviceTokenChange failure" : function(test) {
         var d, s = this.stream, mp = this.metadataProvider;
@@ -477,6 +477,6 @@ exports.tests = {
             test.done();
         });
         s.pushTestData("ID0|MPI\r\n");
-        s.pushTestData("FAKEID|MDC|S|user|P|G|S|appID|S|deviceToken|S|deviceToken2\n");
+        s.pushTestData("FAKEID|MDC|S|user|S|FAKESESSID|P|G|S|appID|S|deviceToken|S|deviceToken2\n");
     },
 };

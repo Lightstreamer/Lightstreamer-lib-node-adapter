@@ -1,3 +1,30 @@
+## 1.4.0 (19 Dec 2017) ##
+
+### New Features ###
+
+Modified the interface in the part related to Mobile Push Notifications,
+after the full revision of the Server's MPN Module.
+In particular:
+* Extended the specifications of the "request" argument for the
+  notifyMpnDeviceAccess and notifyMpnDeviceTokenChange event handlers
+  of the MetadataProvider object, to add a session ID attribute.
+* Wholly revised the specifications of the "request" argument for the
+  notifyMpnSubscriptionActivation event handler of the MetadataProvider
+  object, in the part that reports the platform-specific attributes
+  of the MPN subscription. A new notificationFormat property is now used,
+  which contains the platform-specific attributes in a json string.
+  See the MPN chapter on the General Concepts document for details on the
+  platform-specific attributes (i.e. the Notification Format).
+Note that the MPN Module cannot be enabled in Moderato edition.
+
+Added notes in the documentation on the implication of the licensing policies.
+
+### Lightstreamer Compatibility Notes ###
+
+Compatible with Adapter Remoting Infrastructure since 1.8
+
+
+
 ## 1.3.4 (20 Apr 2017) ##
 
 ### Bug Fixes ###
@@ -30,7 +57,7 @@ Compatible with Adapter Remoting Infrastructure since 1.7
 
 ## 1.3.2 (13 Sep 2016) ##
 
-### New Features ###
+### Bug Fixes ###
 
 Fixed a bug in the parsing of requests that could lead to incorrect results 
 in case of two or more simultaneous requests.

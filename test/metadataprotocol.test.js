@@ -208,7 +208,7 @@ exports.metadataReads = {
 		var reader = new MetadataReader();
 		var inMsg, msg, i;
 
-		inMsg = "FAKEID|MDA|S|user" +
+		inMsg = "FAKEID|MDA|S|user|S|FAKESESSID" +
 		    "|P|A|S|appID|S|deviceToken" +
 			"\n";
 
@@ -218,6 +218,7 @@ exports.metadataReads = {
 		test.equal(msg.verb, "notifyMpnDeviceAccess");
 		test.equal(msg.id, "FAKEID");
 		test.equal(msg.userName, "user");
+		test.equal(msg.sessionId, "FAKESESSID");
 		test.equal(msg.device.mpnPlatformType, "A");
 		test.equal(msg.device.applicationId, "appID");
 		test.equal(msg.device.deviceToken, "deviceToken");
@@ -230,8 +231,8 @@ exports.metadataReads = {
 
 		inMsg = "FAKEID|MSA|S|user|S|FAKESESSID" +
 		    "|I|1|M|M|S|group1|S|schema1|I|1|I|2" +
-		    "|PA|2|2|P|A|S|appID|S|deviceToken|S|triggerExpression|S|sound|S|badge|S|locActionKey|S|launghImage" +
-		    "|S|format|S|locFormatKey|S|arg1|S|arg2|S|customKey1|S|customValue1|S|customKey2|S|customValue2" +
+		    "|P|A|S|appID|S|deviceToken|S|triggerExpression" +
+            "|S|%7B%22aps%22%3A%7B%22alert%22%3A%22%24%7Bmessage%7D%22%2C%22badge%22%3A%22AUTO%22%7D%2C%22acme2%22%3A%5B%22%24%7Btag1%7D%22%2C%22%24%7Btag2%7D%22%5D%7D" +
 			"\n";
 
 		reader.parse(inMsg, false);
@@ -254,16 +255,7 @@ exports.metadataReads = {
 		test.equal(msg.mpnSubscription.device.deviceToken, "deviceToken");
 		test.equal(msg.mpnSubscription.trigger, "triggerExpression");
 
-		test.equal(msg.mpnSubscription.sound, "sound");
-		test.equal(msg.mpnSubscription.badge, "badge");
-		test.equal(msg.mpnSubscription.localizedActionKey, "locActionKey");
-		test.equal(msg.mpnSubscription.launchImage, "launghImage");
-		test.equal(msg.mpnSubscription.format, "format");
-		test.equal(msg.mpnSubscription.localizedFormatKey, "locFormatKey");
-		test.equal(msg.mpnSubscription.localizedFormatArguments.length, 2);
-		test.equal(msg.mpnSubscription.localizedFormatArguments[0], "arg1");
-		test.equal(msg.mpnSubscription.localizedFormatArguments[1], "arg2");
-		test.equal(msg.mpnSubscription.customData["customKey2"], "customValue2");
+		test.equal(msg.mpnSubscription.notificationFormat, "{\"aps\":{\"alert\":\"${message}\",\"badge\":\"AUTO\"},\"acme2\":[\"${tag1}\",\"${tag2}\"]}");
 
 		test.done();
 	},
@@ -273,7 +265,8 @@ exports.metadataReads = {
 
 		inMsg = "FAKEID|MSA|S|user|S|FAKESESSID" +
 		    "|I|1|M|M|S|group1|S|schema1|I|1|I|2" +
-		    "|PG|3|P|G|S|appID|S|deviceToken|S|triggerExpression|S|collapseKey|S|key1|S|value1|S|key2|S|value2|S|key3|S|value3|S|false|S|30" +
+		    "|P|G|S|appID|S|deviceToken|S|triggerExpression" + 
+            "|S|%7B%22priority%22%3A%22NORMAL%22%2C%22notification%22%3A%7B%22icon%22%3A%22my_icon%22%2C%22body%22%3A%22my_body%22%2C%22title%22%3A%22my_title%22%7D%7D" +
 			"\n";
 
 		reader.parse(inMsg, false);
@@ -296,12 +289,7 @@ exports.metadataReads = {
 		test.equal(msg.mpnSubscription.device.deviceToken, "deviceToken");
 		test.equal(msg.mpnSubscription.trigger, "triggerExpression");
 
-		test.equal(msg.mpnSubscription.collapseKey, "collapseKey");
-		test.equal(msg.mpnSubscription.data["key1"], "value1");
-		test.equal(msg.mpnSubscription.data["key2"], "value2");
-		test.equal(msg.mpnSubscription.data["key3"], "value3");
-		test.equal(msg.mpnSubscription.delayWhileIdle, "false");
-		test.equal(msg.mpnSubscription.timeToLive, "30");
+		test.equal(msg.mpnSubscription.notificationFormat, "{\"priority\":\"NORMAL\",\"notification\":{\"icon\":\"my_icon\",\"body\":\"my_body\",\"title\":\"my_title\"}}");
 
 		test.done();
 	},
@@ -309,7 +297,8 @@ exports.metadataReads = {
 		var reader = new MetadataReader();
 		var inMsg, msg, i;
 
-		inMsg = "FAKEID|MDC|S|user|P|G|S|appID|S|deviceToken|S|deviceToken2" +
+		inMsg = "FAKEID|MDC|S|user|S|FAKESESSID" +
+            "|P|G|S|appID|S|deviceToken|S|deviceToken2" +
 			"\n";
 
 		reader.parse(inMsg, false);
@@ -318,6 +307,7 @@ exports.metadataReads = {
 		test.equal(msg.verb, "notifyMpnDeviceTokenChange");
 		test.equal(msg.id, "FAKEID");
 		test.equal(msg.userName, "user");
+		test.equal(msg.sessionId, "FAKESESSID");
 		test.equal(msg.device.mpnPlatformType, "G");
 		test.equal(msg.device.applicationId, "appID");
 		test.equal(msg.device.deviceToken, "deviceToken");
