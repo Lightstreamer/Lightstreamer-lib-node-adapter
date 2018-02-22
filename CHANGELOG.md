@@ -1,3 +1,15 @@
+## 1.4.1 (22 Feb 2018) ##
+
+### New Features ###
+
+Added clarifications on licensing matters in the documentation.
+
+### Lightstreamer Compatibility Notes ###
+
+Compatible with Adapter Remoting Infrastructure since 1.8
+
+
+
 ## 1.4.0 (19 Dec 2017) ##
 
 ### New Features ###
