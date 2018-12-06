@@ -1,3 +1,16 @@
+## 1.4.2 (6 Dec 2018) ##
+
+### Bug Fixes ###
+
+Fixed a bug which prevented instantiation of multiple Data Adapters in the
+same process, causing a "Unexpected late DPI message" error to be issued.
+
+### Lightstreamer Compatibility Notes ###
+
+Compatible with Adapter Remoting Infrastructure since 1.8
+
+
+
 ## 1.4.1 (22 Feb 2018) ##
 
 ### New Features ###
