@@ -26,45 +26,53 @@ exports.tests = {
     },
     "Initialization" : function(test) {
         var reqRespStream = this.reqRespStream;
-        test.expect(4);
+        var notifyStream = this.notifyStream;
+        test.expect(5);
         this.dataProvider.on('init', function(message, response) {
             test.equal(message.parameters["P1"], "V1");
             test.equal(message.parameters["P2"], "V2");
             test.equal(message.initResponseParams, null);
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|1.8.1\n");
+            test.equal(notifyStream.popTestData().substring(13), "|DPNI|S|ARI.version|S|1.8.1\n");
             test.done();
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|P1|S|V1|S|ARI.version|S|1.9.100|S|P2|S|V2\r\n");
     },
     "Initialization OLD" : function(test) {
         var reqRespStream = this.reqRespStream;
-        test.expect(3);
+        var notifyStream = this.notifyStream;
+        test.expect(4);
         this.dataProvider.on('init', function(message, response) {
             test.equal(message.parameters["P1"], "V1");
             test.equal(message.parameters["P2"], "V2");
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|V\n");
+            test.equal(notifyStream.popTestData(), null);
             test.done();
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|P1|S|V1|S|P2|S|V2\r\n");
     },
     "Failed initialization" : function(test) {
         var reqRespStream = this.reqRespStream;
-        test.expect(1);
+        var notifyStream = this.notifyStream;
+        test.expect(2);
         this.dataProvider.on('init', function(message, response) {
             response.error("An exception", "data");
             test.equal(reqRespStream.popTestData(), "ID0|DPI|ED|An+exception\n");
+            test.equal(notifyStream.popTestData(), null);
             test.done();
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|1.8.1\r\n");
     },
     "Missing initialization" : function(test) {
         var reqRespStream = this.reqRespStream;
+        var notifyStream = this.notifyStream;
         test.expect(1);
         this.dataProvider.on('init', function(message, response) {
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|1.8.1\n");
+            test.equal(notifyStream.popTestData().substring(13), "|DPNI|S|ARI.version|S|1.8.1\n");
         });
         test.throws(function () {
             this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
@@ -73,10 +81,12 @@ exports.tests = {
     },
     "Late initialization" : function(test) {
         var reqRespStream = this.reqRespStream;
-        test.expect(2);
+        var notifyStream = this.notifyStream;
+        test.expect(3);
         this.dataProvider.on('init', function(message, response) {
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|1.8.1\n");
+            test.equal(notifyStream.popTestData().substring(13), "|DPNI|S|ARI.version|S|1.8.1\n");
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|1.8.1\r\n");
         test.throws(function () {
@@ -113,13 +123,14 @@ exports.tests = {
             // the handler would have still been invoked
         var reqRespStream = this.reqRespStream,
             notifyStream = this.notifyStream;
-        test.expect(3);
+        test.expect(4);
         this.dataProvider = new DataProvider(
             this.reqRespStream, this.notifyStream, function(itemName) {return false;});
 
         this.dataProvider.on('subscribe', function(itemName, response) {
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|1.8.1\n");
+            test.equal(notifyStream.popTestData().substring(13), "|DPNI|S|ARI.version|S|1.8.1\n");
             test.equal(reqRespStream.popTestData(), "FAKEID|SUB|V\n");
             var data = notifyStream.popTestData();
             test.equal(data.substring(13), "|EOS|S|An+Item+Name|S|FAKEID\n");
@@ -295,10 +306,11 @@ exports.tests = {
         var dataProvider = this.dataProvider,
             reqRespStream = this.reqRespStream,
             notifyStream = this.notifyStream;
-        test.expect(1);
+        test.expect(2);
         dataProvider.on('subscribe', function(itemName, response) {
             response.success();
             dataProvider.endOfSnapshot("An Item Name");
+            test.equal(notifyStream.popTestData().substring(13), "|DPNI|S|ARI.version|S|1.8.1\n");
             var data = notifyStream.popTestData();
             test.equal(data.substring(13), "|EOS|S|An+Item+Name|S|FAKEID\n");
             test.done();
@@ -318,7 +330,7 @@ exports.tests = {
         var dataProvider = this.dataProvider,
             reqRespStream = this.reqRespStream,
             notifyStream = this.notifyStream;
-        test.expect(2);
+        test.expect(3);
 
         dataProvider.on('subscribe', function(itemName, response) {
             response.success();
@@ -334,6 +346,7 @@ exports.tests = {
                     "field8" : fake.undef, //fake does not have an undef property
                     "field9" : false
                 });
+            test.equal(notifyStream.popTestData().substring(13), "|DPNI|S|ARI.version|S|1.8.1\n");
             data = notifyStream.popTestData();
             test.equal(data.substring(13), "|EOS|S|AnItemName|S|FAKEID\n");
             data = notifyStream.popTestData();
@@ -359,7 +372,7 @@ exports.tests = {
         var dataProvider = this.dataProvider,
             reqRespStream = this.reqRespStream,
             notifyStream = this.notifyStream;
-        test.expect(3);
+        test.expect(4);
 
         dataProvider.on('subscribe', function(itemName, response) {
             response.success();
@@ -376,6 +389,7 @@ exports.tests = {
                     "field9" : false
                 });
             dataProvider.clearSnapshot("AnItemName");
+            test.equal(notifyStream.popTestData().substring(13), "|DPNI|S|ARI.version|S|1.8.1\n");
             data = notifyStream.popTestData();
             test.equal(data.substring(13), "|EOS|S|AnItemName|S|FAKEID\n");
             data = notifyStream.popTestData();

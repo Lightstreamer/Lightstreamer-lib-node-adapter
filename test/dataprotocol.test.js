@@ -97,6 +97,13 @@ exports.dataWrites = {
 		test.equal(msg, "FAKEID|DPI|ED|An+exception\n");
 		test.done();
 	},
+	"Init notifications write" : function(test) {
+		var params = {};
+		params["ARI.version"] = "1.8.1";
+		var msg = dataProto.writeNotifInit(params);
+		test.equal(msg.substring(13), "|DPNI|S|ARI.version|S|1.8.1\n");
+		test.done();
+	},
 	"Subscribe write" : function(test) {
 		var msg = dataProto.writeSubscribe("FAKEID");
 		test.equal(msg, "FAKEID|SUB|V\n");
