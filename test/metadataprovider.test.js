@@ -17,6 +17,14 @@ Copyright (c) Lightstreamer Srl
 var MetadataProvider = require('../lib/lightstreamer-adapter').MetadataProvider,
     TestStream = require('./utils/teststream').TestStream;
 
+function overrideMetadataWithParameters(params, credentials) {
+    this.stream = new TestStream();
+        // we cannot keep the old stream, because it already has a 'data' handler
+        // for this.metadataProvider, and, after attaching it to a new MetadataProvider below,
+        // the handler would have still been invoked
+    this.metadataProvider = new MetadataProvider(this.stream, params, credentials);
+}
+
 exports.tests = {
     setUp: function (callback) {
         this.stream = new TestStream();
@@ -24,11 +32,9 @@ exports.tests = {
         callback();
     },
     "init success" : function(test) {
-        this.stream = new TestStream();
-            // we cannot keep the old stream, because it already has a 'data' handler
-            // for this.dataProvider, and, after attaching it to a new DataProvider below,
-            // the handler would have still been invoked
-        this.metadataProvider = new MetadataProvider(this.stream, null, { user: "my_user", password: "my_password" } );
+        var credentials = { user: "my_user", password: "my_password" };
+        overrideMetadataWithParameters.apply(this, [  null, credentials ]);
+
         var s = this.stream, mp = this.metadataProvider;
         test.expect(4);
         mp.on('init', function(msg, resp) {
@@ -128,11 +134,9 @@ exports.tests = {
     },
     "notifyUser success" : function(test) {
         // also tests the default handler for 'init'
-        this.stream = new TestStream();
-            // we cannot keep the old stream, because it already has a 'data' handler
-            // for this.dataProvider, and, after attaching it to a new DataProvider below,
-            // the handler would have still been invoked
-        this.metadataProvider = new MetadataProvider(this.stream, null, { user: "my_user", password: "my_password" } );
+        var credentials = { user: "my_user", password: "my_password" };
+        overrideMetadataWithParameters.apply(this, [  null, credentials ]);
+
         var s = this.stream, mp = this.metadataProvider;
         test.expect(3);
         mp.on("notifyUser", function(msg, resp) {
