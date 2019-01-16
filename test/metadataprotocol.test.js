@@ -20,12 +20,24 @@ var metadataProto = require('../lib/metadataprotocol').metadata,
 exports.metadataReads = {
 	"Read a valid init" : function(test) {
 		var reader = new MetadataReader();
+		reader.parse("FAKEID|MPI|S|P1|S|V1|S|ARI.version|S|1.9.100|S|P2|S|V2\r\n", true);
+		var msg = reader.pop();
+		test.equal(msg.verb, "init");
+		test.equal(msg.id, "FAKEID");
+		test.equal(msg.parameters["P1"], "V1");
+		test.equal(msg.parameters["P2"], "V2");
+		test.equal(msg.initResponseParams["ARI.version"], "1.8.1");
+		test.done();
+	},
+	"Read a valid init OLD" : function(test) {
+		var reader = new MetadataReader();
 		reader.parse("FAKEID|MPI|S|P1|S|V1|S|P2|S|V2\r\n", true);
 		var msg = reader.pop();
 		test.equal(msg.verb, "init");
 		test.equal(msg.id, "FAKEID");
 		test.equal(msg.parameters["P1"], "V1");
 		test.equal(msg.parameters["P2"], "V2");
+		test.equal(msg.initResponseParams, null);
 		test.done();
 	},
 	"Read a valid get item data" : function(test) {
@@ -319,7 +331,14 @@ exports.metadataReads = {
 
 exports.metadataWrites = {
 	"Init write" : function(test) {
-		var msg = metadataProto.writeInit("FAKEID");
+		var params = {};
+		params["ARI.version"] = "1.8.1";
+		var msg = metadataProto.writeInit("FAKEID", params);
+		test.equal(msg, "FAKEID|MPI|S|ARI.version|S|1.8.1\n");
+		test.done();
+	},
+	"Init write OLD" : function(test) {
+		var msg = metadataProto.writeInit("FAKEID", null);
 		test.equal(msg, "FAKEID|MPI|V\n");
 		test.done();
 	},
