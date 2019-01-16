@@ -55,7 +55,7 @@ exports.tests = {
         this.dataProvider.on('init', function(message, response) {
             response.error("An exception", "data");
             test.equal(reqRespStream.popTestData(), "ID0|DPI|ED|An+exception\n");
-            test.done();                        
+            test.done();
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|1.8.1\r\n");
     },
@@ -69,7 +69,7 @@ exports.tests = {
         test.throws(function () {
             this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
         }, Error);
-        test.done();                        
+        test.done();
     },
     "Late initialization" : function(test) {
         var reqRespStream = this.reqRespStream;
@@ -82,7 +82,7 @@ exports.tests = {
         test.throws(function () {
             this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|1.8.1\r\n");
         }, Error);
-        test.done();                        
+        test.done();
     },
     "Subscribe with snapshot" : function(test) {
         this.reqRespStream = new TestStream();
@@ -101,7 +101,7 @@ exports.tests = {
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|1.8.1\n");
             test.equal(reqRespStream.popTestData(), "FAKEID|SUB|V\n");
-            test.done();                        
+            test.done();
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|1.8.1\r\n");
         this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
@@ -122,8 +122,8 @@ exports.tests = {
             test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|1.8.1\n");
             test.equal(reqRespStream.popTestData(), "FAKEID|SUB|V\n");
             var data = notifyStream.popTestData();
-            test.ok(data.substring(13), "|EOS|S|An+Item+Name|S|FAKEID\n");
-            test.done();            
+            test.equal(data.substring(13), "|EOS|S|An+Item+Name|S|FAKEID\n");
+            test.done();
         });
 
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|1.8.1\r\n");
@@ -309,7 +309,7 @@ exports.tests = {
     "End of snapshot with an unsubscribed item" : function(test) {
         test.expect(1);
         test.throws(function () {
-            this.dataProvider.endOfSnapshot("I'm not subscribed yet");            
+            this.dataProvider.endOfSnapshot("I'm not subscribed yet");
         }, Error);
         test.done();
     },
@@ -400,7 +400,7 @@ exports.tests = {
             test.throws(function () {
                 response.success();
             }, Error);
-            test.done();                        
+            test.done();
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|1.8.1\r\n");
         this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
@@ -414,7 +414,7 @@ exports.tests = {
             test.throws(function () {
                 response.error();
             }, Error);
-            test.done();                        
+            test.done();
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|1.8.1\r\n");
         this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
