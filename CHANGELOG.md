@@ -1,3 +1,26 @@
+## 1.5.0 (xxxxxxxxxx) ##
+
+### New Features ###
+
+Extended the constructors of the DataProvider and MetadataProvider classes with
+settings of credentials, to be sent to the Proxy Adapter upon each connection.
+Credential check is an optional configuration of the Proxy Adapter;
+if not leveraged, the credentials will be ignored.
+
+Added full support for ARI protocol extensions introduced in
+Adapter Remoting Infrastructure version 1.9.
+
+### Lightstreamer Compatibility Notes ###
+
+Compatible with Adapter Remoting Infrastructure since 1.8
+
+Only in the very unlikely case that Adapter Remoting Infrastructure 1.8.x
+is used and a custom remote parameter named "ARI.version" is defined,
+this SDK is not compatible, hence the Server should be upgraded
+(or a different parameter name should be used).
+
+
+
 ## 1.4.2 (6 Dec 2018) ##
 
 ### Bug Fixes ###
