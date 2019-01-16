@@ -333,8 +333,10 @@ exports.metadataWrites = {
 	"Init write" : function(test) {
 		var params = {};
 		params["ARI.version"] = "1.8.1";
+		params["user"] = "my_user";
+		params["password"] = "my_password";
 		var msg = metadataProto.writeInit("FAKEID", params);
-		test.equal(msg, "FAKEID|MPI|S|ARI.version|S|1.8.1\n");
+		test.equal(msg, "FAKEID|MPI|S|ARI.version|S|1.8.1|S|user|S|my_user|S|password|S|my_password\n");
 		test.done();
 	},
 	"Init write OLD" : function(test) {

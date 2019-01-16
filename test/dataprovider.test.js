@@ -25,6 +25,11 @@ exports.tests = {
         callback();
     },
     "Initialization" : function(test) {
+        this.reqRespStream = new TestStream();
+            // we cannot keep the old reqRespStream, because it already has a 'data' handler
+            // for this.dataProvider, and, after attaching it to a new DataProvider below,
+            // the handler would have still been invoked
+        this.dataProvider = new DataProvider(this.reqRespStream, this.notifyStream, null, { user: "my_user", password: "my_password" } );
         var reqRespStream = this.reqRespStream;
         var notifyStream = this.notifyStream;
         test.expect(5);
@@ -33,8 +38,8 @@ exports.tests = {
             test.equal(message.parameters["P2"], "V2");
             test.equal(message.initResponseParams, null);
             response.success();
-            test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|1.8.1\n");
-            test.equal(notifyStream.popTestData().substring(13), "|DPNI|S|ARI.version|S|1.8.1\n");
+            test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|1.8.1|S|user|S|my_user|S|password|S|my_password\n");
+            test.equal(notifyStream.popTestData().substring(13), "|DPNI|S|ARI.version|S|1.8.1|S|user|S|my_user|S|password|S|my_password\n");
             test.done();
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|P1|S|V1|S|ARI.version|S|1.9.100|S|P2|S|V2\r\n");
@@ -117,6 +122,7 @@ exports.tests = {
         this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
     },
     "Subscribe without snapshot" : function(test) {
+        // also tests the default handler for 'init'
         this.reqRespStream = new TestStream();
             // we cannot keep the old reqRespStream, because it already has a 'data' handler
             // for this.dataProvider, and, after attaching it to a new DataProvider below,
@@ -125,12 +131,12 @@ exports.tests = {
             notifyStream = this.notifyStream;
         test.expect(4);
         this.dataProvider = new DataProvider(
-            this.reqRespStream, this.notifyStream, function(itemName) {return false;});
+            this.reqRespStream, this.notifyStream, null, { user: "my_user", password: "my_password" } );
 
         this.dataProvider.on('subscribe', function(itemName, response) {
             response.success();
-            test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|1.8.1\n");
-            test.equal(notifyStream.popTestData().substring(13), "|DPNI|S|ARI.version|S|1.8.1\n");
+            test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|1.8.1|S|user|S|my_user|S|password|S|my_password\n");
+            test.equal(notifyStream.popTestData().substring(13), "|DPNI|S|ARI.version|S|1.8.1|S|user|S|my_user|S|password|S|my_password\n");
             test.equal(reqRespStream.popTestData(), "FAKEID|SUB|V\n");
             var data = notifyStream.popTestData();
             test.equal(data.substring(13), "|EOS|S|An+Item+Name|S|FAKEID\n");

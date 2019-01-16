@@ -24,6 +24,11 @@ exports.tests = {
         callback();
     },
     "init success" : function(test) {
+        this.stream = new TestStream();
+            // we cannot keep the old stream, because it already has a 'data' handler
+            // for this.dataProvider, and, after attaching it to a new DataProvider below,
+            // the handler would have still been invoked
+        this.metadataProvider = new MetadataProvider(this.stream, null, { user: "my_user", password: "my_password" } );
         var s = this.stream, mp = this.metadataProvider;
         test.expect(4);
         mp.on('init', function(msg, resp) {
@@ -31,7 +36,7 @@ exports.tests = {
             test.equal(msg.parameters["P2"], "V2");
             test.equal(msg.initResponseParams, null);
             resp.success();
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.1\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.1|S|user|S|my_user|S|password|S|my_password\n");
             test.done();
         });
         s.pushTestData("ID0|MPI|S|P1|S|V1|S|ARI.version|S|1.9.100|S|P2|S|V2\r\n");
@@ -122,12 +127,18 @@ exports.tests = {
         s.pushTestData("FAKEID|GIT|S|An+Item+Name1|S|An+Item+Name2\n");
     },
     "notifyUser success" : function(test) {
+        // also tests the default handler for 'init'
+        this.stream = new TestStream();
+            // we cannot keep the old stream, because it already has a 'data' handler
+            // for this.dataProvider, and, after attaching it to a new DataProvider below,
+            // the handler would have still been invoked
+        this.metadataProvider = new MetadataProvider(this.stream, null, { user: "my_user", password: "my_password" } );
         var s = this.stream, mp = this.metadataProvider;
         test.expect(3);
         mp.on("notifyUser", function(msg, resp) {
             test.equal(msg.verb, "notifyUser");
             resp.success(12.34, true);
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.1\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.1|S|user|S|my_user|S|password|S|my_password\n");
             test.equal(s.popTestData(), "FAKEID|NUS|D|12.34|B|1\n");
             test.done();
         });

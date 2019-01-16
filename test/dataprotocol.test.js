@@ -78,8 +78,10 @@ exports.dataWrites = {
 	"Init write" : function(test) {
 		var params = {};
 		params["ARI.version"] = "1.8.1";
+		params["user"] = "my_user";
+		params["password"] = "my_password";
 		var msg = dataProto.writeInit("FAKEID", params);
-		test.equal(msg, "FAKEID|DPI|S|ARI.version|S|1.8.1\n");
+		test.equal(msg, "FAKEID|DPI|S|ARI.version|S|1.8.1|S|user|S|my_user|S|password|S|my_password\n");
 		test.done();
 	},
 	"Init write OLD" : function(test) {
@@ -100,8 +102,10 @@ exports.dataWrites = {
 	"Init notifications write" : function(test) {
 		var params = {};
 		params["ARI.version"] = "1.8.1";
+		params["user"] = "my_user";
+		params["password"] = "my_password";
 		var msg = dataProto.writeNotifInit(params);
-		test.equal(msg.substring(13), "|DPNI|S|ARI.version|S|1.8.1\n");
+		test.equal(msg.substring(13), "|DPNI|S|ARI.version|S|1.8.1|S|user|S|my_user|S|password|S|my_password\n");
 		test.done();
 	},
 	"Subscribe write" : function(test) {
