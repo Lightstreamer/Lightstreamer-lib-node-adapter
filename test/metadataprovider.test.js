@@ -24,7 +24,7 @@ exports.tests = {
         callback();
     },
     "init success" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(4);
         mp.on('init', function(msg, resp) {
             test.equal(msg.parameters["P1"], "V1");
@@ -37,7 +37,7 @@ exports.tests = {
         s.pushTestData("ID0|MPI|S|P1|S|V1|S|ARI.version|S|1.9.100|S|P2|S|V2\r\n");
     },
     "init success OLD" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(3);
         mp.on('init', function(msg, resp) {
             test.equal(msg.parameters["P1"], "V1");
@@ -49,7 +49,7 @@ exports.tests = {
         s.pushTestData("ID0|MPI|S|P1|S|V1|S|P2|S|V2\r\n");
     },
     "init failure" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(1);
         mp.on('init', function(msg, resp) {
             resp.error("An error");
@@ -59,7 +59,7 @@ exports.tests = {
         s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.1\r\n");
     },
     "init metadata failure" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(1);
         mp.on('init', function(msg, resp) {
             resp.error("An error", "metadata");
@@ -69,7 +69,7 @@ exports.tests = {
         s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.1\r\n");
     },
     "Missing initialization" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(1);
         mp.on('init', function(msg, resp) {
             resp.success();
@@ -81,7 +81,7 @@ exports.tests = {
         test.done();
     },
     "Late initialization" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(2);
         mp.on('init', function(msg, resp) {
             resp.success();
@@ -94,7 +94,7 @@ exports.tests = {
         test.done();
     },
     "getItemData success" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(3);
         mp.on("getItemData", function(msg, resp) {
             test.equal(msg.verb, "getItemData");
@@ -110,7 +110,7 @@ exports.tests = {
         s.pushTestData("FAKEID|GIT|S|An+Item+Name1|S|An+Item+Name2\n");
     },
     "getItemData failure" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(2);
         mp.on("getItemData", function(msg, resp) {
             resp.error("An error");
@@ -122,7 +122,7 @@ exports.tests = {
         s.pushTestData("FAKEID|GIT|S|An+Item+Name1|S|An+Item+Name2\n");
     },
     "notifyUser success" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(3);
         mp.on("notifyUser", function(msg, resp) {
             test.equal(msg.verb, "notifyUser");
@@ -135,7 +135,7 @@ exports.tests = {
         s.pushTestData("FAKEID|NUS|S|user|S|password|S|header1|S|value+1|S|header+2|S|value+2|S|REQUEST_ID|S|FAKEREQID\n");
     },
     "notifyUser failure" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(2);
         mp.on("notifyUser", function(msg, resp) {
             resp.error("An error");
@@ -147,7 +147,7 @@ exports.tests = {
         s.pushTestData("FAKEID|NUS|S|user|S|password|S|header1|S|value+1|S|header+2|S|value+2|S|REQUEST_ID|S|FAKEREQID\n");
     },
     "notifyUser access failure" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(2);
         mp.on("notifyUser", function(msg, resp) {
             resp.error("An error", "access");
@@ -159,7 +159,7 @@ exports.tests = {
         s.pushTestData("FAKEID|NUS|S|user|S|password|S|header1|S|value+1|S|header+2|S|value+2|S|REQUEST_ID|S|FAKEREQID\n");
     },
     "notifyUserAuth success" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(3);
         mp.on("notifyUserAuth", function(msg, resp) {
             test.equal(msg.verb, "notifyUserAuth");
@@ -172,7 +172,7 @@ exports.tests = {
         s.pushTestData("FAKEID|NUA|S|user|S|password|S|principal|S|header1|S|value+1|S|header+2|S|value+2|S|REQUEST_ID|S|FAKEREQID\n");
     },
     "notifyUserAuth failure" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(2);
         mp.on("notifyUserAuth", function(msg, resp) {
             resp.error("An error");
@@ -184,7 +184,7 @@ exports.tests = {
         s.pushTestData("FAKEID|NUA|S|user|S|password|S|principal|S|header1|S|value+1|S|header+2|S|value+2|S|REQUEST_ID|S|FAKEREQID\n");
     },
     "getSchema success" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(3);
         mp.on("getSchema", function(msg, resp) {
             test.equal(msg.verb, "getSchema");
@@ -197,7 +197,7 @@ exports.tests = {
         s.pushTestData("FAKEID|GSC|S|user|S|group|S|schema|S|FAKESESSID\n");
     },
     "getSchema failure" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(2);
         mp.on("getSchema", function(msg, resp) {
             resp.error("An error");
@@ -209,7 +209,7 @@ exports.tests = {
         s.pushTestData("FAKEID|GSC|S|user|S|group|S|schema|S|FAKESESSID\n");
     },
     "getItems success" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(3);
         mp.on("getItems", function(msg, resp) {
             test.equal(msg.verb, "getItems");
@@ -222,7 +222,7 @@ exports.tests = {
         s.pushTestData("FAKEID|GIS|S|user|S|group|S|FAKESESSID\n");
     },
     "getItems failure" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(2);
         mp.on("getItems", function(msg, resp) {
             resp.error("An error");
@@ -234,7 +234,7 @@ exports.tests = {
         s.pushTestData("FAKEID|GIS|S|user|S|group|S|FAKESESSID\n");
     },
     "getUserItemData success" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(3);
         mp.on("getUserItemData", function(msg, resp) {
             test.equal(msg.verb, "getUserItemData");
@@ -250,7 +250,7 @@ exports.tests = {
         s.pushTestData("FAKEID|GUI|S|user|S|item+1|S|item+2\n");
     },
     "getUserItemData failure" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(2);
         mp.on("getUserItemData", function(msg, resp) {
             resp.error("An error");
@@ -262,7 +262,7 @@ exports.tests = {
         s.pushTestData("FAKEID|GUI|S|user|S|item+1|S|item+2\n");
     },
     "notifyUserMessage success" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(3);
         mp.on("notifyUserMessage", function(msg, resp) {
             test.equal(msg.verb, "notifyUserMessage");
@@ -275,7 +275,7 @@ exports.tests = {
         s.pushTestData("FAKEID|NUM|S|user|S|FAKESESSID|S|This+is+a+message\n");
     },
     "notifyUserMessage failure" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(2);
         mp.on("notifyUserMessage", function(msg, resp) {
             resp.error("An error");
@@ -287,7 +287,7 @@ exports.tests = {
         s.pushTestData("FAKEID|NUM|S|user|S|FAKESESSID|S|This+is+a+message\n");
     },
     "notifyNewSession success" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(3);
         mp.on("notifyNewSession", function(msg, resp) {
             test.equal(msg.verb, "notifyNewSession");
@@ -300,7 +300,7 @@ exports.tests = {
         s.pushTestData("FAKEID|NNS|S|user|S|FAKESESSID|S|prop1|S|val1|S|prop2|S|val2\n");
     },
     "notifyNewSession failure" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(2);
         mp.on("notifyNewSession", function(msg, resp) {
             resp.error("An error");
@@ -312,7 +312,7 @@ exports.tests = {
         s.pushTestData("FAKEID|NNS|S|user|S|FAKESESSID|S|prop1|S|val1|S|prop2|S|val2\n");
     },
     "notifySessionClose success" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(3);
         mp.on("notifySessionClose", function(msg, resp) {
             test.equal(msg.verb, "notifySessionClose");
@@ -325,7 +325,7 @@ exports.tests = {
         s.pushTestData("FAKEID|NSC|S|FAKESESSID\n");
     },
     "notifySessionClose failure" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(2);
         mp.on("notifySessionClose", function(msg, resp) {
             resp.error("An error");
@@ -337,7 +337,7 @@ exports.tests = {
         s.pushTestData("FAKEID|NSC|S|FAKESESSID\n");
     },
     "notifyNewTables success" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(3);
         mp.on("notifyNewTables", function(msg, resp) {
             test.equal(msg.verb, "notifyNewTables");
@@ -350,7 +350,7 @@ exports.tests = {
         s.pushTestData("FAKEID|NNT|S|user|S|FAKESESSID|I|1|M|M|S|group1|S|schema1|I|1|I|5|S|#\n");
     },
     "notifyNewTables failure" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(2);
         mp.on("notifyNewTables", function(msg, resp) {
             resp.error("An error");
@@ -362,7 +362,7 @@ exports.tests = {
         s.pushTestData("FAKEID|NNT|S|user|S|FAKESESSID|I|1|M|M|S|group1|S|schema1|I|1|I|5|S|#\n");
     },
     "notifyTablesClose success" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(3);
         mp.on("notifyTablesClose", function(msg, resp) {
             test.equal(msg.verb, "notifyTablesClose");
@@ -375,7 +375,7 @@ exports.tests = {
         s.pushTestData("FAKEID|NTC|S|FAKESESSID|I|1|M|M|S|group1|S|schema1|I|1|I|5|S|#\n");
     },
     "notifyTablesClose failure" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(2);
         mp.on("notifyTablesClose", function(msg, resp) {
             resp.error("An error");
@@ -387,7 +387,7 @@ exports.tests = {
         s.pushTestData("FAKEID|NTC|S|FAKESESSID|I|1|M|M|S|group1|S|schema1|I|1|I|5|S|#\n");
     },
     "notifyUserMessage with double success" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(2);
         mp.on("notifyUserMessage", function(msg, resp) {
             test.equal(msg.verb, "notifyUserMessage");
@@ -401,7 +401,7 @@ exports.tests = {
         s.pushTestData("FAKEID|NUM|S|user|S|FAKESESSID|S|This+is+a+message\n");
     },
     "notifyUserMessage with double error" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(2);
         mp.on("notifyUserMessage", function(msg, resp) {
             test.equal(msg.verb, "notifyUserMessage");
@@ -415,7 +415,7 @@ exports.tests = {
         s.pushTestData("FAKEID|NUM|S|user|S|FAKESESSID|S|This+is+a+message\n");
     },
     "notifyMpnDeviceAccess success" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(3);
         mp.on("notifyMpnDeviceAccess", function(msg, resp) {
             test.equal(msg.verb, "notifyMpnDeviceAccess");
@@ -428,7 +428,7 @@ exports.tests = {
         s.pushTestData("FAKEID|MDA|S|user|S|FAKESESSID|P|A|S|appID|S|deviceToken\n");
     },
     "notifyMpnDeviceAccess failure" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(2);
         mp.on("notifyMpnDeviceAccess", function(msg, resp) {
             var excData = {clientCode: -2, clientMessage: "Message for the client"};
@@ -441,7 +441,7 @@ exports.tests = {
         s.pushTestData("FAKEID|MDA|S|user|S|FAKESESSID|P|A|S|appID|S|deviceToken\n");
     },
     "notifyMpnSubscriptionActivation success" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(3);
         mp.on("notifyMpnSubscriptionActivation", function(msg, resp) {
             test.equal(msg.verb, "notifyMpnSubscriptionActivation");
@@ -454,7 +454,7 @@ exports.tests = {
         s.pushTestData("FAKEID|MSA|S|user|S|FAKESESSID|I|1|M|M|S|group1|S|schema1|I|1|I|2|P|A|S|appID|S|deviceToken|S|triggerExpression|S|%7B%22aps%22%3A%7B%22alert%22%3A%22%24%7Bmessage%7D%22%2C%22badge%22%3A%22AUTO%22%7D%2C%22acme2%22%3A%5B%22%24%7Btag1%7D%22%2C%22%24%7Btag2%7D%22%5D%7D\n");
     },
     "notifyMpnSubscriptionActivation failure" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(2);
         mp.on("notifyMpnSubscriptionActivation", function(msg, resp) {
             var excData = {clientCode: -2, clientMessage: "Message for the client"};
@@ -467,7 +467,7 @@ exports.tests = {
         s.pushTestData("FAKEID|MSA|S|user|S|FAKESESSID|I|1|M|M|S|group1|S|schema1|I|1|I|2|P|G|S|appID|S|deviceToken|S|triggerExpression|S|%7B%22priority%22%3A%22NORMAL%22%2C%22notification%22%3A%7B%22icon%22%3A%22my_icon%22%2C%22body%22%3A%22my_body%22%2C%22title%22%3A%22my_title%22%7D%7D\n");
     },
     "notifyMpnDeviceTokenChange success" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(3);
         mp.on("notifyMpnDeviceTokenChange", function(msg, resp) {
             test.equal(msg.verb, "notifyMpnDeviceTokenChange");
@@ -480,7 +480,7 @@ exports.tests = {
         s.pushTestData("FAKEID|MDC|S|user|S|FAKESESSID|P|G|S|appID|S|deviceToken|S|deviceToken2\n");
     },
     "notifyMpnDeviceTokenChange failure" : function(test) {
-        var d, s = this.stream, mp = this.metadataProvider;
+        var s = this.stream, mp = this.metadataProvider;
         test.expect(2);
         mp.on("notifyMpnDeviceTokenChange", function(msg, resp) {
             var excData = {clientCode: -2, clientMessage: "Message for the client"};
