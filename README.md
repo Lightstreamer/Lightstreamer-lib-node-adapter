@@ -1,4 +1,4 @@
-# Lightstreamer SDK for Node Adapters 1.5.0 #
+# Lightstreamer SDK for Node Adapters 1.5.1 #
 
 This package includes the resources needed to write Data Adapters and Metadata Adapters for [Lightstreamer](http://www.lightstreamer.com/ "Lightstreamer") Server in a [Node.js](http://nodejs.org/ "Node.js") environment.
 The adapters will run in a separate process, communicating with the Server through the Adapter Remoting Infrastructure.
@@ -96,7 +96,7 @@ lsClient.connect();
 Note that the "PROXY_NODE" string is taken from the adapters.xml
 
 ### API Reference ###
-http://www.lightstreamer.com/api/ls-nodejs-adapter/1.5.0/
+http://www.lightstreamer.com/api/ls-nodejs-adapter/1.5.1/
 
 ## Develop ##
 This section is dedicated to developers who want to extend/modify the library itself, if you're simply looking to use it, ignore it.
@@ -145,7 +145,7 @@ nodeunit metadataprovider.test.js
 The API documentation will be available in the docs folder.
 
 ## See Also ##
-* [Adapter Remoting Infrastructure Network Protocol Specification](http://www.lightstreamer.com/docs/adapter_generic_base/ARI Protocol.pdf "Lightstreamer ARI protocol")
+* [Adapter Remoting Infrastructure Network Protocol Specification](http://www.lightstreamer.com/docs/adapter_generic_base/ARI%20Protocol.pdf "Lightstreamer ARI protocol")
 * [Lightstreamer Chat Demo adapter for Node](https://github.com/Lightstreamer/Lightstreamer-example-Chat-adapter-node "Lightstreamer Chat Demo adapter for Node")
 
 ## Lightstreamer Compatibility Notes ##

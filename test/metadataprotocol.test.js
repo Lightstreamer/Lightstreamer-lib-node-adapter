@@ -20,13 +20,14 @@ var metadataProto = require('../lib/metadataprotocol').metadata,
 exports.metadataReads = {
 	"Read a valid init" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|MPI|S|P1|S|V1|S|ARI.version|S|1.9.100|S|P2|S|V2\r\n", true);
+		reader.parse("FAKEID|MPI|S|P1|S|V1|S|ARI.version|S|1.9.100|S|P2|S|V2|S|keepalive_hint.millis|S|8000\r\n", true);
 		var msg = reader.pop();
 		test.equal(msg.verb, "init");
 		test.equal(msg.id, "FAKEID");
 		test.equal(msg.parameters["P1"], "V1");
 		test.equal(msg.parameters["P2"], "V2");
-		test.equal(msg.initResponseParams["ARI.version"], "1.8.1");
+		test.equal(msg.parameters["keepalive_hint.millis"], null);
+		test.equal(msg.initResponseParams["ARI.version"], "1.8.2");
 		test.done();
 	},
 	"Read a valid init OLD" : function(test) {
@@ -330,13 +331,25 @@ exports.metadataReads = {
 };
 
 exports.metadataWrites = {
-	"Init write" : function(test) {
+	"Keepalive write" : function(test) {
+		var msg = metadataProto.writeKeepalive();
+		test.equal(msg, "KEEPALIVE\n");
+		test.done();
+	},
+	"Credentials write" : function(test) {
 		var params = {};
-		params["ARI.version"] = "1.8.1";
 		params["user"] = "my_user";
 		params["password"] = "my_password";
+		var msg = metadataProto.writeRemoteCredentials(params);
+		test.equal(msg, "1|RAC|S|user|S|my_user|S|password|S|my_password\n");
+		test.done();
+	},
+	"Init write" : function(test) {
+		var params = {};
+		params["ARI.version"] = "1.8.2";
+		params["P1"] = "V1";
 		var msg = metadataProto.writeInit("FAKEID", params);
-		test.equal(msg, "FAKEID|MPI|S|ARI.version|S|1.8.1|S|user|S|my_user|S|password|S|my_password\n");
+		test.equal(msg, "FAKEID|MPI|S|ARI.version|S|1.8.2|S|P1|S|V1\n");
 		test.done();
 	},
 	"Init write OLD" : function(test) {

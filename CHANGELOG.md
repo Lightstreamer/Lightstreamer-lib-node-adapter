@@ -1,4 +1,4 @@
-## 1.5.0 (xxxxxxxxxx) ##
+## 1.5.1 (xxxxxxxxxx) ##
 
 ### New Features ###
 
@@ -7,6 +7,14 @@ settings of credentials, to be sent to the Proxy Adapter upon each connection.
 Credential check is an optional configuration of the Proxy Adapter;
 if not leveraged, the credentials will be ignored.
 
+Introduced the handling of keepalive packets to help keeping the connections
+to the Proxy Adapter alive. This fixes possible incompatibilities with Proxy
+Adapters configured to perform activity checks.
+Also furtherly extended the constructors of the DataProvider and MetadataProvider
+classes to provide keepalive interval settings; however the supplied settings
+are only meant to restrict the Proxy Adapter requirements, if needed to support
+intermediate node or to detect connection issues.
+
 Added full support for ARI protocol extensions introduced in
 Adapter Remoting Infrastructure version 1.9.
 
@@ -14,10 +22,16 @@ Adapter Remoting Infrastructure version 1.9.
 
 Compatible with Adapter Remoting Infrastructure since 1.8
 
+If Adapter Remoting Infrastructure 1.8.x (corresponding to Server 7.0.x) is used
+and credentials to be sent to the Proxy Adapter are specified,
+they will obviously be ignored, but the Proxy Adapter will issue some
+log messages at WARN level on startup.
+
 Only in the very unlikely case that Adapter Remoting Infrastructure 1.8.x
-is used and a custom remote parameter named "ARI.version" is defined,
-this SDK is not compatible, hence the Server should be upgraded
-(or a different parameter name should be used).
+(corresponding to Server 7.0.x) were used and a custom remote parameter
+named "ARI.version" were defined in adapters.xml,
+this SDK would not be compatible with the Server, hence the Server
+should be upgraded (or a different parameter name should be used).
 
 
 
