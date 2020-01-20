@@ -1,4 +1,4 @@
-## 1.5.1 (xxxxxxxxxx) ##
+## 1.5.1 (24 Jan 2020) ##
 
 ### New Features ###
 
