@@ -27,7 +27,7 @@ classes to provide keepalive interval settings; however the supplied settings
 are only meant to restrict the Proxy Adapter requirements, if needed to support
 intermediate node or to detect connection issues.
 
-Added full support for ARI protocol extensions introduced in
+Added full support for ARI Protocol extensions introduced in
 Adapter Remoting Infrastructure version 1.9.
 
 ### Lightstreamer Compatibility Notes ###
@@ -42,7 +42,7 @@ log messages at WARN level on startup.
 Only in the very unlikely case that Adapter Remoting Infrastructure 1.8.x
 (corresponding to Server 7.0.x) were used and a custom remote parameter
 named "ARI.version" were defined in adapters.xml,
-this SDK would not be compatible with the Server, hence the Server
+this SDK would not be compatible with Lightstreamer Server, hence the Server
 should be upgraded (or a different parameter name should be used).
 
 
@@ -77,7 +77,7 @@ Compatible with Adapter Remoting Infrastructure since 1.8
 ### New Features ###
 
 Modified the interface in the part related to Mobile Push Notifications,
-after the full revision of the Server's MPN Module.
+after the full revision of Lightstreamer Server's MPN Module.
 In particular:
 * Extended the specifications of the "request" argument for the
   notifyMpnDeviceAccess and notifyMpnDeviceTokenChange event handlers
@@ -117,8 +117,8 @@ Compatible with Adapter Remoting Infrastructure since 1.7
 
 Fixed the error() method of the MetadataResponse class, whose support for the
 "credits" and "conflictingSession" response was incomplete; sending such
-a response would have caused a wrong message to be sent to the Server and the
-message would have been refused.
+a response would have caused a wrong message to be sent to Lightstreamer Server
+and the message would have been refused.
 The new optional exceptionData argument has been added; see the API docs for
 details. Sending a "credits" or "conflictingSession" response now requires the
 new argument; if omitted or wrong, an exception will be thrown.
@@ -133,7 +133,7 @@ Compatible with Adapter Remoting Infrastructure since 1.7
 
 ### Bug Fixes ###
 
-Fixed a bug in the parsing of requests that could lead to incorrect results 
+Fixed a bug in the parsing of requests that could lead to incorrect results
 in case of two or more simultaneous requests.
 
 ### Lightstreamer Compatibility Notes ###
