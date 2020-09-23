@@ -1,3 +1,15 @@
+## [current state]
+
+### Improvements ###
+
+Reformulated the compatibility constraint with respect to the Server version.
+
+### Lightstreamer Compatibility Notes ###
+
+Compatible with Adapter Remoting Infrastructure since Server version 7.0
+
+
+
 ## 1.5.1 (24 Jan 2020) ##
 
 ### New Features ###
