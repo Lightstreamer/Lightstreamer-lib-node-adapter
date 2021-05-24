@@ -28,11 +28,11 @@ are only meant to restrict the Proxy Adapter requirements, if needed to support
 intermediate node or to detect connection issues.
 
 Added full support for ARI Protocol extensions introduced in
-Adapter Remoting Infrastructure version 1.9.
+Adapter Remoting Infrastructure version 1.9 (corresponding to Server 7.1).
 
 ### Lightstreamer Compatibility Notes ###
 
-Compatible with Adapter Remoting Infrastructure since 1.8
+Compatible with Adapter Remoting Infrastructure since 1.8 (corresponding to Server 7.0)
 
 If Adapter Remoting Infrastructure 1.8.x (corresponding to Server 7.0.x) is used
 and credentials to be sent to the Proxy Adapter are specified,
@@ -56,7 +56,7 @@ same process, causing a "Unexpected late DPI message" error to be issued.
 
 ### Lightstreamer Compatibility Notes ###
 
-Compatible with Adapter Remoting Infrastructure since 1.8
+Compatible with Adapter Remoting Infrastructure since 1.8 (corresponding to Server 7.0)
 
 
 
@@ -68,7 +68,7 @@ Added clarifications on licensing matters in the documentation.
 
 ### Lightstreamer Compatibility Notes ###
 
-Compatible with Adapter Remoting Infrastructure since 1.8
+Compatible with Adapter Remoting Infrastructure since 1.8 (corresponding to Server 7.0)
 
 
 
@@ -95,7 +95,7 @@ Added notes in the documentation on the implication of the licensing policies.
 
 ### Lightstreamer Compatibility Notes ###
 
-Compatible with Adapter Remoting Infrastructure since 1.8
+Compatible with Adapter Remoting Infrastructure since 1.8 (corresponding to Server 7.0)
 
 
 
@@ -107,7 +107,7 @@ Fixed the formatting of the README.md page, for which a new version is required.
 
 ### Lightstreamer Compatibility Notes ###
 
-Compatible with Adapter Remoting Infrastructure since 1.7
+Compatible with Adapter Remoting Infrastructure since 1.7 (corresponding to Server 6.0)
 
 
 
@@ -125,7 +125,7 @@ new argument; if omitted or wrong, an exception will be thrown.
 
 ### Lightstreamer Compatibility Notes ###
 
-Compatible with Adapter Remoting Infrastructure since 1.7
+Compatible with Adapter Remoting Infrastructure since 1.7 (corresponding to Server 6.0)
 
 
 
@@ -138,7 +138,7 @@ in case of two or more simultaneous requests.
 
 ### Lightstreamer Compatibility Notes ###
 
-Compatible with Adapter Remoting Infrastructure since 1.7
+Compatible with Adapter Remoting Infrastructure since 1.7 (corresponding to Server 6.0)
 
 
 
@@ -154,7 +154,7 @@ confused with the corresponding requests.
 
 ### Lightstreamer Compatibility Notes ###
 
-Compatible with Adapter Remoting Infrastructure since 1.7
+Compatible with Adapter Remoting Infrastructure since 1.7 (corresponding to Server 6.0)
 
 
 
@@ -169,7 +169,7 @@ Note that the MPN Module cannot be enabled in Moderato edition.
 
 ### Lightstreamer Compatibility Notes ###
 
-Compatible with Adapter Remoting Infrastructure since 1.7
+Compatible with Adapter Remoting Infrastructure since 1.7 (corresponding to Server 6.0)
 
 
 
@@ -187,7 +187,7 @@ to account for the protocol extension.
 
 ### Lightstreamer Compatibility Notes ###
 
-Compatible with Adapter Remoting Infrastructure since 1.6
+Compatible with Adapter Remoting Infrastructure since 1.6 (corresponding to Server 6.0)
 
 
 
@@ -236,4 +236,4 @@ Still compatible with 1.4.3 if "clearSnapshot" is not used.
 
 ### Lightstreamer Compatibility Notes ###
 
-Compatible with Adapter Remoting Infrastructure since 1.4.3
+Compatible with Adapter Remoting Infrastructure since 1.4.3 (corresponding to Server 5.1)
