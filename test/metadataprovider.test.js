@@ -53,12 +53,12 @@ exports.tests = {
 
         var s = this.stream, mp = this.metadataProvider;
         test.expect(5);
+        test.equal(s.popTestData(), "1|RAC|S|user|S|my_user|S|password|S|my_password\n");
         mp.on('init', function(msg, resp) {
             test.equal(msg.parameters["P1"], "V1");
             test.equal(msg.parameters["P2"], "V2");
             test.equal(msg.initResponseParams, null);
             resp.success();
-            test.equal(s.popTestData(), "1|RAC|S|user|S|my_user|S|password|S|my_password\n");
             test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.done();
         });
@@ -143,6 +143,7 @@ exports.tests = {
         var s = this.stream, mp = this.metadataProvider;
         test.expect(1);
         mp.on('init', function(msg, resp) {
+            // not expected
             resp.success();
             test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
         });
@@ -199,10 +200,10 @@ exports.tests = {
 
         var s = this.stream, mp = this.metadataProvider;
         test.expect(4);
+        test.equal(s.popTestData(), "1|RAC|S|user|S|my_user|S|password|S|my_password\n");
         mp.on("notifyUser", function(msg, resp) {
             test.equal(msg.verb, "notifyUser");
             resp.success(12.34, true);
-            test.equal(s.popTestData(), "1|RAC|S|user|S|my_user|S|password|S|my_password\n");
             test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|NUS|D|12.34|B|1\n");
             test.done();
