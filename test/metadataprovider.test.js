@@ -17,6 +17,8 @@ Copyright (c) Lightstreamer Srl
 var MetadataProvider = require('../lib/lightstreamer-adapter').MetadataProvider,
     TestStream = require('./utils/teststream').TestStream;
 
+var currProtocolVersion = "1.8.2";
+
 function overrideMetadataWithParameters(params, credentials) {
     this.stream = new TestStream();
         // we cannot keep the old stream, because it already has a 'data' handler
@@ -40,7 +42,7 @@ exports.tests = {
             test.equal(msg.parameters["keepalive_hint.millis"], null);
             test.equal(msg.initResponseParams, null);
             resp.success();
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.done();
         });
         s.pushTestData("ID0|MPI|S|P1|S|V1|S|ARI.version|S|1.9.100|S|P2|S|V2|S|keepalive_hint.millis|S|8000\r\n");
@@ -57,7 +59,7 @@ exports.tests = {
             test.equal(msg.initResponseParams, null);
             resp.success();
             test.equal(s.popTestData(), "1|RAC|S|user|S|my_user|S|password|S|my_password\n");
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.done();
         });
         s.pushTestData("ID0|MPI|S|P1|S|V1|S|ARI.version|S|1.9.100|S|P2|S|V2\r\n");
@@ -71,7 +73,7 @@ exports.tests = {
             test.equal(msg.parameters["keepalive_hint.millis"], null);
             test.equal(msg.keepaliveHint, null);
             resp.success();
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             setTimeout(function() {
                 test.equal(s.popTestData(), "KEEPALIVE\n");
             }, 500);
@@ -125,7 +127,7 @@ exports.tests = {
             test.equal(s.popTestData(), "ID0|MPI|E|An+error\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
     },
     "init metadata failure" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
@@ -135,14 +137,14 @@ exports.tests = {
             test.equal(s.popTestData(), "ID0|MPI|EM|An+error\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
     },
     "Missing initialization" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
         test.expect(1);
         mp.on('init', function(msg, resp) {
             resp.success();
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
         });
         test.throws(function () {
             s.pushTestData("FAKEID|NUS|S|user|S|password|S|header1|S|value+1|S|header+2|S|value+2\n");
@@ -154,11 +156,11 @@ exports.tests = {
         test.expect(2);
         mp.on('init', function(msg, resp) {
             resp.success();
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         test.throws(function () {
-            s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+            s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         }, Error);
         test.done();
     },
@@ -171,11 +173,11 @@ exports.tests = {
                 {distinctSnapLen: 10, minSourceFreq: 0.5, allowedModes: {raw: true, merge: true}},
                 {distinctSnapLen: 5, minSourceFreq: 0, allowedModes: {distinct: true}}
             ]);
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|GIT|I|10|D|0.5|M|RM|I|5|D|0|M|D\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|GIT|S|An+Item+Name1|S|An+Item+Name2\n");
     },
     "getItemData failure" : function(test) {
@@ -183,11 +185,11 @@ exports.tests = {
         test.expect(2);
         mp.on("getItemData", function(msg, resp) {
             resp.error("An error");
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|GIT|E|An+error\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|GIT|S|An+Item+Name1|S|An+Item+Name2\n");
     },
     "notifyUser success" : function(test) {
@@ -201,11 +203,11 @@ exports.tests = {
             test.equal(msg.verb, "notifyUser");
             resp.success(12.34, true);
             test.equal(s.popTestData(), "1|RAC|S|user|S|my_user|S|password|S|my_password\n");
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|NUS|D|12.34|B|1\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|NUS|S|user|S|password|S|header1|S|value+1|S|header+2|S|value+2|S|REQUEST_ID|S|FAKEREQID\n");
     },
     "notifyUser failure" : function(test) {
@@ -213,11 +215,11 @@ exports.tests = {
         test.expect(2);
         mp.on("notifyUser", function(msg, resp) {
             resp.error("An error");
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|NUS|E|An+error\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|NUS|S|user|S|password|S|header1|S|value+1|S|header+2|S|value+2|S|REQUEST_ID|S|FAKEREQID\n");
     },
     "notifyUser access failure" : function(test) {
@@ -225,11 +227,11 @@ exports.tests = {
         test.expect(2);
         mp.on("notifyUser", function(msg, resp) {
             resp.error("An error", "access");
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|NUS|EA|An+error\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|NUS|S|user|S|password|S|header1|S|value+1|S|header+2|S|value+2|S|REQUEST_ID|S|FAKEREQID\n");
     },
     "notifyUserAuth success" : function(test) {
@@ -238,11 +240,11 @@ exports.tests = {
         mp.on("notifyUserAuth", function(msg, resp) {
             test.equal(msg.verb, "notifyUserAuth");
             resp.success(12.34, true);
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|NUA|D|12.34|B|1\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|NUA|S|user|S|password|S|principal|S|header1|S|value+1|S|header+2|S|value+2|S|REQUEST_ID|S|FAKEREQID\n");
     },
     "notifyUserAuth failure" : function(test) {
@@ -250,11 +252,11 @@ exports.tests = {
         test.expect(2);
         mp.on("notifyUserAuth", function(msg, resp) {
             resp.error("An error");
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|NUA|E|An+error\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|NUA|S|user|S|password|S|principal|S|header1|S|value+1|S|header+2|S|value+2|S|REQUEST_ID|S|FAKEREQID\n");
     },
     "getSchema success" : function(test) {
@@ -263,11 +265,11 @@ exports.tests = {
         mp.on("getSchema", function(msg, resp) {
             test.equal(msg.verb, "getSchema");
             resp.success(["Field 1","Field 2"]);
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|GSC|S|Field+1|S|Field+2\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|GSC|S|user|S|group|S|schema|S|FAKESESSID\n");
     },
     "getSchema failure" : function(test) {
@@ -275,11 +277,11 @@ exports.tests = {
         test.expect(2);
         mp.on("getSchema", function(msg, resp) {
             resp.error("An error");
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|GSC|E|An+error\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|GSC|S|user|S|group|S|schema|S|FAKESESSID\n");
     },
     "getItems success" : function(test) {
@@ -288,11 +290,11 @@ exports.tests = {
         mp.on("getItems", function(msg, resp) {
             test.equal(msg.verb, "getItems");
             resp.success(["Item 1","Item 2"]);
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|GIS|S|Item+1|S|Item+2\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|GIS|S|user|S|group|S|FAKESESSID\n");
     },
     "getItems failure" : function(test) {
@@ -300,11 +302,11 @@ exports.tests = {
         test.expect(2);
         mp.on("getItems", function(msg, resp) {
             resp.error("An error");
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|GIS|E|An+error\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|GIS|S|user|S|group|S|FAKESESSID\n");
     },
     "getUserItemData success" : function(test) {
@@ -316,11 +318,11 @@ exports.tests = {
                 {allowedBufferSize: 30, allowedMaxItemFreq: 3, allowedModes: {raw: true, merge: true, distinct:true, command: true}},
                 {allowedBufferSize: 40, allowedMaxItemFreq: 2.25, allowedModes: {merge: true}},
             ]);
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|GUI|I|30|D|3|M|RMDC|I|40|D|2.25|M|M\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|GUI|S|user|S|item+1|S|item+2\n");
     },
     "getUserItemData failure" : function(test) {
@@ -328,11 +330,11 @@ exports.tests = {
         test.expect(2);
         mp.on("getUserItemData", function(msg, resp) {
             resp.error("An error");
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|GUI|E|An+error\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|GUI|S|user|S|item+1|S|item+2\n");
     },
     "notifyUserMessage success" : function(test) {
@@ -341,11 +343,11 @@ exports.tests = {
         mp.on("notifyUserMessage", function(msg, resp) {
             test.equal(msg.verb, "notifyUserMessage");
             resp.success();
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|NUM|V\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|NUM|S|user|S|FAKESESSID|S|This+is+a+message\n");
     },
     "notifyUserMessage failure" : function(test) {
@@ -353,11 +355,11 @@ exports.tests = {
         test.expect(2);
         mp.on("notifyUserMessage", function(msg, resp) {
             resp.error("An error");
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|NUM|E|An+error\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|NUM|S|user|S|FAKESESSID|S|This+is+a+message\n");
     },
     "notifyNewSession success" : function(test) {
@@ -366,11 +368,11 @@ exports.tests = {
         mp.on("notifyNewSession", function(msg, resp) {
             test.equal(msg.verb, "notifyNewSession");
             resp.success();
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|NNS|V\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|NNS|S|user|S|FAKESESSID|S|prop1|S|val1|S|prop2|S|val2\n");
     },
     "notifyNewSession failure" : function(test) {
@@ -378,11 +380,11 @@ exports.tests = {
         test.expect(2);
         mp.on("notifyNewSession", function(msg, resp) {
             resp.error("An error");
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|NNS|E|An+error\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|NNS|S|user|S|FAKESESSID|S|prop1|S|val1|S|prop2|S|val2\n");
     },
     "notifySessionClose success" : function(test) {
@@ -391,11 +393,11 @@ exports.tests = {
         mp.on("notifySessionClose", function(msg, resp) {
             test.equal(msg.verb, "notifySessionClose");
             resp.success();
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|NSC|V\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|NSC|S|FAKESESSID\n");
     },
     "notifySessionClose failure" : function(test) {
@@ -403,11 +405,11 @@ exports.tests = {
         test.expect(2);
         mp.on("notifySessionClose", function(msg, resp) {
             resp.error("An error");
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|NSC|E|An+error\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|NSC|S|FAKESESSID\n");
     },
     "notifyNewTables success" : function(test) {
@@ -416,11 +418,11 @@ exports.tests = {
         mp.on("notifyNewTables", function(msg, resp) {
             test.equal(msg.verb, "notifyNewTables");
             resp.success();
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|NNT|V\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|NNT|S|user|S|FAKESESSID|I|1|M|M|S|group1|S|schema1|I|1|I|5|S|#\n");
     },
     "notifyNewTables failure" : function(test) {
@@ -428,11 +430,11 @@ exports.tests = {
         test.expect(2);
         mp.on("notifyNewTables", function(msg, resp) {
             resp.error("An error");
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|NNT|E|An+error\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|NNT|S|user|S|FAKESESSID|I|1|M|M|S|group1|S|schema1|I|1|I|5|S|#\n");
     },
     "notifyTablesClose success" : function(test) {
@@ -441,11 +443,11 @@ exports.tests = {
         mp.on("notifyTablesClose", function(msg, resp) {
             test.equal(msg.verb, "notifyTablesClose");
             resp.success();
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|NTC|V\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|NTC|S|FAKESESSID|I|1|M|M|S|group1|S|schema1|I|1|I|5|S|#\n");
     },
     "notifyTablesClose failure" : function(test) {
@@ -453,11 +455,11 @@ exports.tests = {
         test.expect(2);
         mp.on("notifyTablesClose", function(msg, resp) {
             resp.error("An error");
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|NTC|E|An+error\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|NTC|S|FAKESESSID|I|1|M|M|S|group1|S|schema1|I|1|I|5|S|#\n");
     },
     "notifyUserMessage with double success" : function(test) {
@@ -471,7 +473,7 @@ exports.tests = {
             }, Error);
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|NUM|S|user|S|FAKESESSID|S|This+is+a+message\n");
     },
     "notifyUserMessage with double error" : function(test) {
@@ -485,7 +487,7 @@ exports.tests = {
             }, Error);
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|NUM|S|user|S|FAKESESSID|S|This+is+a+message\n");
     },
     "notifyMpnDeviceAccess success" : function(test) {
@@ -494,11 +496,11 @@ exports.tests = {
         mp.on("notifyMpnDeviceAccess", function(msg, resp) {
             test.equal(msg.verb, "notifyMpnDeviceAccess");
             resp.success();
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|MDA|V\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|MDA|S|user|S|FAKESESSID|P|A|S|appID|S|deviceToken\n");
     },
     "notifyMpnDeviceAccess failure" : function(test) {
@@ -507,11 +509,11 @@ exports.tests = {
         mp.on("notifyMpnDeviceAccess", function(msg, resp) {
             var excData = {clientCode: -2, clientMessage: "Message for the client"};
             resp.error("An error", "credits", excData);
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|MDA|EC|An+error|-2|Message+for+the+client\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|MDA|S|user|S|FAKESESSID|P|A|S|appID|S|deviceToken\n");
     },
     "notifyMpnSubscriptionActivation success" : function(test) {
@@ -520,11 +522,11 @@ exports.tests = {
         mp.on("notifyMpnSubscriptionActivation", function(msg, resp) {
             test.equal(msg.verb, "notifyMpnSubscriptionActivation");
             resp.success();
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|MSA|V\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|MSA|S|user|S|FAKESESSID|I|1|M|M|S|group1|S|schema1|I|1|I|2|P|A|S|appID|S|deviceToken|S|triggerExpression|S|%7B%22aps%22%3A%7B%22alert%22%3A%22%24%7Bmessage%7D%22%2C%22badge%22%3A%22AUTO%22%7D%2C%22acme2%22%3A%5B%22%24%7Btag1%7D%22%2C%22%24%7Btag2%7D%22%5D%7D\n");
     },
     "notifyMpnSubscriptionActivation failure" : function(test) {
@@ -533,11 +535,11 @@ exports.tests = {
         mp.on("notifyMpnSubscriptionActivation", function(msg, resp) {
             var excData = {clientCode: -2, clientMessage: "Message for the client"};
             resp.error("An error", "credits", excData);
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|MSA|EC|An+error|-2|Message+for+the+client\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|MSA|S|user|S|FAKESESSID|I|1|M|M|S|group1|S|schema1|I|1|I|2|P|G|S|appID|S|deviceToken|S|triggerExpression|S|%7B%22priority%22%3A%22NORMAL%22%2C%22notification%22%3A%7B%22icon%22%3A%22my_icon%22%2C%22body%22%3A%22my_body%22%2C%22title%22%3A%22my_title%22%7D%7D\n");
     },
     "notifyMpnDeviceTokenChange success" : function(test) {
@@ -546,11 +548,11 @@ exports.tests = {
         mp.on("notifyMpnDeviceTokenChange", function(msg, resp) {
             test.equal(msg.verb, "notifyMpnDeviceTokenChange");
             resp.success();
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|MDC|V\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|MDC|S|user|S|FAKESESSID|P|G|S|appID|S|deviceToken|S|deviceToken2\n");
     },
     "notifyMpnDeviceTokenChange failure" : function(test) {
@@ -559,11 +561,11 @@ exports.tests = {
         mp.on("notifyMpnDeviceTokenChange", function(msg, resp) {
             var excData = {clientCode: -2, clientMessage: "Message for the client"};
             resp.error("An error", "credits", excData);
-            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|MDC|EC|An+error|-2|Message+for+the+client\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|MDC|S|user|S|FAKESESSID|P|G|S|appID|S|deviceToken|S|deviceToken2\n");
     },
 };

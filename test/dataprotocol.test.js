@@ -17,6 +17,8 @@ Copyright (c) Lightstreamer Srl
 var dataProto = require('../lib/dataprotocol').data,
 	DataReader = require('../lib/dataprotocol').DataReader;
 
+var currProtocolVersion = "1.8.2";
+
 exports.dataReads = {
 	"Read a valid init" : function(test) {
 		var reader = new DataReader();
@@ -27,7 +29,7 @@ exports.dataReads = {
 		test.equal(msg.parameters["P1"], "V1");
 		test.equal(msg.parameters["P2"], "V2");
 		test.equal(msg.parameters["keepalive_hint.millis"], null);
-		test.equal(msg.initResponseParams["ARI.version"], "1.8.2");
+		test.equal(msg.initResponseParams["ARI.version"], currProtocolVersion);
 		test.done();
 	},
 	"Read a valid init OLD" : function(test) {
@@ -99,10 +101,10 @@ exports.dataWrites = {
 	},
 	"Init write" : function(test) {
 		var params = {};
-		params["ARI.version"] = "1.8.2";
+		params["ARI.version"] = currProtocolVersion;
 		params["P1"] = "V1";
 		var msg = dataProto.writeInit("FAKEID", params);
-		test.equal(msg, "FAKEID|DPI|S|ARI.version|S|1.8.2|S|P1|S|V1\n");
+		test.equal(msg, "FAKEID|DPI|S|ARI.version|S|" + currProtocolVersion + "|S|P1|S|V1\n");
 		test.done();
 	},
 	"Init write OLD" : function(test) {
