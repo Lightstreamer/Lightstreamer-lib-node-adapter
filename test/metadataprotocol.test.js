@@ -224,7 +224,7 @@ exports.metadataReads = {
 		var inMsg, msg, i;
 
 		inMsg = "FAKEID|MDA|S|user|S|FAKESESSID" +
-		    "|P|A|S|appID|S|deviceToken" +
+			"|P|A|S|appID|S|deviceToken" +
 			"\n";
 
 		reader.parse(inMsg, false);
@@ -245,9 +245,9 @@ exports.metadataReads = {
 		var inMsg, msg, i;
 
 		inMsg = "FAKEID|MSA|S|user|S|FAKESESSID" +
-		    "|I|1|M|M|S|group1|S|schema1|I|1|I|2" +
-		    "|P|A|S|appID|S|deviceToken|S|triggerExpression" +
-            "|S|%7B%22aps%22%3A%7B%22alert%22%3A%22%24%7Bmessage%7D%22%2C%22badge%22%3A%22AUTO%22%7D%2C%22acme2%22%3A%5B%22%24%7Btag1%7D%22%2C%22%24%7Btag2%7D%22%5D%7D" +
+			"|I|1|M|M|S|group1|S|schema1|I|1|I|2" +
+			"|P|A|S|appID|S|deviceToken|S|triggerExpression" +
+			"|S|%7B%22aps%22%3A%7B%22alert%22%3A%22%24%7Bmessage%7D%22%2C%22badge%22%3A%22AUTO%22%7D%2C%22acme2%22%3A%5B%22%24%7Btag1%7D%22%2C%22%24%7Btag2%7D%22%5D%7D" +
 			"\n";
 
 		reader.parse(inMsg, false);
@@ -279,9 +279,9 @@ exports.metadataReads = {
 		var inMsg, msg, i;
 
 		inMsg = "FAKEID|MSA|S|user|S|FAKESESSID" +
-		    "|I|1|M|M|S|group1|S|schema1|I|1|I|2" +
-		    "|P|G|S|appID|S|deviceToken|S|triggerExpression" + 
-            "|S|%7B%22priority%22%3A%22NORMAL%22%2C%22notification%22%3A%7B%22icon%22%3A%22my_icon%22%2C%22body%22%3A%22my_body%22%2C%22title%22%3A%22my_title%22%7D%7D" +
+			"|I|1|M|M|S|group1|S|schema1|I|1|I|2" +
+			"|P|G|S|appID|S|deviceToken|S|triggerExpression" + 
+			"|S|%7B%22priority%22%3A%22NORMAL%22%2C%22notification%22%3A%7B%22icon%22%3A%22my_icon%22%2C%22body%22%3A%22my_body%22%2C%22title%22%3A%22my_title%22%7D%7D" +
 			"\n";
 
 		reader.parse(inMsg, false);
@@ -313,7 +313,7 @@ exports.metadataReads = {
 		var inMsg, msg, i;
 
 		inMsg = "FAKEID|MDC|S|user|S|FAKESESSID" +
-            "|P|G|S|appID|S|deviceToken|S|deviceToken2" +
+			"|P|G|S|appID|S|deviceToken|S|deviceToken2" +
 			"\n";
 
 		reader.parse(inMsg, false);

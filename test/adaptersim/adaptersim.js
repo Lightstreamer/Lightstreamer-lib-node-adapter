@@ -91,15 +91,15 @@ dataProvider.on('subscribe', function(itemName, resp) {
 		console.log("Subscribe config item " + itemName);
 		resp.success();
 		pushConfig();
-    } else if (itemName.match('^i')) {
+	} else if (itemName.match('^i')) {
 		console.log("Subscribe data item " + itemName);
 		items[itemName] = true;
 		itemsNum++;
 		resp.success();
-    } else {
+	} else {
 		console.log("Unexpected item " + itemName);
-    	resp.error("Unexpected item " + itemName);
-    }
+		resp.error("Unexpected item " + itemName);
+	}
 });
 
 // Handle unsubscribe event
@@ -107,15 +107,15 @@ dataProvider.on('unsubscribe', function(itemName, resp) {
 	if (itemName === "CONFIGURATION") {
 		console.log("Unsubscribe config item " + itemName);
 		resp.success();
-    } else if (itemName.match('^i')) {
+	} else if (itemName.match('^i')) {
 		console.log("Unsubscribe data item " + itemName);
 		items[itemName] = undefined;
 		itemsNum--;
 		resp.success();
-    } else {
+	} else {
 		console.log("Unexpected item " + itemName);
-    	resp.error("Unexpected item " + itemName);
-    }
+		resp.error("Unexpected item " + itemName);
+	}
 });
 
 function pushConfig() {
