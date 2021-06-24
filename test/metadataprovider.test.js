@@ -17,7 +17,7 @@ Copyright (c) Lightstreamer Srl
 var MetadataProvider = require('../lib/lightstreamer-adapter').MetadataProvider,
     TestStream = require('./utils/teststream').TestStream;
 
-var currProtocolVersion = "1.8.2";
+var currProtocolVersion = "1.8.3";
 
 function overrideMetadataWithParameters(params, credentials) {
     this.stream = new TestStream();
@@ -35,7 +35,8 @@ exports.tests = {
     },
     "init success" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(5);
+        test.expect(6);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on('init', function(msg, resp) {
             test.equal(msg.parameters["P1"], "V1");
             test.equal(msg.parameters["P2"], "V2");
@@ -53,7 +54,7 @@ exports.tests = {
 
         var s = this.stream, mp = this.metadataProvider;
         test.expect(5);
-        test.equal(s.popTestData(), "1|RAC|S|user|S|my_user|S|password|S|my_password\n");
+        test.equal(s.popTestData(), "1|RAC|S|user|S|my_user|S|password|S|my_password|S|enableClosePacket|S|true\n");
         mp.on('init', function(msg, resp) {
             test.equal(msg.parameters["P1"], "V1");
             test.equal(msg.parameters["P2"], "V2");
@@ -68,7 +69,8 @@ exports.tests = {
         overrideMetadataWithParameters.apply(this, [  null, null, 5000 ]);
 
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(6);
+        test.expect(7);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on('init', function(msg, resp) {
             test.equal(msg.parameters["keepalive_hint.millis"], null);
             test.equal(msg.keepaliveHint, null);
@@ -89,7 +91,8 @@ exports.tests = {
     },
     "init success OLD" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(3);
+        test.expect(4);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on('init', function(msg, resp) {
             test.equal(msg.parameters["P1"], "V1");
             test.equal(msg.parameters["P2"], "V2");
@@ -103,7 +106,8 @@ exports.tests = {
         overrideMetadataWithParameters.apply(this, [  null, null, 5000 ]);
 
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(5);
+        test.expect(6);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on('init', function(msg, resp) {
             test.equal(msg.parameters["keepalive_hint.millis"], "3000");
             resp.success();
@@ -121,7 +125,8 @@ exports.tests = {
     },
     "init failure" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(1);
+        test.expect(2);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on('init', function(msg, resp) {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|E|An+error\n");
@@ -131,7 +136,8 @@ exports.tests = {
     },
     "init metadata failure" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(1);
+        test.expect(2);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on('init', function(msg, resp) {
             resp.error("An error", "metadata");
             test.equal(s.popTestData(), "ID0|MPI|EM|An+error\n");
@@ -141,7 +147,8 @@ exports.tests = {
     },
     "Missing initialization" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(1);
+        test.expect(2);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on('init', function(msg, resp) {
             // not expected
             resp.success();
@@ -154,7 +161,8 @@ exports.tests = {
     },
     "Late initialization" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(2);
+        test.expect(3);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on('init', function(msg, resp) {
             resp.success();
             test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
@@ -167,7 +175,8 @@ exports.tests = {
     },
     "getItemData success" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(3);
+        test.expect(4);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("getItemData", function(msg, resp) {
             test.equal(msg.verb, "getItemData");
             resp.success([
@@ -183,7 +192,8 @@ exports.tests = {
     },
     "getItemData failure" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(2);
+        test.expect(3);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("getItemData", function(msg, resp) {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
@@ -200,7 +210,7 @@ exports.tests = {
 
         var s = this.stream, mp = this.metadataProvider;
         test.expect(4);
-        test.equal(s.popTestData(), "1|RAC|S|user|S|my_user|S|password|S|my_password\n");
+        test.equal(s.popTestData(), "1|RAC|S|user|S|my_user|S|password|S|my_password|S|enableClosePacket|S|true\n");
         mp.on("notifyUser", function(msg, resp) {
             test.equal(msg.verb, "notifyUser");
             resp.success(12.34, true);
@@ -213,7 +223,8 @@ exports.tests = {
     },
     "notifyUser failure" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(2);
+        test.expect(3);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("notifyUser", function(msg, resp) {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
@@ -225,7 +236,8 @@ exports.tests = {
     },
     "notifyUser access failure" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(2);
+        test.expect(3);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("notifyUser", function(msg, resp) {
             resp.error("An error", "access");
             test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
@@ -237,7 +249,8 @@ exports.tests = {
     },
     "notifyUserAuth success" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(3);
+        test.expect(4);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("notifyUserAuth", function(msg, resp) {
             test.equal(msg.verb, "notifyUserAuth");
             resp.success(12.34, true);
@@ -250,7 +263,8 @@ exports.tests = {
     },
     "notifyUserAuth failure" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(2);
+        test.expect(3);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("notifyUserAuth", function(msg, resp) {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
@@ -262,7 +276,8 @@ exports.tests = {
     },
     "getSchema success" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(3);
+        test.expect(4);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("getSchema", function(msg, resp) {
             test.equal(msg.verb, "getSchema");
             resp.success(["Field 1","Field 2"]);
@@ -275,7 +290,8 @@ exports.tests = {
     },
     "getSchema failure" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(2);
+        test.expect(3);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("getSchema", function(msg, resp) {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
@@ -287,7 +303,8 @@ exports.tests = {
     },
     "getItems success" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(3);
+        test.expect(4);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("getItems", function(msg, resp) {
             test.equal(msg.verb, "getItems");
             resp.success(["Item 1","Item 2"]);
@@ -300,7 +317,8 @@ exports.tests = {
     },
     "getItems failure" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(2);
+        test.expect(3);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("getItems", function(msg, resp) {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
@@ -312,7 +330,8 @@ exports.tests = {
     },
     "getUserItemData success" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(3);
+        test.expect(4);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("getUserItemData", function(msg, resp) {
             test.equal(msg.verb, "getUserItemData");
             resp.success([
@@ -328,7 +347,8 @@ exports.tests = {
     },
     "getUserItemData failure" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(2);
+        test.expect(3);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("getUserItemData", function(msg, resp) {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
@@ -340,7 +360,8 @@ exports.tests = {
     },
     "notifyUserMessage success" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(3);
+        test.expect(4);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("notifyUserMessage", function(msg, resp) {
             test.equal(msg.verb, "notifyUserMessage");
             resp.success();
@@ -353,7 +374,8 @@ exports.tests = {
     },
     "notifyUserMessage failure" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(2);
+        test.expect(3);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("notifyUserMessage", function(msg, resp) {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
@@ -365,7 +387,8 @@ exports.tests = {
     },
     "notifyNewSession success" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(3);
+        test.expect(4);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("notifyNewSession", function(msg, resp) {
             test.equal(msg.verb, "notifyNewSession");
             resp.success();
@@ -378,7 +401,8 @@ exports.tests = {
     },
     "notifyNewSession failure" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(2);
+        test.expect(3);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("notifyNewSession", function(msg, resp) {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
@@ -390,7 +414,8 @@ exports.tests = {
     },
     "notifySessionClose success" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(3);
+        test.expect(4);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("notifySessionClose", function(msg, resp) {
             test.equal(msg.verb, "notifySessionClose");
             resp.success();
@@ -403,7 +428,8 @@ exports.tests = {
     },
     "notifySessionClose failure" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(2);
+        test.expect(3);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("notifySessionClose", function(msg, resp) {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
@@ -415,7 +441,8 @@ exports.tests = {
     },
     "notifyNewTables success" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(3);
+        test.expect(4);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("notifyNewTables", function(msg, resp) {
             test.equal(msg.verb, "notifyNewTables");
             resp.success();
@@ -428,7 +455,8 @@ exports.tests = {
     },
     "notifyNewTables failure" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(2);
+        test.expect(3);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("notifyNewTables", function(msg, resp) {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
@@ -440,7 +468,8 @@ exports.tests = {
     },
     "notifyTablesClose success" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(3);
+        test.expect(4);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("notifyTablesClose", function(msg, resp) {
             test.equal(msg.verb, "notifyTablesClose");
             resp.success();
@@ -453,7 +482,8 @@ exports.tests = {
     },
     "notifyTablesClose failure" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(2);
+        test.expect(3);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("notifyTablesClose", function(msg, resp) {
             resp.error("An error");
             test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
@@ -465,7 +495,8 @@ exports.tests = {
     },
     "notifyUserMessage with double success" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(2);
+        test.expect(3);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("notifyUserMessage", function(msg, resp) {
             test.equal(msg.verb, "notifyUserMessage");
             resp.success();
@@ -479,7 +510,8 @@ exports.tests = {
     },
     "notifyUserMessage with double error" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(2);
+        test.expect(3);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("notifyUserMessage", function(msg, resp) {
             test.equal(msg.verb, "notifyUserMessage");
             resp.error();
@@ -493,7 +525,8 @@ exports.tests = {
     },
     "notifyMpnDeviceAccess success" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(3);
+        test.expect(4);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("notifyMpnDeviceAccess", function(msg, resp) {
             test.equal(msg.verb, "notifyMpnDeviceAccess");
             resp.success();
@@ -506,7 +539,8 @@ exports.tests = {
     },
     "notifyMpnDeviceAccess failure" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(2);
+        test.expect(3);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("notifyMpnDeviceAccess", function(msg, resp) {
             var excData = {clientCode: -2, clientMessage: "Message for the client"};
             resp.error("An error", "credits", excData);
@@ -519,7 +553,8 @@ exports.tests = {
     },
     "notifyMpnSubscriptionActivation success" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(3);
+        test.expect(4);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("notifyMpnSubscriptionActivation", function(msg, resp) {
             test.equal(msg.verb, "notifyMpnSubscriptionActivation");
             resp.success();
@@ -532,7 +567,8 @@ exports.tests = {
     },
     "notifyMpnSubscriptionActivation failure" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(2);
+        test.expect(3);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("notifyMpnSubscriptionActivation", function(msg, resp) {
             var excData = {clientCode: -2, clientMessage: "Message for the client"};
             resp.error("An error", "credits", excData);
@@ -545,7 +581,8 @@ exports.tests = {
     },
     "notifyMpnDeviceTokenChange success" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(3);
+        test.expect(4);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("notifyMpnDeviceTokenChange", function(msg, resp) {
             test.equal(msg.verb, "notifyMpnDeviceTokenChange");
             resp.success();
@@ -558,7 +595,8 @@ exports.tests = {
     },
     "notifyMpnDeviceTokenChange failure" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
-        test.expect(2);
+        test.expect(3);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on("notifyMpnDeviceTokenChange", function(msg, resp) {
             var excData = {clientCode: -2, clientMessage: "Message for the client"};
             resp.error("An error", "credits", excData);

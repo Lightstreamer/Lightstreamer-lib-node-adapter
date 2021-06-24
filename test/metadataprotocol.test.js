@@ -17,12 +17,12 @@ Copyright (c) Lightstreamer Srl
 var metadataProto = require('../lib/metadataprotocol').metadata,
 	MetadataReader = require('../lib/metadataprotocol').MetadataReader;
 
-var currProtocolVersion = "1.8.2";
+var currProtocolVersion = "1.8.3";
 
 exports.metadataReads = {
 	"Read a valid init" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|MPI|S|P1|S|V1|S|ARI.version|S|1.9.100|S|P2|S|V2|S|keepalive_hint.millis|S|8000\r\n", true);
+		reader.parse("FAKEID|MPI|S|P1|S|V1|S|ARI.version|S|1.9.100|S|P2|S|V2|S|keepalive_hint.millis|S|8000\r\n", true, true);
 		var msg = reader.pop();
 		test.equal(msg.verb, "init");
 		test.equal(msg.id, "FAKEID");
@@ -34,7 +34,7 @@ exports.metadataReads = {
 	},
 	"Read a valid init OLD" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|MPI|S|P1|S|V1|S|P2|S|V2\r\n", true);
+		reader.parse("FAKEID|MPI|S|P1|S|V1|S|P2|S|V2\r\n", true, true);
 		var msg = reader.pop();
 		test.equal(msg.verb, "init");
 		test.equal(msg.id, "FAKEID");
@@ -45,7 +45,7 @@ exports.metadataReads = {
 	},
 	"Read a valid get item data" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|GIT|S|An+Item+Name1|S|An+Item+Name2\r\n", false);
+		reader.parse("FAKEID|GIT|S|An+Item+Name1|S|An+Item+Name2\r\n", false, true);
 		var msg = reader.pop();
 		test.equal(msg.verb, "getItemData");
 		test.equal(msg.id, "FAKEID");
@@ -56,7 +56,7 @@ exports.metadataReads = {
 	},
 	"Read a valid notify user" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|NUS|S|user|S|password|S|header1|S|value+1|S|header+2|S|value+2\r\n", false);
+		reader.parse("FAKEID|NUS|S|user|S|password|S|header1|S|value+1|S|header+2|S|value+2\r\n", false, true);
 		var msg = reader.pop();
 		test.equal(msg.verb, "notifyUser");
 		test.equal(msg.id, "FAKEID");
@@ -68,7 +68,7 @@ exports.metadataReads = {
 	},
 	"Read a valid notify user auth" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|NUA|S|user|S|password|S|principal|S|header1|S|value+1|S|header+2|S|value+2\r\n", false);
+		reader.parse("FAKEID|NUA|S|user|S|password|S|principal|S|header1|S|value+1|S|header+2|S|value+2\r\n", false, true);
 		var msg = reader.pop();
 		test.equal(msg.verb, "notifyUserAuth");
 		test.equal(msg.id, "FAKEID");
@@ -81,7 +81,7 @@ exports.metadataReads = {
 	},
 	"Read a valid get schema" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|GSC|S|user|S|group|S|schema|S|FAKESESSID\r\n", false);
+		reader.parse("FAKEID|GSC|S|user|S|group|S|schema|S|FAKESESSID\r\n", false, true);
 		var msg = reader.pop();
 		test.equal(msg.verb, "getSchema");
 		test.equal(msg.id, "FAKEID");
@@ -93,7 +93,7 @@ exports.metadataReads = {
 	},
 	"Read a valid get items" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|GIS|S|user|S|group|S|FAKESESSID\r\n", false);
+		reader.parse("FAKEID|GIS|S|user|S|group|S|FAKESESSID\r\n", false, true);
 		var msg = reader.pop();
 		test.equal(msg.verb, "getItems");
 		test.equal(msg.id, "FAKEID");
@@ -104,7 +104,7 @@ exports.metadataReads = {
 	},
 	"Read a valid get user item data" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|GUI|S|user|S|item+1|S|item+2\r\nFAKEID|GUI|S|user|S|item+7\r\n", false);
+		reader.parse("FAKEID|GUI|S|user|S|item+1|S|item+2\r\nFAKEID|GUI|S|user|S|item+7\r\n", false, true);
 		var msg = reader.pop();
 		test.equal(msg.verb, "getUserItemData");
 		test.equal(msg.id, "FAKEID");
@@ -118,7 +118,7 @@ exports.metadataReads = {
 	},
 	"Read a valid notify user message" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|NUM|S|user|S|FAKESESSID|S|This+is+a+message\r\n", false);
+		reader.parse("FAKEID|NUM|S|user|S|FAKESESSID|S|This+is+a+message\r\n", false, true);
 		var msg = reader.pop();
 		test.equal(msg.verb, "notifyUserMessage");
 		test.equal(msg.id, "FAKEID");
@@ -129,7 +129,7 @@ exports.metadataReads = {
 	},
 	"Read a valid notify new session" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|NNS|S|user|S|FAKESESSID|S|prop1|S|val1|S|prop2|S|val2\r\n", false);
+		reader.parse("FAKEID|NNS|S|user|S|FAKESESSID|S|prop1|S|val1|S|prop2|S|val2\r\n", false, true);
 		var msg = reader.pop();
 		test.equal(msg.verb, "notifyNewSession");
 		test.equal(msg.id, "FAKEID");
@@ -141,7 +141,7 @@ exports.metadataReads = {
 	},
 	"Read a valid notify session close" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|NSC|S|FAKESESSID\n", false);
+		reader.parse("FAKEID|NSC|S|FAKESESSID\n", false, true);
 		var msg = reader.pop();
 		test.equal(msg.verb, "notifySessionClose");
 		test.equal(msg.id, "FAKEID");
@@ -159,7 +159,7 @@ exports.metadataReads = {
 			"|I|1|M|C|S|group4|S|schema4|I|1|I|5|S|#" +
 			"\n";
 
-		reader.parse(inMsg, false);
+		reader.parse(inMsg, false, true);
 		msg = reader.pop();
 
 		test.equal(msg.verb, "notifyNewTables");
@@ -197,7 +197,7 @@ exports.metadataReads = {
 			"|I|1|M|R|S|group2|S|schema2|I|1|I|5|S|selector" +
 			"\n";
 
-		reader.parse(inMsg, false);
+		reader.parse(inMsg, false, true);
 		msg = reader.pop();
 
 		test.equal(msg.verb, "notifyTablesClose");
@@ -227,7 +227,7 @@ exports.metadataReads = {
 			"|P|A|S|appID|S|deviceToken" +
 			"\n";
 
-		reader.parse(inMsg, false);
+		reader.parse(inMsg, false, true);
 		msg = reader.pop();
 
 		test.equal(msg.verb, "notifyMpnDeviceAccess");
@@ -250,7 +250,7 @@ exports.metadataReads = {
 			"|S|%7B%22aps%22%3A%7B%22alert%22%3A%22%24%7Bmessage%7D%22%2C%22badge%22%3A%22AUTO%22%7D%2C%22acme2%22%3A%5B%22%24%7Btag1%7D%22%2C%22%24%7Btag2%7D%22%5D%7D" +
 			"\n";
 
-		reader.parse(inMsg, false);
+		reader.parse(inMsg, false, true);
 		msg = reader.pop();
 
 		test.equal(msg.verb, "notifyMpnSubscriptionActivation");
@@ -284,7 +284,7 @@ exports.metadataReads = {
 			"|S|%7B%22priority%22%3A%22NORMAL%22%2C%22notification%22%3A%7B%22icon%22%3A%22my_icon%22%2C%22body%22%3A%22my_body%22%2C%22title%22%3A%22my_title%22%7D%7D" +
 			"\n";
 
-		reader.parse(inMsg, false);
+		reader.parse(inMsg, false, true);
 		msg = reader.pop();
 
 		test.equal(msg.verb, "notifyMpnSubscriptionActivation");
@@ -316,7 +316,7 @@ exports.metadataReads = {
 			"|P|G|S|appID|S|deviceToken|S|deviceToken2" +
 			"\n";
 
-		reader.parse(inMsg, false);
+		reader.parse(inMsg, false, true);
 		msg = reader.pop();
 
 		test.equal(msg.verb, "notifyMpnDeviceTokenChange");
@@ -342,8 +342,9 @@ exports.metadataWrites = {
 		var params = {};
 		params["user"] = "my_user";
 		params["password"] = "my_password";
+		params["enableClosePacket"] = "true";
 		var msg = metadataProto.writeRemoteCredentials(params);
-		test.equal(msg, "1|RAC|S|user|S|my_user|S|password|S|my_password\n");
+		test.equal(msg, "1|RAC|S|user|S|my_user|S|password|S|my_password|S|enableClosePacket|S|true\n");
 		test.done();
 	},
 	"Init write" : function(test) {

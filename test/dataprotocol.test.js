@@ -17,12 +17,12 @@ Copyright (c) Lightstreamer Srl
 var dataProto = require('../lib/dataprotocol').data,
 	DataReader = require('../lib/dataprotocol').DataReader;
 
-var currProtocolVersion = "1.8.2";
+var currProtocolVersion = "1.8.3";
 
 exports.dataReads = {
 	"Read a valid init" : function(test) {
 		var reader = new DataReader();
-		reader.parse("FAKEID|DPI|S|P1|S|V1|S|ARI.version|S|1.9.100|S|P2|S|V2|S|keepalive_hint.millis|S|8000\r\n", true);
+		reader.parse("FAKEID|DPI|S|P1|S|V1|S|ARI.version|S|1.9.100|S|P2|S|V2|S|keepalive_hint.millis|S|8000\r\n", true, true);
 		var msg = reader.pop();
 		test.equal(msg.verb, "init");
 		test.equal(msg.id, "FAKEID");
@@ -34,7 +34,7 @@ exports.dataReads = {
 	},
 	"Read a valid init OLD" : function(test) {
 		var reader = new DataReader();
-		reader.parse("FAKEID|DPI|S|P1|S|V1|S|P2|S|V2\r\n", true);
+		reader.parse("FAKEID|DPI|S|P1|S|V1|S|P2|S|V2\r\n", true, true);
 		var msg = reader.pop();
 		test.equal(msg.verb, "init");
 		test.equal(msg.id, "FAKEID");
@@ -45,7 +45,7 @@ exports.dataReads = {
 	},
 	"Read a valid subscribe" : function(test) {
 		var reader = new DataReader();
-		reader.parse("FAKEID|SUB|S|An+Item+Name\r\n", false);
+		reader.parse("FAKEID|SUB|S|An+Item+Name\r\n", false, true);
 		var msg = reader.pop();
 		test.equal(msg.verb, "subscribe");
 		test.equal(msg.id, "FAKEID");
@@ -54,7 +54,7 @@ exports.dataReads = {
 	},
 	"Read a valid unsubscribe" : function(test) {
 		var reader = new DataReader();
-		reader.parse("FAKEID|USB|S|An+Item+Name\n", false);
+		reader.parse("FAKEID|USB|S|An+Item+Name\n", false, true);
 		var msg = reader.pop();
 		test.equal(msg.verb, "unsubscribe");
 		test.equal(msg.id, "FAKEID");
@@ -64,14 +64,14 @@ exports.dataReads = {
 	"Read an unknown message" : function(test) {
 		test.throws(function() {
 			var reader = new DataReader();
-			reader.parse("FAKEID|WHAT|S|An+Item+Name\n", false);
+			reader.parse("FAKEID|WHAT|S|An+Item+Name\n", false, true);
 		}, Error);
 		test.done();
 	},
 	"Read an invalid message" : function(test) {
 		test.throws(function() {
 			var reader = new DataReader();
-			reader.parse("FAKEID|WHAT|An+Item+Name\r\n", false);
+			reader.parse("FAKEID|WHAT|An+Item+Name\r\n", false, true);
 		}, Error);
 		test.done();
 	}
@@ -87,8 +87,9 @@ exports.dataWrites = {
 		var params = {};
 		params["user"] = "my_user";
 		params["password"] = "my_password";
+		params["enableClosePacket"] = "true";
 		var msg = dataProto.writeRemoteCredentials(params);
-		test.equal(msg, "1|RAC|S|user|S|my_user|S|password|S|my_password\n");
+		test.equal(msg, "1|RAC|S|user|S|my_user|S|password|S|my_password|S|enableClosePacket|S|true\n");
 		test.done();
 	},
 	"Credentials notif write" : function(test) {
