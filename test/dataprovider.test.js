@@ -193,10 +193,14 @@ exports.tests = {
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\n");
         });
+        this.dataProvider.on('END', function() {
+            // local event
+            test.done();
+        });
         test.throws(function () {
             this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
         }, Error);
-        test.done();
+        this.dataProvider.emit("END");
     },
     "Late initialization" : function(test) {
         var reqRespStream = this.reqRespStream;
@@ -237,7 +241,7 @@ exports.tests = {
         this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
     },
     "Subscribe without snapshot" : function(test) {
-        // also tests the default handler for 'init'
+        // also tests the default handling for 'init'
         var credentials = { user: "my_user", password: "my_password" };
         overrideDataWithParameters.apply(this, [  null, credentials ]);
 

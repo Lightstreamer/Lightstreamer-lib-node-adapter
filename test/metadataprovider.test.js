@@ -177,10 +177,14 @@ exports.tests = {
             resp.success();
             test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
         });
+        mp.on('END', function() {
+            // local event
+            test.done();
+        });
         test.throws(function () {
             s.pushTestData("FAKEID|NUS|S|user|S|password|S|header1|S|value+1|S|header+2|S|value+2\n");
         }, Error);
-        test.done();
+        mp.emit("END");
     },
     "Late initialization" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
