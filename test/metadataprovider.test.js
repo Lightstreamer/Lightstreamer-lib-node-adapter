@@ -133,18 +133,13 @@ exports.tests = {
         mp.on('closeMessage', function(reason) {
             // undocumented event
             test.equal(reason, "wrong credentials");
-        });
-        mp.on('END', function(exc) {
-            // local event
-            test.equal(exc.message.substring(0, 34), "Close requested by the counterpart");
             test.equal(s.popTestData(), null);
+        });
+        s.on('error', function(exc) {
+            test.equal(exc.message.substring(0, 34), "Close requested by the counterpart");
             test.done();
         });
-        try {
-            s.pushTestData("0|CLOSE|S|reason|S|wrong credentials\r\n");
-        } catch (e) {
-            mp.emit("END", e);
-        }
+        s.pushTestData("0|CLOSE|S|reason|S|wrong credentials\r\n");
     },
     "init failure" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
@@ -644,20 +639,15 @@ exports.tests = {
             test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(s.popTestData(), "FAKEID|NUS|D|0|B|0\n");
             test.equal(reason, "keepalive timeout");
-        });
-        mp.on('END', function(exc) {
-            // local event
-            test.equal(exc.message.substring(0, 34), "Close requested by the counterpart");
             test.equal(s.popTestData(), null);
+        });
+        s.on('error', function(exc) {
+            test.equal(exc.message.substring(0, 34), "Close requested by the counterpart");
             test.done();
         });
         s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|NUS|S|user|S|password|S|header1|S|value+1|S|header+2|S|value+2|S|REQUEST_ID|S|FAKEREQID\n");
-        try {
-            s.pushTestData("0|CLOSE|S|reason|S|keepalive timeout\r\n");
-        } catch (e) {
-            mp.emit("END", e);
-        }
+        s.pushTestData("0|CLOSE|S|reason|S|keepalive timeout\r\n");
     },
     "some activity 1.8.2 with unexpected close" : function(test) {
         var s = this.stream, mp = this.metadataProvider;

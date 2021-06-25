@@ -154,19 +154,14 @@ exports.tests = {
         this.dataProvider.on('closeMessage', function(reason) {
             // undocumented event
             test.equal(reason, "wrong credentials");
-        });
-        this.dataProvider.on('END', function(exc) {
-            // local event
-            test.equal(exc.message.substring(0, 34), "Close requested by the counterpart");
             test.equal(reqRespStream.popTestData(), null);
             test.equal(notifyStream.popTestData(), null);
+        });
+        reqRespStream.on('error', function(exc) {
+            test.equal(exc.message.substring(0, 34), "Close requested by the counterpart");
             test.done();
         });
-        try {
-            this.reqRespStream.pushTestData("0|CLOSE|S|reason|S|wrong credentials\r\n");
-        } catch (e) {
-            this.dataProvider.emit("END", e);
-        }
+        this.reqRespStream.pushTestData("0|CLOSE|S|reason|S|wrong credentials\r\n");
     },
     "Failed initialization" : function(test) {
         var reqRespStream = this.reqRespStream;
@@ -573,21 +568,16 @@ exports.tests = {
         this.dataProvider.on('closeMessage', function(reason) {
             // undocumented event
             test.equal(reason, "keepalive timeout");
-        });
-        this.dataProvider.on('END', function(exc) {
-            // local event
-            test.equal(exc.message.substring(0, 34), "Close requested by the counterpart");
             test.equal(reqRespStream.popTestData(), null);
             test.equal(notifyStream.popTestData(), null);
+        });
+        reqRespStream.on('error', function(exc) {
+            test.equal(exc.message.substring(0, 34), "Close requested by the counterpart");
             test.done();
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
-        try {
-            this.reqRespStream.pushTestData("0|CLOSE|S|reason|S|keepalive timeout\r\n");
-        } catch (e) {
-            this.dataProvider.emit("END", e);
-        }
+        this.reqRespStream.pushTestData("0|CLOSE|S|reason|S|keepalive timeout\r\n");
     },
     "some activity 1.8.2 with unexpected close" : function(test) {
         var reqRespStream = this.reqRespStream;

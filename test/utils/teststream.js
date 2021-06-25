@@ -43,6 +43,10 @@ function TestStream(ignoreWrite) {
     }
   }
 
+  function destroy(error) {
+    that.emit('error', error);
+  }
+
   function pushTestData(chunk) {
     that.emit('data', chunk);
   }
@@ -65,6 +69,7 @@ function TestStream(ignoreWrite) {
 
   that = {
     write: write,
+    destroy: destroy,
     pushTestData: pushTestData,
     popTestData: popTestData,
     getTestData: getTestData,
