@@ -89,7 +89,7 @@ exports.tests = {
         });
         s.pushTestData("ID0|MPI|S|ARI.version|S|1.9.100|S|keepalive_hint.millis|S|3000\r\n");
     },
-    "init success OLD" : function(test) {
+    "init success 1.8.0" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
         test.expect(4);
         test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
@@ -102,7 +102,7 @@ exports.tests = {
         });
         s.pushTestData("ID0|MPI|S|P1|S|V1|S|P2|S|V2\r\n");
     },
-    "init success OLD with keepalives" : function(test) {
+    "init success 1.8.0 with keepalives" : function(test) {
         overrideMetadataWithParameters.apply(this, [  null, null, 5000 ]);
 
         var s = this.stream, mp = this.metadataProvider;
@@ -648,6 +648,37 @@ exports.tests = {
             test.done();
         });
         s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
+        s.pushTestData("FAKEID|NUS|S|user|S|password|S|header1|S|value+1|S|header+2|S|value+2|S|REQUEST_ID|S|FAKEREQID\n");
+        try {
+            s.pushTestData("0|CLOSE|S|reason|S|keepalive timeout\r\n");
+        } catch (e) {
+            mp.emit("END", e);
+        }
+    },
+    "some activity 1.8.2 with unexpected close" : function(test) {
+        var s = this.stream, mp = this.metadataProvider;
+        test.expect(5);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
+        mp.on('init', function(msg, resp) {
+            resp.success();
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|1.8.2\n");
+        });
+        mp.on("notifyUser", function(msg, resp) {
+            resp.success(12.34, true);
+            test.equal(s.popTestData(), "FAKEID|NUS|D|12.34|B|1\n");
+        });
+        mp.on('closeMessage', function(reason) {
+            // undocumented event
+            // not expected
+            test.equal(reason, "keepalive timeout");
+        });
+        mp.on('END', function(exc) {
+            // local event
+            test.equal(exc.message.substring(0, 29), "Message has an invalid method");
+            test.equal(s.popTestData(), null);
+            test.done();
+        });
+        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.2\r\n");
         s.pushTestData("FAKEID|NUS|S|user|S|password|S|header1|S|value+1|S|header+2|S|value+2|S|REQUEST_ID|S|FAKEREQID\n");
         try {
             s.pushTestData("0|CLOSE|S|reason|S|keepalive timeout\r\n");

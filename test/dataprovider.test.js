@@ -100,7 +100,7 @@ exports.tests = {
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "|S|keepalive_hint.millis|S|3000\r\n");
     },
-    "Initialization OLD" : function(test) {
+    "Initialization 1.8.0" : function(test) {
         var reqRespStream = this.reqRespStream;
         var notifyStream = this.notifyStream;
         test.expect(6);
@@ -116,7 +116,7 @@ exports.tests = {
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|P1|S|V1|S|P2|S|V2\r\n");
     },
-    "Initialization OLD with keepalives" : function(test) {
+    "Initialization 1.8.0 with keepalives" : function(test) {
         overrideDataWithParameters.apply(this, [  null, null, 5000 ]);
 
         var reqRespStream = this.reqRespStream;
@@ -578,6 +578,41 @@ exports.tests = {
             test.done();
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
+        this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
+        try {
+            this.reqRespStream.pushTestData("0|CLOSE|S|reason|S|keepalive timeout\r\n");
+        } catch (e) {
+            this.dataProvider.emit("END", e);
+        }
+    },
+    "some activity 1.8.2 with unexpected close" : function(test) {
+        var reqRespStream = this.reqRespStream;
+        var notifyStream = this.notifyStream;
+        test.expect(8);
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
+        test.equal(notifyStream.popTestData().substring(13), "|RAC|S|enableClosePacket|S|true\n");
+        this.dataProvider.on('init', function(message, response) {
+            response.success();
+            test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|1.8.2\n");
+        });
+        this.dataProvider.on('subscribe', function(itemName, response) {
+            response.success();
+            test.equal(reqRespStream.popTestData(), "FAKEID|SUB|V\n");
+            test.equal(notifyStream.popTestData().substring(13), "|EOS|S|An+Item+Name|S|FAKEID\n");
+        });
+        this.dataProvider.on('closeMessage', function(reason) {
+            // undocumented event
+            // not expected
+            test.equal(reason, "keepalive timeout");
+        });
+        this.dataProvider.on('END', function(exc) {
+            // local event
+            test.equal(exc.message.substring(0, 29), "Message has an invalid method");
+            test.equal(reqRespStream.popTestData(), null);
+            test.equal(notifyStream.popTestData(), null);
+            test.done();
+        });
+        this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|1.8.2\r\n");
         this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
         try {
             this.reqRespStream.pushTestData("0|CLOSE|S|reason|S|keepalive timeout\r\n");
