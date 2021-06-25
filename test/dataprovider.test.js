@@ -142,6 +142,32 @@ exports.tests = {
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|keepalive_hint.millis|S|3000\r\n");
     },
+    "Credential error with close" : function(test) {
+        var credentials = { user: "my_user", password: "wrong_password" };
+        overrideDataWithParameters.apply(this, [  null, credentials ]);
+
+        var reqRespStream = this.reqRespStream;
+        var notifyStream = this.notifyStream;
+        test.expect(6);
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|user|S|my_user|S|password|S|wrong_password|S|enableClosePacket|S|true\n");
+        test.equal(notifyStream.popTestData().substring(13), "|RAC|S|user|S|my_user|S|password|S|wrong_password|S|enableClosePacket|S|true\n");
+        this.dataProvider.on('closeMessage', function(reason) {
+            // undocumented event
+            test.equal(reason, "wrong credentials");
+        });
+        this.dataProvider.on('END', function(exc) {
+            // local event
+            test.equal(exc.message.substring(0, 34), "Close requested by the counterpart");
+            test.equal(reqRespStream.popTestData(), null);
+            test.equal(notifyStream.popTestData(), null);
+            test.done();
+        });
+        try {
+            this.reqRespStream.pushTestData("0|CLOSE|S|reason|S|wrong credentials\r\n");
+        } catch (e) {
+            this.dataProvider.emit("END", e);
+        }
+    },
     "Failed initialization" : function(test) {
         var reqRespStream = this.reqRespStream;
         var notifyStream = this.notifyStream;
@@ -526,5 +552,37 @@ exports.tests = {
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
+    },
+    "some activity with close" : function(test) {
+        // also tests the default handling for 'init'
+        var reqRespStream = this.reqRespStream;
+        var notifyStream = this.notifyStream;
+        test.expect(9);
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
+        test.equal(notifyStream.popTestData().substring(13), "|RAC|S|enableClosePacket|S|true\n");
+        this.dataProvider.on('subscribe', function(itemName, response) {
+            response.success();
+            test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\n");
+            test.equal(reqRespStream.popTestData(), "FAKEID|SUB|V\n");
+            test.equal(notifyStream.popTestData().substring(13), "|EOS|S|An+Item+Name|S|FAKEID\n");
+        });
+        this.dataProvider.on('closeMessage', function(reason) {
+            // undocumented event
+            test.equal(reason, "keepalive timeout");
+        });
+        this.dataProvider.on('END', function(exc) {
+            // local event
+            test.equal(exc.message.substring(0, 34), "Close requested by the counterpart");
+            test.equal(reqRespStream.popTestData(), null);
+            test.equal(notifyStream.popTestData(), null);
+            test.done();
+        });
+        this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
+        this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
+        try {
+            this.reqRespStream.pushTestData("0|CLOSE|S|reason|S|keepalive timeout\r\n");
+        } catch (e) {
+            this.dataProvider.emit("END", e);
+        }
     },
 };

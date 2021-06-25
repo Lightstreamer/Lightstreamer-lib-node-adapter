@@ -123,6 +123,29 @@ exports.tests = {
         });
         s.pushTestData("ID0|MPI|S|keepalive_hint.millis|S|3000\r\n");
     },
+    "credential error with close" : function(test) {
+        var credentials = { user: "my_user", password: "wrong_password" };
+        overrideMetadataWithParameters.apply(this, [  null, credentials ]);
+
+        var s = this.stream, mp = this.metadataProvider;
+        test.expect(4);
+        test.equal(s.popTestData(), "1|RAC|S|user|S|my_user|S|password|S|wrong_password|S|enableClosePacket|S|true\n");
+        mp.on('closeMessage', function(reason) {
+            // undocumented event
+            test.equal(reason, "wrong credentials");
+        });
+        mp.on('END', function(exc) {
+            // local event
+            test.equal(exc.message.substring(0, 34), "Close requested by the counterpart");
+            test.equal(s.popTestData(), null);
+            test.done();
+        });
+        try {
+            s.pushTestData("0|CLOSE|S|reason|S|wrong credentials\r\n");
+        } catch (e) {
+            mp.emit("END", e);
+        }
+    },
     "init failure" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
         test.expect(2);
@@ -606,5 +629,30 @@ exports.tests = {
         });
         s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         s.pushTestData("FAKEID|MDC|S|user|S|FAKESESSID|P|G|S|appID|S|deviceToken|S|deviceToken2\n");
+    },
+    "some activity with close" : function(test) {
+        // also tests the default handlers
+        var s = this.stream, mp = this.metadataProvider;
+        test.expect(6);
+        test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
+        mp.on('closeMessage', function(reason) {
+            // undocumented event
+            test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
+            test.equal(s.popTestData(), "FAKEID|NUS|D|0|B|0\n");
+            test.equal(reason, "keepalive timeout");
+        });
+        mp.on('END', function(exc) {
+            // local event
+            test.equal(exc.message.substring(0, 34), "Close requested by the counterpart");
+            test.equal(s.popTestData(), null);
+            test.done();
+        });
+        s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
+        s.pushTestData("FAKEID|NUS|S|user|S|password|S|header1|S|value+1|S|header+2|S|value+2|S|REQUEST_ID|S|FAKEREQID\n");
+        try {
+            s.pushTestData("0|CLOSE|S|reason|S|keepalive timeout\r\n");
+        } catch (e) {
+            mp.emit("END", e);
+        }
     },
 };

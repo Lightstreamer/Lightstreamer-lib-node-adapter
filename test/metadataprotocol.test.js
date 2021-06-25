@@ -329,6 +329,14 @@ exports.metadataReads = {
 		test.equal(msg.newDeviceToken, "deviceToken2");
 
 		test.done();
+	},
+	"Read a valid close" : function(test) {
+		var reader = new MetadataReader();
+		reader.parse("0|CLOSE|S|reason|S|keepalive timeout\r\n", true, true);
+		var msg = reader.pop();
+		test.equal(msg.id, "0");
+		test.equal(msg.parameters["reason"], "keepalive timeout");
+		test.done();
 	}
 };
 
