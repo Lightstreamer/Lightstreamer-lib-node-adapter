@@ -1,3 +1,22 @@
+## 1.5.3 (10 Sep 2021) ##
+
+### New Features ###
+
+Introduced full support for Server version 7.2. Now any message sent by the
+Proxy Adapter when forcibly closing the connection will be available in the 'error'
+event of the 'net.Socket' object supplied as the request/reply stream.
+
+Modified the behavior when incomplete credentials are configured: now they are sent
+to the Proxy Adapter, whereas previously they were not sent.
+Note that, if the Proxy Adapter has credentials configured, they cannot be incomplete;
+hence the Proxy Adapter is expected to refuse the connection in all cases.
+
+### Lightstreamer Compatibility Notes ###
+
+Compatible with Adapter Remoting Infrastructure since Server version 7.0
+
+
+
 ## 1.5.2 (24 May 2021) ##
 
 ### Improvements ###
