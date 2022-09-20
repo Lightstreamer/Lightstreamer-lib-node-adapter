@@ -1,3 +1,32 @@
+## [1.6.0] (20 Sep 2022)
+
+### New Features ###
+
+Added a "declareFieldDiffOrder" function to the DataProvider object; this allows for specification, before sending data for fields,
+of which algorithms, and in which order, the Server should try, in order to compute the difference between a value and the previous one
+in order to send the client this difference, for "delta delivery" purpose, by leveraging the extensions introduced in Server version 7.3.0.
+Currently, only the JSONPATCH and DIFF_MATCH_PATCH (used for TLCP-diff) algorithms are available.
+
+Extended the specifications of the "request" argument for the
+notifyNewSession and notifySessionClose event handlers of the MetadataProvider object.
+Now the elements of the tableInfos array also provide a dataAdapter property,
+which specifies the Data Adapter to which tables (i.e. subscriptions) refer.
+
+Similarly, extended the specifications of the "request" argument for the
+notifyMpnSubscriptionActivation event handler of the MetadataProvider object.
+Now the tableInfo attribute also provide a dataAdapter property,
+which specifies the Data Adapter to which the table (i.e. subscription) refers.
+
+### Improvements ###
+
+Modified the String encoding according to ARI protocol version 1.9.0. This ensures a more efficient transport for almost all messages.
+
+### Lightstreamer Compatibility Notes ###
+
+Compatible with Adapter Remoting Infrastructure since Server version 7.3
+
+
+
 ## 1.5.3 (10 Sep 2021) ##
 
 ### New Features ###

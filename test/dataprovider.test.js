@@ -17,7 +17,7 @@ Copyright (c) Lightstreamer Srl
 var DataProvider = require('../lib/lightstreamer-adapter').DataProvider,
     TestStream = require('./utils/teststream').TestStream;
 
-var currProtocolVersion = "1.8.3";
+var currProtocolVersion = "1.9.0";
 
 function overrideDataWithParameters(isSnapshotAvailable, credentials) {
     this.reqRespStream = new TestStream();
@@ -100,47 +100,33 @@ exports.tests = {
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "|S|keepalive_hint.millis|S|3000\r\n");
     },
-    "Initialization 1.8.0" : function(test) {
+    "Initialization 1.8.0 unsupported" : function(test) {
         var reqRespStream = this.reqRespStream;
         var notifyStream = this.notifyStream;
-        test.expect(6);
+        test.expect(4);
         test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         test.equal(notifyStream.popTestData().substring(13), "|RAC|S|enableClosePacket|S|true\n");
         this.dataProvider.on('init', function(message, response) {
-            test.equal(message.parameters["P1"], "V1");
-            test.equal(message.parameters["P2"], "V2");
+            test.fail();
+        });
+        this.reqRespStream.pushTestData("ID0|DPI|S|P1|S|V1|S|P2|S|V2\r\n");
+        test.equal(reqRespStream.popTestData(), "ID0|DPI|ED|Unsupported+protocol+version\n");
+        test.equal(notifyStream.popTestData(), null);
+        test.done();
+    },
+    "Initialization 1.8.3 to be upgraded" : function(test) {
+        var reqRespStream = this.reqRespStream;
+        var notifyStream = this.notifyStream;
+        test.expect(4);
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
+        test.equal(notifyStream.popTestData().substring(13), "|RAC|S|enableClosePacket|S|true\n");
+        this.dataProvider.on('init', function(message, response) {
             response.success();
-            test.equal(reqRespStream.popTestData(), "ID0|DPI|V\n");
+            test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(notifyStream.popTestData(), null);
             test.done();
         });
-        this.reqRespStream.pushTestData("ID0|DPI|S|P1|S|V1|S|P2|S|V2\r\n");
-    },
-    "Initialization 1.8.0 with keepalives" : function(test) {
-        overrideDataWithParameters.apply(this, [  null, null, 5000 ]);
-
-        var reqRespStream = this.reqRespStream;
-        var notifyStream = this.notifyStream;
-        test.expect(10);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
-        test.equal(notifyStream.popTestData().substring(13), "|RAC|S|enableClosePacket|S|true\n");
-        this.dataProvider.on('init', function(message, response) {
-            test.equal(message.parameters["keepalive_hint.millis"], "3000");
-            response.success();
-            test.equal(reqRespStream.popTestData(), "ID0|DPI|V\n");
-            setTimeout(function() {
-                test.equal(reqRespStream.popTestData(), "KEEPALIVE\n");
-                test.equal(notifyStream.popTestData(), "KEEPALIVE\n");
-                test.equal(reqRespStream.popTestData(), null);
-                test.equal(notifyStream.popTestData(), null);
-            }, 500);
-            setTimeout(function() {
-                test.equal(reqRespStream.popTestData(), "KEEPALIVE\n");
-                test.equal(notifyStream.popTestData(), "KEEPALIVE\n");
-                test.done();
-            }, 1500); // with no hint, use 1 second
-        });
-        this.reqRespStream.pushTestData("ID0|DPI|S|keepalive_hint.millis|S|3000\r\n");
+        this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|1.8.3\r\n");
     },
     "Credential error with close" : function(test) {
         var credentials = { user: "my_user", password: "wrong_password" };
@@ -193,7 +179,7 @@ exports.tests = {
             test.done();
         });
         test.throws(function () {
-            this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
+            this.reqRespStream.pushTestData("FAKEID|SUB|S|An Item Name\r\n");
         }, Error);
         this.dataProvider.emit("END");
     },
@@ -233,7 +219,7 @@ exports.tests = {
             test.done();
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
-        this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
+        this.reqRespStream.pushTestData("FAKEID|SUB|S|An Item Name\r\n");
     },
     "Subscribe without snapshot" : function(test) {
         // also tests the default handling for 'init'
@@ -249,11 +235,11 @@ exports.tests = {
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(reqRespStream.popTestData(), "FAKEID|SUB|V\n");
-            test.equal(notifyStream.popTestData().substring(13), "|EOS|S|An+Item+Name|S|FAKEID\n");
+            test.equal(notifyStream.popTestData().substring(13), "|EOS|S|An Item Name|S|FAKEID\n");
             test.done();
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
-        this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
+        this.reqRespStream.pushTestData("FAKEID|SUB|S|An Item Name\r\n");
     },
     "Failed subscribe" : function(test) {
         var reqRespStream = this.reqRespStream;
@@ -262,11 +248,11 @@ exports.tests = {
         this.dataProvider.on('subscribe', function(itemName, response) {
             response.error("An exception", "subscription");
             test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\n");
-            test.equal(reqRespStream.popTestData(), "FAKEID|SUB|EU|An+exception\n");
+            test.equal(reqRespStream.popTestData(), "FAKEID|SUB|EU|An exception\n");
             test.done();
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
-        this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
+        this.reqRespStream.pushTestData("FAKEID|SUB|S|An Item Name\r\n");
     },
     "Unsubscribe" : function(test) {
         var reqRespStream = this.reqRespStream;
@@ -280,7 +266,7 @@ exports.tests = {
             test.done();
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
-        this.reqRespStream.pushTestData("FAKEID|USB|S|An+Item+Name\r\n");
+        this.reqRespStream.pushTestData("FAKEID|USB|S|An Item Name\r\n");
     },
     "Late subscribe" : function(test) {
         var reqRespStream = this.reqRespStream;
@@ -296,7 +282,6 @@ exports.tests = {
         dataProvider.on('subscribe', function(itemName, response) {
             subNum++;
             test.ok(true, subNum + ") subscribe has been called");
-            // console.log(subNum + ") subscribe call " + itemName);
             if (subNum === 1) {
                 // Sub ID1
                 // we keep the response without forwarding it, hence simulating a delay;
@@ -314,7 +299,6 @@ exports.tests = {
         dataProvider.on('unsubscribeInQueue', function(itemName) {
             unsubNumQ++;
             test.ok(true, unsubNumQ + ") unsubscribe in queue");
-            // console.log(unsubNumQ + ") unsubscribe in queue " + itemName);
             if (unsubNumQ === 3) {
                 // On unsub ID6 ***
                 sub1DelayedResponse.success();
@@ -323,15 +307,14 @@ exports.tests = {
         dataProvider.on('unsubscribe', function(itemName, response) {
             unsubNum++;
             test.ok(true, unsubNum + ") unsubscribe has been called");
-            // console.log(unsubNum + ") unsubscribe call " + itemName);
             if (unsubNum === 1) {
                 // Called after ***
                 response.success();
                 test.equals(reqRespStream.popTestData(), "ID1|SUB|V\n");
                 test.equals(reqRespStream.popTestData(), "ID2|USB|V\n");
-                test.equals(reqRespStream.popTestData(), "ID3|SUB|EU|Subscribe+request+come+too+late\n");
+                test.equals(reqRespStream.popTestData(), "ID3|SUB|EU|Subscribe request come too late\n");
                 test.equals(reqRespStream.popTestData(), "ID4|USB|V\n");
-                test.equals(reqRespStream.popTestData(), "ID5|SUB|EU|Subscribe+request+come+too+late\n");
+                test.equals(reqRespStream.popTestData(), "ID5|SUB|EU|Subscribe request come too late\n");
                 test.equals(reqRespStream.popTestData(), "ID6|USB|V\n");
                 test.ok(typeof reqRespStream.popTestData() === "undefined");
                 test.done();
@@ -340,7 +323,6 @@ exports.tests = {
         dataProvider.on('subscribeInQueue', function(itemName) {
             subNumQ++;
             test.ok(true, subNumQ + ") subscribe in queue");
-            // console.log(subNumQ + ") subscribe in queue " + itemName);
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         this.reqRespStream.pushTestData("ID1|SUB|S|item1\n");
@@ -365,7 +347,6 @@ exports.tests = {
         dataProvider.on('subscribe', function(itemName, response) {
             subNum++;
             test.ok(true, subNum + ") subscribe has been called");
-            // console.log(subNum + ") subscribe call " + itemName);
             if (subNum === 1) {
                 response.success();
                 test.equals(reqRespStream.popTestData(), "ID1|SUB|V\n");
@@ -383,7 +364,6 @@ exports.tests = {
         dataProvider.on('unsubscribeInQueue', function(itemName) {
             unsubNumQ++;
             test.ok(true, unsubNumQ + ") unsubscribe in queue");
-            // console.log(unsubNumQ + ") unsubscribe in queue " + itemName);
             if (unsubNumQ === 2) {
                 // On unsub ID6 ***
                 subDelayedResp.success();
@@ -392,7 +372,6 @@ exports.tests = {
         dataProvider.on('unsubscribe', function(itemName, response) {
             unsubNum++;
             test.ok(true, unsubNum + ") unsubscribe has been called");
-            // console.log(unsubNum + ") unsubscribe call " + itemName);
             if (unsubNum === 1) {
                 response.success();
                 test.equals(reqRespStream.popTestData(), "ID2|USB|V\n");
@@ -400,7 +379,7 @@ exports.tests = {
                 response.success();
                 test.equals(reqRespStream.popTestData(), "ID3|SUB|V\n");
                 test.equals(reqRespStream.popTestData(), "ID4|USB|V\n");
-                test.equals(reqRespStream.popTestData(), "ID5|SUB|EU|Subscribe+request+come+too+late\n");
+                test.equals(reqRespStream.popTestData(), "ID5|SUB|EU|Subscribe request come too late\n");
                 test.equals(reqRespStream.popTestData(), "ID6|USB|V\n");
                 test.ok(typeof reqRespStream.popTestData() === "undefined");
             }
@@ -408,7 +387,6 @@ exports.tests = {
         dataProvider.on('subscribeInQueue', function(itemName) {
             subNumQ++;
             test.ok(true, subNumQ + ") subscribe in queue");
-            // console.log(subNumQ  + ") subscribe in queue " + itemName);
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         this.reqRespStream.pushTestData("ID1|SUB|S|item1\n");
@@ -424,7 +402,10 @@ exports.tests = {
         test.expect(2);
         test.equal(notifyStream.popTestData().substring(13), "|RAC|S|enableClosePacket|S|true\n");
         this.dataProvider.failure("An exception");
-        test.equal(notifyStream.popTestData().substring(13), "|FAL|E|An+exception\n");
+        // note: it is always possible to send a failure message on the notifyStream,
+        // but, until the request/response stream is initialized and the protocol version is agreed-upon,
+        // the counterparty will defer the read or even refuse the message and close the channel
+        test.equal(notifyStream.popTestData().substring(13), "|FAL|E|An exception\n");
         test.done();
     },
     "End of snapshot" : function(test) {
@@ -436,11 +417,11 @@ exports.tests = {
         dataProvider.on('subscribe', function(itemName, response) {
             response.success();
             dataProvider.endOfSnapshot("An Item Name");
-            test.equal(notifyStream.popTestData().substring(13), "|EOS|S|An+Item+Name|S|FAKEID\n");
+            test.equal(notifyStream.popTestData().substring(13), "|EOS|S|An Item Name|S|FAKEID\n");
             test.done();
         });
         reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
-        reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
+        reqRespStream.pushTestData("FAKEID|SUB|S|An Item Name\r\n");
     },
     "End of snapshot with an unsubscribed item" : function(test) {
         test.expect(1);
@@ -473,7 +454,7 @@ exports.tests = {
                 });
             test.equal(notifyStream.popTestData().substring(13), "|EOS|S|AnItemName|S|FAKEID\n");
             test.equal(notifyStream.popTestData().substring(13), "|UD3|S|AnItemName|S|FAKEID|B|1|" +
-                "S|field1|S|A+string|S|field2|S|$|S|field3|S|#|" +
+                "S|field1|S|A string|S|field2|S|$|S|field3|S|#|" +
                 "S|field4|S|12.4|S|field5|S|true|S|field6|S|0|" +
                 "S|field7|S|NaN|S|field8|S|undefined|S|field9|S|false\n");
             test.done();
@@ -514,10 +495,40 @@ exports.tests = {
             dataProvider.clearSnapshot("AnItemName");
             test.equal(notifyStream.popTestData().substring(13), "|EOS|S|AnItemName|S|FAKEID\n");
             test.equal(notifyStream.popTestData().substring(13), "|UD3|S|AnItemName|S|FAKEID|B|1|" +
-                "S|field1|S|A+string|S|field2|S|$|S|field3|S|#|" +
+                "S|field1|S|A string|S|field2|S|$|S|field3|S|#|" +
                 "S|field4|S|12.4|S|field5|S|true|S|field6|S|0|" +
                 "S|field7|S|NaN|S|field8|S|undefined|S|field9|S|false\n");
             test.equal(notifyStream.popTestData().substring(13), "|CLS|S|AnItemName|S|FAKEID\n");
+            test.done();
+        });
+
+        reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
+        reqRespStream.pushTestData("FAKEID|SUB|S|AnItemName\r\n");
+    },
+    "Update a field which supports JSON Patch and diff-match-patch" : function(test) {
+        var fake = "";
+        var dataProvider = this.dataProvider;
+        var reqRespStream = this.reqRespStream;
+        var notifyStream = this.notifyStream;
+        test.expect(4);
+        test.equal(notifyStream.popTestData().substring(13), "|RAC|S|enableClosePacket|S|true\n");
+
+        dataProvider.on('subscribe', function(itemName, response) {
+            response.success();
+            dataProvider.declareFieldDiffOrder("AnItemName",
+                {
+                    "field1" : [ "JSONPATCH", "DIFF_MATCH_PATCH" ]
+                });
+            dataProvider.update("AnItemName", true,
+                {
+                    "field1" : "{ val: 1 }"
+                });
+            test.equal(notifyStream.popTestData().substring(13), "|EOS|S|AnItemName|S|FAKEID\n");
+                // EOS is sent immediately upon subscribe() if isSnapshotAvailable is false
+            test.equal(notifyStream.popTestData().substring(13), "|DFD|S|AnItemName|S|FAKEID|" +
+                "S|field1|F|JM\n");
+            test.equal(notifyStream.popTestData().substring(13), "|UD3|S|AnItemName|S|FAKEID|B|1|" +
+                "S|field1|S|{ val: 1 }\n");
             test.done();
         });
 
@@ -536,7 +547,7 @@ exports.tests = {
             test.done();
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
-        this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
+        this.reqRespStream.pushTestData("FAKEID|SUB|S|An Item Name\r\n");
     },
     "Subscribe with double error" : function(test) {
         var reqRespStream = this.reqRespStream;
@@ -550,7 +561,7 @@ exports.tests = {
             test.done();
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
-        this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
+        this.reqRespStream.pushTestData("FAKEID|SUB|S|An Item Name\r\n");
     },
     "some activity with close" : function(test) {
         // also tests the default handling for 'init'
@@ -563,7 +574,7 @@ exports.tests = {
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(reqRespStream.popTestData(), "FAKEID|SUB|V\n");
-            test.equal(notifyStream.popTestData().substring(13), "|EOS|S|An+Item+Name|S|FAKEID\n");
+            test.equal(notifyStream.popTestData().substring(13), "|EOS|S|An Item Name|S|FAKEID\n");
         });
         this.dataProvider.on('closeMessage', function(reason) {
             // undocumented event
@@ -576,42 +587,7 @@ exports.tests = {
             test.done();
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
-        this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
+        this.reqRespStream.pushTestData("FAKEID|SUB|S|An Item Name\r\n");
         this.reqRespStream.pushTestData("0|CLOSE|S|reason|S|keepalive timeout\r\n");
-    },
-    "some activity 1.8.2 with unexpected close" : function(test) {
-        var reqRespStream = this.reqRespStream;
-        var notifyStream = this.notifyStream;
-        test.expect(8);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
-        test.equal(notifyStream.popTestData().substring(13), "|RAC|S|enableClosePacket|S|true\n");
-        this.dataProvider.on('init', function(message, response) {
-            response.success();
-            test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|1.8.2\n");
-        });
-        this.dataProvider.on('subscribe', function(itemName, response) {
-            response.success();
-            test.equal(reqRespStream.popTestData(), "FAKEID|SUB|V\n");
-            test.equal(notifyStream.popTestData().substring(13), "|EOS|S|An+Item+Name|S|FAKEID\n");
-        });
-        this.dataProvider.on('closeMessage', function(reason) {
-            // undocumented event
-            // not expected
-            test.equal(reason, "keepalive timeout");
-        });
-        this.dataProvider.on('END', function(exc) {
-            // local event
-            test.equal(exc.message.substring(0, 29), "Message has an invalid method");
-            test.equal(reqRespStream.popTestData(), null);
-            test.equal(notifyStream.popTestData(), null);
-            test.done();
-        });
-        this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|1.8.2\r\n");
-        this.reqRespStream.pushTestData("FAKEID|SUB|S|An+Item+Name\r\n");
-        try {
-            this.reqRespStream.pushTestData("0|CLOSE|S|reason|S|keepalive timeout\r\n");
-        } catch (e) {
-            this.dataProvider.emit("END", e);
-        }
     },
 };

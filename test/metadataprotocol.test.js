@@ -17,7 +17,7 @@ Copyright (c) Lightstreamer Srl
 var metadataProto = require('../lib/metadataprotocol').metadata,
 	MetadataReader = require('../lib/metadataprotocol').MetadataReader;
 
-var currProtocolVersion = "1.8.3";
+var currProtocolVersion = "1.9.0";
 
 exports.metadataReads = {
 	"Read a valid init" : function(test) {
@@ -32,7 +32,7 @@ exports.metadataReads = {
 		test.equal(msg.initResponseParams["ARI.version"], currProtocolVersion);
 		test.done();
 	},
-	"Read a valid init 1.8.2" : function(test) {
+	"Read a valid init 1.8.2 to upgrade" : function(test) {
 		var reader = new MetadataReader();
 		reader.parse("FAKEID|MPI|S|P1|S|V1|S|ARI.version|S|1.8.2|S|P2|S|V2|S|keepalive_hint.millis|S|8000\r\n", true, true);
 		var msg = reader.pop();
@@ -41,10 +41,10 @@ exports.metadataReads = {
 		test.equal(msg.parameters["P1"], "V1");
 		test.equal(msg.parameters["P2"], "V2");
 		test.equal(msg.parameters["keepalive_hint.millis"], null);
-		test.equal(msg.initResponseParams["ARI.version"], "1.8.2");
+		test.equal(msg.initResponseParams["ARI.version"], currProtocolVersion);
 		test.done();
 	},
-	"Read a valid init 1.8.0" : function(test) {
+	"Read a valid init 1.8.0 unsupported" : function(test) {
 		var reader = new MetadataReader();
 		reader.parse("FAKEID|MPI|S|P1|S|V1|S|P2|S|V2\r\n", true, true);
 		var msg = reader.pop();
@@ -57,7 +57,7 @@ exports.metadataReads = {
 	},
 	"Read a valid get item data" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|GIT|S|An+Item+Name1|S|An+Item+Name2\r\n", false, true);
+		reader.parse("FAKEID|GIT|S|An Item Name1|S|An Item Name2\r\n", false, true);
 		var msg = reader.pop();
 		test.equal(msg.verb, "getItemData");
 		test.equal(msg.id, "FAKEID");
@@ -68,19 +68,33 @@ exports.metadataReads = {
 	},
 	"Read a valid notify user" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|NUS|S|user|S|password|S|header1|S|value+1|S|header+2|S|value+2\r\n", false, true);
+		reader.parse("FAKEID|NUS|S|user|S|password|S|header1|S|value 1|S|header2|S|value 2\r\n", false, true);
 		var msg = reader.pop();
 		test.equal(msg.verb, "notifyUser");
 		test.equal(msg.id, "FAKEID");
 		test.equal(msg.userName, "user");
 		test.equal(msg.userPassword, "password");
 		test.equal(msg.headers["header1"], "value 1");
-		test.equal(msg.headers["header 2"], "value 2");
+		test.equal(msg.headers["header2"], "value 2");
+		test.done();
+	},
+	"Read a valid notify user and test new encoding" : function(test) {
+		var reader = new MetadataReader();
+		reader.parse("FAKEID|NUS|S|user|S|password|S|header %0D|S|value 𩥪|S|header $|S|%23|S|header %2B|S|value Ȭ|S|header %7C|S|value €\r\n", false, true);
+		var msg = reader.pop();
+		test.equal(msg.verb, "notifyUser");
+		test.equal(msg.id, "FAKEID");
+		test.equal(msg.userName, "user");
+		test.equal(msg.userPassword, "password");
+		test.equal(msg.headers["header \r"], "value 𩥪");
+		test.equal(msg.headers["header $"], "#");
+		test.equal(msg.headers["header +"], "value Ȭ");
+		test.equal(msg.headers["header |"], "value €");
 		test.done();
 	},
 	"Read a valid notify user auth" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|NUA|S|user|S|password|S|principal|S|header1|S|value+1|S|header+2|S|value+2\r\n", false, true);
+		reader.parse("FAKEID|NUA|S|user|S|password|S|principal|S|header1|S|value 1|S|header2|S|value 2\r\n", false, true);
 		var msg = reader.pop();
 		test.equal(msg.verb, "notifyUserAuth");
 		test.equal(msg.id, "FAKEID");
@@ -88,7 +102,7 @@ exports.metadataReads = {
 		test.equal(msg.userPassword, "password");
 		test.equal(msg.clientPrincipal, "principal");
 		test.equal(msg.headers["header1"], "value 1");
-		test.equal(msg.headers["header 2"], "value 2");
+		test.equal(msg.headers["header2"], "value 2");
 		test.done();
 	},
 	"Read a valid get schema" : function(test) {
@@ -116,7 +130,7 @@ exports.metadataReads = {
 	},
 	"Read a valid get user item data" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|GUI|S|user|S|item+1|S|item+2\r\nFAKEID|GUI|S|user|S|item+7\r\n", false, true);
+		reader.parse("FAKEID|GUI|S|user|S|item 1|S|item 2\r\nFAKEID|GUI|S|user|S|item 7\r\n", false, true);
 		var msg = reader.pop();
 		test.equal(msg.verb, "getUserItemData");
 		test.equal(msg.id, "FAKEID");
@@ -130,7 +144,7 @@ exports.metadataReads = {
 	},
 	"Read a valid notify user message" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("FAKEID|NUM|S|user|S|FAKESESSID|S|This+is+a+message\r\n", false, true);
+		reader.parse("FAKEID|NUM|S|user|S|FAKESESSID|S|This is a message\r\n", false, true);
 		var msg = reader.pop();
 		test.equal(msg.verb, "notifyUserMessage");
 		test.equal(msg.id, "FAKEID");
@@ -165,10 +179,10 @@ exports.metadataReads = {
 		var inMsg, msg, i;
 
 		inMsg = "FAKEID|NNT|S|user|S|FAKESESSID" +
-			"|I|1|M|M|S|group1|S|schema1|I|1|I|5|S|#" +
-			"|I|1|M|R|S|group2|S|schema2|I|1|I|5|S|selector" +
-			"|I|1|M|D|S|group3|S|schema3|I|1|I|5|S|#" +
-			"|I|1|M|C|S|group4|S|schema4|I|1|I|5|S|#" +
+			"|I|1|M|M|S|group1|S|data_adapter1|S|schema1|I|1|I|5|S|#" +
+			"|I|1|M|R|S|group2|S|data_adapter2|S|schema2|I|1|I|5|S|selector" +
+			"|I|1|M|D|S|group3|S|data_adapter3|S|schema3|I|1|I|5|S|#" +
+			"|I|1|M|C|S|group4|S|data_adapter4|S|schema4|I|1|I|5|S|#" +
 			"\n";
 
 		reader.parse(inMsg, false, true);
@@ -184,6 +198,7 @@ exports.metadataReads = {
 		test.strictEqual(msg.tableInfos[0].winIndex, 1);
 		test.ok(msg.tableInfos[0].pubModes["merge"]);
 		test.equal(msg.tableInfos[0].groupName, "group1");
+		test.equal(msg.tableInfos[0].dataAdapter, "data_adapter1");
 		test.equal(msg.tableInfos[0].schemaName, "schema1");
 		test.strictEqual(msg.tableInfos[0].firstItemIndex, 1);
 		test.strictEqual(msg.tableInfos[0].lastItemIndex, 5);
@@ -196,6 +211,7 @@ exports.metadataReads = {
 
 		test.ok(msg.tableInfos[3].pubModes["command"]);
 		test.equal(msg.tableInfos[3].groupName, "group4");
+		test.equal(msg.tableInfos[3].dataAdapter, "data_adapter4");
 		test.equal(msg.tableInfos[3].schemaName, "schema4");
 
 		test.done();
@@ -205,8 +221,8 @@ exports.metadataReads = {
 		var inMsg, msg, i;
 
 		inMsg = "FAKEID|NTC|S|FAKESESSID" +
-			"|I|1|M|M|S|group1|S|schema1|I|1|I|5|S|#" +
-			"|I|1|M|R|S|group2|S|schema2|I|1|I|5|S|selector" +
+			"|I|1|M|M|S|group1|S|data_adapter1|S|schema1|I|1|I|5|S|#" +
+			"|I|1|M|R|S|group2|S|data_adapter2|S|schema2|I|1|I|5|S|selector" +
 			"\n";
 
 		reader.parse(inMsg, false, true);
@@ -221,6 +237,7 @@ exports.metadataReads = {
 		test.strictEqual(msg.tableInfos[0].winIndex, 1);
 		test.ok(msg.tableInfos[0].pubModes["merge"]);
 		test.equal(msg.tableInfos[0].groupName, "group1");
+		test.equal(msg.tableInfos[0].dataAdapter, "data_adapter1");
 		test.equal(msg.tableInfos[0].schemaName, "schema1");
 		test.strictEqual(msg.tableInfos[0].firstItemIndex, 1);
 		test.strictEqual(msg.tableInfos[0].lastItemIndex, 5);
@@ -257,7 +274,7 @@ exports.metadataReads = {
 		var inMsg, msg, i;
 
 		inMsg = "FAKEID|MSA|S|user|S|FAKESESSID" +
-			"|I|1|M|M|S|group1|S|schema1|I|1|I|2" +
+			"|I|1|M|M|S|group1|S|data_adapter1|S|schema1|I|1|I|2" +
 			"|P|A|S|appID|S|deviceToken|S|triggerExpression" +
 			"|S|%7B%22aps%22%3A%7B%22alert%22%3A%22%24%7Bmessage%7D%22%2C%22badge%22%3A%22AUTO%22%7D%2C%22acme2%22%3A%5B%22%24%7Btag1%7D%22%2C%22%24%7Btag2%7D%22%5D%7D" +
 			"\n";
@@ -273,6 +290,7 @@ exports.metadataReads = {
 		test.strictEqual(msg.tableInfo.winIndex, 1);
 		test.ok(msg.tableInfo.pubModes["merge"]);
 		test.equal(msg.tableInfo.groupName, "group1");
+		test.equal(msg.tableInfo.dataAdapter, "data_adapter1");
 		test.equal(msg.tableInfo.schemaName, "schema1");
 		test.strictEqual(msg.tableInfo.firstItemIndex, 1);
 		test.strictEqual(msg.tableInfo.lastItemIndex, 2);
@@ -291,7 +309,7 @@ exports.metadataReads = {
 		var inMsg, msg, i;
 
 		inMsg = "FAKEID|MSA|S|user|S|FAKESESSID" +
-			"|I|1|M|M|S|group1|S|schema1|I|1|I|2" +
+			"|I|1|M|M|S|group1|S|data_adapter1|S|schema1|I|1|I|2" +
 			"|P|G|S|appID|S|deviceToken|S|triggerExpression" + 
 			"|S|%7B%22priority%22%3A%22NORMAL%22%2C%22notification%22%3A%7B%22icon%22%3A%22my_icon%22%2C%22body%22%3A%22my_body%22%2C%22title%22%3A%22my_title%22%7D%7D" +
 			"\n";
@@ -307,6 +325,7 @@ exports.metadataReads = {
 		test.strictEqual(msg.tableInfo.winIndex, 1);
 		test.ok(msg.tableInfo.pubModes["merge"]);
 		test.equal(msg.tableInfo.groupName, "group1");
+		test.equal(msg.tableInfo.dataAdapter, "data_adapter1");
 		test.equal(msg.tableInfo.schemaName, "schema1");
 		test.strictEqual(msg.tableInfo.firstItemIndex, 1);
 		test.strictEqual(msg.tableInfo.lastItemIndex, 2);
@@ -344,7 +363,7 @@ exports.metadataReads = {
 	},
 	"Read a valid close" : function(test) {
 		var reader = new MetadataReader();
-		reader.parse("0|CLOSE|S|reason|S|keepalive timeout\r\n", true, true);
+		reader.parse("0|CLOSE|S|reason|S|keepalive+timeout\r\n", true, true);
 		var msg = reader.pop();
 		test.equal(msg.id, "0");
 		test.equal(msg.parameters["reason"], "keepalive timeout");
@@ -367,6 +386,18 @@ exports.metadataWrites = {
 		test.equal(msg, "1|RAC|S|user|S|my_user|S|password|S|my_password|S|enableClosePacket|S|true\n");
 		test.done();
 	},
+	"Credentials write and test old encoding" : function(test) {
+		var params = {};
+		params["user"] = "my_user_\r";
+		params["password"] = "my_password_𩥪";
+		params["enableClosePacket"] = "true";
+		params["extra $"] = "#";
+		params["extra +"] = "Ȭ";
+		params["extra |"] = "€";
+		var msg = metadataProto.writeRemoteCredentials(params);
+		test.equal(msg, "1|RAC|S|user|S|my_user_%0D|S|password|S|my_password_%F0%A9%A5%AA|S|enableClosePacket|S|true|S|extra+%24|S|%23|S|extra+%2B|S|%C8%AC|S|extra+%7C|S|%E2%82%AC\n");
+		test.done();
+	},
 	"Init write" : function(test) {
 		var params = {};
 		params["ARI.version"] = currProtocolVersion;
@@ -375,14 +406,9 @@ exports.metadataWrites = {
 		test.equal(msg, "FAKEID|MPI|S|ARI.version|S|" + currProtocolVersion + "|S|P1|S|V1\n");
 		test.done();
 	},
-	"Init write 1.8.0" : function(test) {
-		var msg = metadataProto.writeInit("FAKEID", null);
-		test.equal(msg, "FAKEID|MPI|V\n");
-		test.done();
-	},
 	"Write a valid get schema response" : function(test) {
 		var msg = metadataProto.writeGetSchema("FAKEID",["Field 1","Field 2"]);
-		test.equal(msg, "FAKEID|GSC|S|Field+1|S|Field+2\n");
+		test.equal(msg, "FAKEID|GSC|S|Field 1|S|Field 2\n");
 		test.done();
 	},
 	"Write a valid get item data response" : function(test) {
@@ -403,7 +429,7 @@ exports.metadataWrites = {
 	},
 	"Write a valid get items response" : function(test) {
 		var msg = metadataProto.writeGetItems("FAKEID",["Item 1","Item 2"]);
-		test.equal(msg, "FAKEID|GIS|S|Item+1|S|Item+2\n");
+		test.equal(msg, "FAKEID|GIS|S|Item 1|S|Item 2\n");
 		test.done();
 	},
 	"Write a valid notify user response" : function(test) {
@@ -461,75 +487,75 @@ exports.metadataExceptionWrites = {
 	},
 	"Write generic exception for getItemData" : function(test) {
 		var msg = metadataProto.writeGetItemDataException("FAKEID","A Message");
-		test.equal(msg, "FAKEID|GIT|E|A+Message\n");
+		test.equal(msg, "FAKEID|GIT|E|A Message\n");
 		test.done();
 	},
 	"Write generic exception for notifyUser" : function(test) {
 		var msg = metadataProto.writeNotifyUserException("FAKEID","A Message");
-		test.equal(msg, "FAKEID|NUS|E|A+Message\n");
+		test.equal(msg, "FAKEID|NUS|E|A Message\n");
 		test.done();
 	},
 	"Write generic exception for notifyUserAuth" : function(test) {
 		var msg = metadataProto.writeNotifyUserAuthException("FAKEID","A Message");
-		test.equal(msg, "FAKEID|NUA|E|A+Message\n");
+		test.equal(msg, "FAKEID|NUA|E|A Message\n");
 		test.done();
 	},
 	"Write generic exception for getSchema" : function(test) {
 		var msg = metadataProto.writeGetSchemaException("FAKEID","A Message");
-		test.equal(msg, "FAKEID|GSC|E|A+Message\n");
+		test.equal(msg, "FAKEID|GSC|E|A Message\n");
 		test.done();
 	},
 	"Write generic exception for getItems" : function(test) {
 		var msg = metadataProto.writeGetItemsException("FAKEID","A Message");
-		test.equal(msg, "FAKEID|GIS|E|A+Message\n");
+		test.equal(msg, "FAKEID|GIS|E|A Message\n");
 		test.done();
 	},
 	"Write generic exception for getUserItemData" : function(test) {
 		var msg = metadataProto.writeGetUserItemDataException("FAKEID","A Message");
-		test.equal(msg, "FAKEID|GUI|E|A+Message\n");
+		test.equal(msg, "FAKEID|GUI|E|A Message\n");
 		test.done();
 	},
 	"Write generic exception for notifyUserMessage" : function(test) {
 		var msg = metadataProto.writeNotifyUserMessageException("FAKEID","A Message");
-		test.equal(msg, "FAKEID|NUM|E|A+Message\n");
+		test.equal(msg, "FAKEID|NUM|E|A Message\n");
 		test.done();
 	},
 	"Write generic exception for notifyNewSession" : function(test) {
 		var msg = metadataProto.writeNotifyNewSessionException("FAKEID","A Message");
-		test.equal(msg, "FAKEID|NNS|E|A+Message\n");
+		test.equal(msg, "FAKEID|NNS|E|A Message\n");
 		test.done();
 	},
 	"Write generic exception for notifySessionClose" : function(test) {
 		var msg = metadataProto.writeNotifySessionCloseException("FAKEID","A Message");
-		test.equal(msg, "FAKEID|NSC|E|A+Message\n");
+		test.equal(msg, "FAKEID|NSC|E|A Message\n");
 		test.done();
 	},
 	"Write generic exception for notifyNewTables" : function(test) {
 		var msg = metadataProto.writeNotifyNewTablesException("FAKEID","A Message");
-		test.equal(msg, "FAKEID|NNT|E|A+Message\n");
+		test.equal(msg, "FAKEID|NNT|E|A Message\n");
 		test.done();
 	},
 	"Write generic exception for notifyTablesClose" : function(test) {
 		var msg = metadataProto.writeNotifyTablesCloseException("FAKEID","A Message");
-		test.equal(msg, "FAKEID|NTC|E|A+Message\n");
+		test.equal(msg, "FAKEID|NTC|E|A Message\n");
 		test.done();
 	},
 	"Write credits exception for notifyMpnDeviceAccess" : function(test) {
 		var excData = {clientCode: -1, clientMessage: "Message for client"};
 		var msg = metadataProto.writeNotifyMpnDeviceAccessException("FAKEID","A Message","credits",excData);
-		test.equal(msg, "FAKEID|MDA|EC|A+Message|-1|Message+for+client\n");
+		test.equal(msg, "FAKEID|MDA|EC|A Message|-1|Message for client\n");
 		test.done();
 	},
 	"Write credits exception for notifyMpnSubscriptionActivation" : function(test) {
 		var excData = {clientCode: -1, clientMessage: "Message for client"};
 		var msg = metadataProto.writeNotifyMpnSubscriptionActivationException("FAKEID","A Message","credits",excData);
-		test.equal(msg, "FAKEID|MSA|EC|A+Message|-1|Message+for+client\n");
+		test.equal(msg, "FAKEID|MSA|EC|A Message|-1|Message for client\n");
 		test.done();
 	},
 	"Write credits exception for notifyMpnDeviceTokenChange" : function(test) {
 		var excData = {clientCode: -1, clientMessage: "Message for client"};
 		var msg = metadataProto.writeNotifyMpnDeviceTokenChangeException("FAKEID","A Message","credits",excData);
-		test.equal(msg, "FAKEID|MDC|EC|A+Message|-1|Message+for+client\n");
+		test.equal(msg, "FAKEID|MDC|EC|A Message|-1|Message for client\n");
 		test.done();
 	},
 	"Write metadata exception for init" : function(test) {
@@ -539,39 +565,39 @@ exports.metadataExceptionWrites = {
 	},
 	"Write access exception for notifyUser" : function(test) {
 		var msg = metadataProto.writeNotifyUserException("FAKEID","A Message","access");
-		test.equal(msg, "FAKEID|NUS|EA|A+Message\n");
+		test.equal(msg, "FAKEID|NUS|EA|A Message\n");
 		test.done();
 	},
 	"Write credits exception for notifyUser" : function(test) {
 		var excData = {clientCode: -1, clientMessage: "Message for client"};
 		var msg = metadataProto.writeNotifyUserException("FAKEID","A Message","credits",excData);
-		test.equal(msg, "FAKEID|NUS|EC|A+Message|-1|Message+for+client\n");
+		test.equal(msg, "FAKEID|NUS|EC|A Message|-1|Message for client\n");
 		test.done();
 	},
 	"Write conflicting session exception for notifyNewSession" : function(test) {
 		var excData = {clientCode: -1, clientMessage: "Message for client", conflictingSessionId: "SXXXXXXXXXXXXXXXXX"};
 		var msg = metadataProto.writeNotifyNewSessionException("FAKEID","A Message","conflictingSession",excData);
-		test.equal(msg, "FAKEID|NNS|EX|A+Message|-1|Message+for+client|SXXXXXXXXXXXXXXXXX\n");
+		test.equal(msg, "FAKEID|NNS|EX|A Message|-1|Message for client|SXXXXXXXXXXXXXXXXX\n");
 		test.done();
 	},
 	"Write notification exception for notifyNewSession" : function(test) {
 		var msg = metadataProto.writeNotifyNewSessionException("FAKEID","A Message","notification");
-		test.equal(msg, "FAKEID|NNS|EN|A+Message\n");
+		test.equal(msg, "FAKEID|NNS|EN|A Message\n");
 		test.done();
 	},
 	"Write notification exception for notifyNewSession" : function(test) {
 		var msg = metadataProto.writeNotifyNewSessionException("FAKEID","A Message","notification");
-		test.equal(msg, "FAKEID|NNS|EN|A+Message\n");
+		test.equal(msg, "FAKEID|NNS|EN|A Message\n");
 		test.done();
 	},
 	"Write items exception for getSchema" : function(test) {
 		var msg = metadataProto.writeGetSchemaException("FAKEID","A Message","items");
-		test.equal(msg, "FAKEID|GSC|EI|A+Message\n");
+		test.equal(msg, "FAKEID|GSC|EI|A Message\n");
 		test.done();
 	},
 	"Write schema exception for getSchema" : function(test) {
 		var msg = metadataProto.writeGetSchemaException("FAKEID","A Message","schema");
-		test.equal(msg, "FAKEID|GSC|ES|A+Message\n");
+		test.equal(msg, "FAKEID|GSC|ES|A Message\n");
 		test.done();
 	}
 };

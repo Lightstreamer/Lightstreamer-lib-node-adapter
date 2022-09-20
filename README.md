@@ -1,4 +1,4 @@
-# Lightstreamer SDK for Node Adapters 1.5.3 #
+# Lightstreamer SDK for Node Adapters 1.6.0 #
 
 This package includes the resources needed to write Data Adapters and Metadata Adapters for [Lightstreamer](http://www.lightstreamer.com/ "Lightstreamer") Server in a [Node.js](http://nodejs.org/ "Node.js") environment.
 The adapters will run in a separate process, communicating with the Server through the Adapter Remoting Infrastructure.
@@ -15,7 +15,7 @@ npm install lightstreamer-adapter
 1. Download and install Lightstreamer
 2. Go to the "adapters" folder of your Lightstreamer Server installation. Create a new folder to deploy the remote adapters in, let's call it "NodeAdapter".
 3. Create an "adapters.xml" file inside the "NodeAdapter" folder and use the following contents (this is an example configuration, you can modify it to your liking by using the generic template
-for [basic](https://lightstreamer.com/docs/ls-ARI/latest/adapter_conf_template/adapters.xml) and [robust](https://lightstreamer.com/docs/ls-ARI/latest/adapter_robust_conf_template/adapters.xml) Proxy Adapters as a reference):
+for [basic](https://lightstreamer.com/docs/ls-server/latest/remote_adapter_conf_template/adapters.xml) and [robust](https://lightstreamer.com/docs/ls-server/latest/remote_adapter_robust_conf_template/adapters.xml) Proxy Adapters as a reference):
     ```xml
     <?xml version="1.0"?>
     <adapters_conf id="PROXY_NODE">
@@ -97,7 +97,7 @@ lsClient.connect();
 Note that the "PROXY_NODE" string is taken from the adapters.xml
 
 ### API Reference ###
-http://www.lightstreamer.com/api/ls-nodejs-adapter/1.5.3/
+http://www.lightstreamer.com/api/ls-nodejs-adapter/1.6.0/
 
 ## Develop ##
 This section is dedicated to developers who want to extend/modify the library itself, if you're simply looking to use it, ignore it.
@@ -150,6 +150,7 @@ The API documentation will be available in the docs folder.
 * [Lightstreamer Chat Demo adapter for Node](https://github.com/Lightstreamer/Lightstreamer-example-Chat-adapter-node "Lightstreamer Chat Demo adapter for Node")
 
 ## Lightstreamer Compatibility Notes ##
-Compatible with Adapter Remoting Infrastructure since Server version 7.0 (corresponding to Adapter Remoting Infrastructure 1.8).
+Compatible with Adapter Remoting Infrastructure since Server version 7.3.
+- For a version of this library compatible with Adapter Remoting Infrastructure for Server version 7.0 (corresponding to Adapter Remoting Infrastructure 1.8), please refer to [this tag](https://github.com/Lightstreamer/Lightstreamer-lib-node-adapter/tree/version-1.5.3).
 - For a version of this library compatible with Adapter Remoting Infrastructure for Server version 6.0 (corresponding to Adapter Remoting Infrastructure 1.7), please refer to [this tag](https://github.com/Lightstreamer/Lightstreamer-lib-node-adapter/tree/version-1.3.4).
 - For a version of this library compatible with Adapter Remoting Infrastructure for Server version 5.1 (corresponding to Adapter Remoting Infrastructure 1.4.3), please refer to [this tag](https://github.com/Lightstreamer/Lightstreamer-lib-node-adapter/tree/version-1.0.2).
