@@ -19,7 +19,7 @@ for [basic](https://lightstreamer.com/docs/ls-server/latest/remote_adapter_conf_
     ```xml
     <?xml version="1.0"?>
     <adapters_conf id="PROXY_NODE">
-			<metadata_adapter_initialised_first>N</metadata_adapter_initialised_first>
+            <metadata_adapter_initialised_first>N</metadata_adapter_initialised_first>
             <metadata_provider>
                     <adapter_class>ROBUST_PROXY_FOR_REMOTE_ADAPTER</adapter_class>
                     <classloader>log-enabled</classloader>
