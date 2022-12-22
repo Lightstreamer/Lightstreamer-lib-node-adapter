@@ -72,7 +72,7 @@ exports.tests = {
         this.reqRespStream.pushTestData("ID0|DPI|S|P1|S|V1|S|ARI.version|S|" + currProtocolVersion + "|S|P2|S|V2\r\n");
     },
     "Initialization with keepalives" : function(test) {
-        overrideDataWithParameters.apply(this, [  null, null, 5000 ]);
+        overrideDataWithParameters.apply(this, [  null, null ]);
 
         var reqRespStream = this.reqRespStream;
         var notifyStream = this.notifyStream;
