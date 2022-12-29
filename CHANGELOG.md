@@ -2,7 +2,7 @@
 
 ### Improvements
 
-- Added explicit support for the use of the same stream as both the reply and the notify stream for Remote Data Adapters.
+Added explicit support for the use of the same stream as both the reply and the notify stream for Remote Data Adapters.
 Now the two flows are merged without redundancies and suitable tests have been added.
 The use of a unified stream is supported since Server version 7.4, with proper configuration.
 

@@ -36,7 +36,7 @@ for [basic](https://lightstreamer.com/docs/ls-server/latest/remote_adapter_conf_
     </adapters_conf>
     ```
 
-NOTE: If you use Lightstreamer Server version 7.4 or later, you have the option to configure the same port for both "request_reply_port" and "notify_port" in the <data_provider> block. This will require a single connection also for the Remote Data Adapter.
+    NOTE: If you use Lightstreamer Server version 7.4 or later, you have the option to configure the same port for both "request_reply_port" and "notify_port" in the <data_provider> block. This will require a single connection also for the Remote Data Adapter.
 
 4. Take note of the ports configured in the adapters.xml file as those are needed to write the remote part of the adapters.
 
