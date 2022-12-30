@@ -1,6 +1,6 @@
 {
   "name": "lightstreamer-adapter",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "This package includes the resources needed to write Data Adapters and Metadata Adapters for Lightstreamer Server in a Node.js environment. The adapters will run in a separate process, communicating with the Server through the Adapter Remoting Infrastructure.",
   "keywords": [
     "lightstreamer",

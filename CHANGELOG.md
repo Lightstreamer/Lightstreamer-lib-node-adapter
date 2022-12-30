@@ -1,4 +1,4 @@
-## [current state]
+## [1.6.1] (xx Xxx xxxx)
 
 ### Improvements
 
