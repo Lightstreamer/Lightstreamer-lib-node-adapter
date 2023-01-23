@@ -263,13 +263,14 @@ exports.tests = {
         overrideDataWithParameters.apply(this, [ isSnapshotAvailable, null, false ]);
 
         var reqRespStream = this.reqRespStream;
-        test.expect(5);
+        test.expect(6);
         test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         this.dataProvider.on('subscribe', function(itemName, response) {
             test.equal(itemName, "An Item Name");
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.equal(reqRespStream.popTestData(), "FAKEID|SUB|V\n");
+            test.equal(reqRespStream.popTestData(), null);
             test.done();
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
@@ -324,7 +325,7 @@ exports.tests = {
         var dataProvider = this.dataProvider;
         var subNum = 0, unsubNum = 0, subNumQ = 0, unsubNumQ = 0;
         var sub1DelayedResponse;
-        test.expect(17);
+        test.expect(20);
         test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         dataProvider.on('init', function(message, response) {
             response.success();
@@ -345,6 +346,8 @@ exports.tests = {
                 // Sub ID7 at last
                 response.success();
                 test.equals(reqRespStream.popTestData(), "ID7|SUB|V\n");
+                test.equals(reqRespStream.popTestData().substring(13), "|EOS|S|item1|S|ID7\n");
+                test.done();
             }
         });
         dataProvider.on('unsubscribeInQueue', function(itemName) {
@@ -369,7 +372,6 @@ exports.tests = {
                 test.equals(reqRespStream.popTestData(), "ID5|SUB|EU|Subscribe request come too late\n");
                 test.equals(reqRespStream.popTestData(), "ID6|USB|V\n");
                 test.ok(typeof reqRespStream.popTestData() === "undefined");
-                test.done();
             }
         });
         dataProvider.on('subscribeInQueue', function(itemName) {
