@@ -30,13 +30,13 @@ for [basic](https://lightstreamer.com/docs/ls-server/latest/remote_adapter_conf_
                     <adapter_class>ROBUST_PROXY_FOR_REMOTE_ADAPTER</adapter_class>
                     <classloader>log-enabled</classloader>
                     <param name="request_reply_port">8001</param>
-                    <param name="notify_port">8002</param>
+                    <!-- <param name="notify_port">8002</param> -->
                     <param name="timeout">36000000</param>
             </data_provider>
     </adapters_conf>
     ```
 
-    NOTE: If you use Lightstreamer Server version 7.4 or later, you have the option to configure the same port for both "request_reply_port" and "notify_port" in the <data_provider> block. This will require a single connection also for the Remote Data Adapter.
+    NOTE: If you use Lightstreamer Server version earlier than 7.4, you will need to also configure a "notify_port" in the <data_provider> block (see the line commented out). This will require two separate connections for the Remote Data Adapter communication.
 
 4. Take note of the ports configured in the adapters.xml file as those are needed to write the remote part of the adapters.
 
@@ -46,18 +46,15 @@ Create a .js file, let's call it "adapters.js"
 1. Get the net package and create the connections to Lightstreamer server. Note that the ports are the same used in the above file; LIGHTSTREAMER_SERVER_HOST is the host of the Lightstreamer server e.g.: "localhost".
    ```js
    var net = require('net'),
-   reqRespStream = net.createConnection(8001, LIGHTSTREAMER_SERVER_HOST),
-   notifyStream = net.createConnection(8002, LIGHTSTREAMER_SERVER_HOST),
+   dataStream = net.createConnection(8001, LIGHTSTREAMER_SERVER_HOST),
    metadataStream = net.createConnection(8003, LIGHTSTREAMER_SERVER_HOST);
    ```
-
-   NOTE: if you could configure the same port for both "request_reply_port" and "notify_port" in adapters.xml, then here you can just set the notifyStream as the same of reqRespStream and leverage a single-connection also for the Remote Data Adapter.
 
 2. Get the adapter classes and create the needed instances
    ```js
    var MetadataProvider = require('lightstreamer-adapter').MetadataProvider,
-   DataProvider = require('lightstreamer-adapter').DataProvider,
-   dataProvider = new DataProvider(reqRespStream, notifyStream),
+   var DataProvider = require('lightstreamer-adapter').DataProvider,
+   dataProvider = new DataProvider(dataStream, null),
    metadataProvider = new MetadataProvider(metadataStream);
    ```
 
@@ -86,6 +83,18 @@ hence this calls must be bound to the "start/stop sending updates" comments int 
        'field2': valField2
    });
    ```
+
+NOTE: if you had to configure a "notify_port" in adapters.xml, then here you have to open two connections and supply two streams for the Remote Data Adapter. The code in steps 1 and 2 becomes:
+```js
+var net = require('net'),
+dataReqRespStream = net.createConnection(8001, LIGHTSTREAMER_SERVER_HOST),
+dataNotifyStream = net.createConnection(8002, LIGHTSTREAMER_SERVER_HOST),
+metadataStream = net.createConnection(8003, LIGHTSTREAMER_SERVER_HOST);
+var MetadataProvider = require('lightstreamer-adapter').MetadataProvider,
+var DataProvider = require('lightstreamer-adapter').DataProvider,
+dataProvider = new DataProvider(dataReqRespStream, dataNotifyStream),
+metadataProvider = new MetadataProvider(metadataStream);
+```
 
 ### Run ###
 From the command line call
