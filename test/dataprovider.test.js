@@ -35,7 +35,7 @@ function overrideDataWithParameters(isSnapshotAvailable, credentials, doubleConn
 exports.tests = {
     setUp: function (callback) {
         this.reqRespStream = new TestStream();
-        this.notifyStream = new TestStream();
+        this.notifyStream = null;
         this.dataProvider = new DataProvider(this.reqRespStream, this.notifyStream);
         callback();
     },
@@ -120,8 +120,6 @@ exports.tests = {
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "|S|keepalive_hint.millis|S|3000\r\n");
     },
     "Initialization with keepalives" : function(test) {
-        overrideDataWithParameters.apply(this, [ null, null, false ]);
-
         var stream = this.reqRespStream;
         test.expect(7);
         test.equal(stream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
@@ -144,6 +142,8 @@ exports.tests = {
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "|S|keepalive_hint.millis|S|3000\r\n");
     },
     "Initialization 1.8.0 unsupported on double conn" : function(test) {
+        overrideDataWithParameters.apply(this, [ null, null, true ]);
+
         var reqRespStream = this.reqRespStream;
         var notifyStream = this.notifyStream;
         test.expect(4);
@@ -158,6 +158,8 @@ exports.tests = {
         test.done();
     },
     "Initialization 1.8.3 to be upgraded on double conn" : function(test) {
+        overrideDataWithParameters.apply(this, [ null, null, true ]);
+
         var reqRespStream = this.reqRespStream;
         var notifyStream = this.notifyStream;
         test.expect(4);
@@ -211,7 +213,6 @@ exports.tests = {
         this.reqRespStream.pushTestData("0|CLOSE|S|reason|S|wrong credentials\r\n");
     },
     "Failed initialization" : function(test) {
-        overrideDataWithParameters.apply(this, [ null, null, false ]);
         var reqRespStream = this.reqRespStream;
         test.expect(2);
         test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
@@ -223,7 +224,6 @@ exports.tests = {
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
     },
     "Missing initialization" : function(test) {
-        overrideDataWithParameters.apply(this, [ null, null, false ]);
         var reqRespStream = this.reqRespStream;
         test.expect(2);
         test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
@@ -242,7 +242,6 @@ exports.tests = {
         this.dataProvider.emit("END");
     },
     "Late initialization" : function(test) {
-        overrideDataWithParameters.apply(this, [ null, null, false ]);
         var reqRespStream = this.reqRespStream;
         test.expect(3);
         test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
@@ -325,7 +324,7 @@ exports.tests = {
         var dataProvider = this.dataProvider;
         var subNum = 0, unsubNum = 0, subNumQ = 0, unsubNumQ = 0;
         var sub1DelayedResponse;
-        test.expect(16);
+        test.expect(17);
         test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         dataProvider.on('init', function(message, response) {
             response.success();
@@ -363,6 +362,7 @@ exports.tests = {
                 // Called after ***
                 response.success();
                 test.equals(reqRespStream.popTestData(), "ID1|SUB|V\n");
+                test.equals(reqRespStream.popTestData().substring(13), "|EOS|S|item1|S|ID1\n");
                 test.equals(reqRespStream.popTestData(), "ID2|USB|V\n");
                 test.equals(reqRespStream.popTestData(), "ID3|SUB|EU|Subscribe request come too late\n");
                 test.equals(reqRespStream.popTestData(), "ID4|USB|V\n");
@@ -390,7 +390,7 @@ exports.tests = {
         var dataProvider = this.dataProvider;
         var subNum = 0, unsubNum = 0, subNumQ = 0, unsubNumQ = 0;
         var subDelayedResp;
-        test.expect(18);
+        test.expect(21);
         test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         dataProvider.on('init', function(message, response) {
             response.success();
@@ -402,6 +402,7 @@ exports.tests = {
             if (subNum === 1) {
                 response.success();
                 test.equals(reqRespStream.popTestData(), "ID1|SUB|V\n");
+                test.equals(reqRespStream.popTestData().substring(13), "|EOS|S|item1|S|ID1\n");
             } else if (subNum === 2) {
                 // Delay on 2nd sub
                 subDelayedResp = response;
@@ -409,6 +410,7 @@ exports.tests = {
                 // Sub ID7 at last
                 response.success();
                 test.equals(reqRespStream.popTestData(), "ID7|SUB|V\n");
+                test.equals(reqRespStream.popTestData().substring(13), "|EOS|S|item1|S|ID7\n");
                 test.done();
             }
 
@@ -430,6 +432,7 @@ exports.tests = {
             } else if (unsubNum === 2) {
                 response.success();
                 test.equals(reqRespStream.popTestData(), "ID3|SUB|V\n");
+                test.equals(reqRespStream.popTestData().substring(13), "|EOS|S|item1|S|ID3\n");
                 test.equals(reqRespStream.popTestData(), "ID4|USB|V\n");
                 test.equals(reqRespStream.popTestData(), "ID5|SUB|EU|Subscribe request come too late\n");
                 test.equals(reqRespStream.popTestData(), "ID6|USB|V\n");
@@ -450,7 +453,6 @@ exports.tests = {
         this.reqRespStream.pushTestData("ID7|SUB|S|item1\n");
     },
     "Failure" : function(test) {
-        overrideDataWithParameters.apply(this, [ null, null, false ]);
         var dataProvider = this.dataProvider;
         var reqRespStream = this.reqRespStream;
         test.expect(3);
@@ -466,7 +468,6 @@ exports.tests = {
         reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
     },
     "End of snapshot" : function(test) {
-        overrideDataWithParameters.apply(this, [ null, null, false ]);
         var dataProvider = this.dataProvider;
         var reqRespStream = this.reqRespStream;
         test.expect(4);
@@ -490,7 +491,6 @@ exports.tests = {
         test.done();
     },
     "Update by hash" : function(test) {
-        overrideDataWithParameters.apply(this, [ null, null, false ]);
         var fake = "";
         var dataProvider = this.dataProvider;
         var reqRespStream = this.reqRespStream;
@@ -525,6 +525,8 @@ exports.tests = {
         reqRespStream.pushTestData("FAKEID|SUB|S|AnItemName\r\n");
     },
     "Update by hash on double conn" : function(test) {
+        overrideDataWithParameters.apply(this, [ null, null, true ]);
+
         var fake = "";
         var dataProvider = this.dataProvider;
         var reqRespStream = this.reqRespStream;
@@ -565,7 +567,6 @@ exports.tests = {
         test.done();
     },       
     "Update by hash, then clear snapshot" : function(test) {
-        overrideDataWithParameters.apply(this, [ null, null, false ]);
         var fake = "";
         var dataProvider = this.dataProvider;
         var reqRespStream = this.reqRespStream;
@@ -602,7 +603,6 @@ exports.tests = {
         reqRespStream.pushTestData("FAKEID|SUB|S|AnItemName\r\n");
     },
     "Update a field which supports JSON Patch and diff-match-patch" : function(test) {
-        overrideDataWithParameters.apply(this, [ null, null, false ]);
         var fake = "";
         var dataProvider = this.dataProvider;
         var reqRespStream = this.reqRespStream;
@@ -662,7 +662,6 @@ exports.tests = {
         this.reqRespStream.pushTestData("FAKEID|SUB|S|An Item Name\r\n");
     },
     "some activity with close" : function(test) {
-        overrideDataWithParameters.apply(this, [ null, null, false ]);
         var reqRespStream = this.reqRespStream;
         test.expect(7);
         test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
