@@ -39,12 +39,10 @@ exports.tests = {
         this.dataProvider = new DataProvider(this.reqRespStream, this.notifyStream);
         callback();
     },
-    "Initialization on double conn" : function(test) {
+    "Initialization" : function(test) {
         var reqRespStream = this.reqRespStream;
-        var notifyStream = this.notifyStream;
-        test.expect(7);
+        test.expect(6);
         test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
-        test.equal(notifyStream.popTestData().substring(13), "|RAC|S|enableClosePacket|S|true\n");
         this.dataProvider.on('init', function(message, response) {
             test.equal(message.parameters["P1"], "V1");
             test.equal(message.parameters["P2"], "V2");
@@ -194,26 +192,41 @@ exports.tests = {
         });
         this.reqRespStream.pushTestData("0|CLOSE|S|reason|S|wrong credentials\r\n");
     },
-    "Failed initialization on double conn" : function(test) {
+    "Credential error with close" : function(test) {
+        var credentials = { user: "my_user", password: "wrong_password" };
+        overrideDataWithParameters.apply(this, [ null, credentials, false ]);
+
         var reqRespStream = this.reqRespStream;
-        var notifyStream = this.notifyStream;
         test.expect(4);
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|user|S|my_user|S|password|S|wrong_password|S|enableClosePacket|S|true\n");
+        this.dataProvider.on('closeMessage', function(reason) {
+            // undocumented event
+            test.equal(reason, "wrong credentials");
+            test.equal(reqRespStream.popTestData(), null);
+        });
+        reqRespStream.on('error', function(exc) {
+            test.equal(exc.message.substring(0, 34), "Close requested by the counterpart");
+            test.done();
+        });
+        this.reqRespStream.pushTestData("0|CLOSE|S|reason|S|wrong credentials\r\n");
+    },
+    "Failed initialization" : function(test) {
+        overrideDataWithParameters.apply(this, [ null, null, false ]);
+        var reqRespStream = this.reqRespStream;
+        test.expect(2);
         test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
-        test.equal(notifyStream.popTestData().substring(13), "|RAC|S|enableClosePacket|S|true\n");
         this.dataProvider.on('init', function(message, response) {
             response.error("An exception", "data");
             test.equal(reqRespStream.popTestData(), "ID0|DPI|ED|An+exception\n");
-            test.equal(notifyStream.popTestData(), null);
             test.done();
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
     },
-    "Missing initialization on double conn" : function(test) {
+    "Missing initialization" : function(test) {
+        overrideDataWithParameters.apply(this, [ null, null, false ]);
         var reqRespStream = this.reqRespStream;
-        var notifyStream = this.notifyStream;
-        test.expect(3);
+        test.expect(2);
         test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
-        test.equal(notifyStream.popTestData().substring(13), "|RAC|S|enableClosePacket|S|true\n");
         this.dataProvider.on('init', function(message, response) {
             // not expected
             response.success();
@@ -228,12 +241,11 @@ exports.tests = {
         }, Error);
         this.dataProvider.emit("END");
     },
-    "Late initialization on double conn" : function(test) {
+    "Late initialization" : function(test) {
+        overrideDataWithParameters.apply(this, [ null, null, false ]);
         var reqRespStream = this.reqRespStream;
-        var notifyStream = this.notifyStream;
-        test.expect(4);
+        test.expect(3);
         test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
-        test.equal(notifyStream.popTestData().substring(13), "|RAC|S|enableClosePacket|S|true\n");
         this.dataProvider.on('init', function(message, response) {
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\n");
@@ -244,18 +256,16 @@ exports.tests = {
         }, Error);
         test.done();
     },
-    "Subscribe with snapshot on double conn" : function(test) {
+    "Subscribe with snapshot" : function(test) {
         var isSnapshotAvailable = function(itemName) {
             test.equal(itemName, "An Item Name");
             return true;
         };
-        overrideDataWithParameters.apply(this, [ isSnapshotAvailable, null, true ]);
+        overrideDataWithParameters.apply(this, [ isSnapshotAvailable, null, false ]);
 
         var reqRespStream = this.reqRespStream;
-        var notifyStream = this.notifyStream;
-        test.expect(6);
+        test.expect(5);
         test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
-        test.equal(notifyStream.popTestData().substring(13), "|RAC|S|enableClosePacket|S|true\n");
         this.dataProvider.on('subscribe', function(itemName, response) {
             test.equal(itemName, "An Item Name");
             response.success();
@@ -634,21 +644,5 @@ exports.tests = {
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         this.reqRespStream.pushTestData("FAKEID|SUB|S|An Item Name\r\n");
         this.reqRespStream.pushTestData("0|CLOSE|S|reason|S|keepalive timeout\r\n");
-    },
-    "some activity" : function(test) {
-        overrideDataWithParameters.apply(this, [ null, null, false ]);
-
-        var stream = this.reqRespStream;
-        test.expect(4);
-        test.equal(stream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
-        this.dataProvider.on('subscribe', function(itemName, response) {
-            response.success();
-            test.equal(stream.popTestData(), "ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\n");
-            test.equal(stream.popTestData(), "FAKEID|SUB|V\n");
-            test.equal(stream.popTestData().substring(13), "|EOS|S|An Item Name|S|FAKEID\n");
-            test.done();
-        });
-        this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
-        this.reqRespStream.pushTestData("FAKEID|SUB|S|An Item Name\r\n");
     },
 };
