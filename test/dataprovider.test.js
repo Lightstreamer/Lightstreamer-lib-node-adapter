@@ -19,15 +19,15 @@ var DataProvider = require('../lib/lightstreamer-adapter').DataProvider,
 
 var currProtocolVersion = "1.9.0";
 
-function overrideDataWithParameters(isSnapshotAvailable, credentials, singleConn) {
+function overrideDataWithParameters(isSnapshotAvailable, credentials, doubleConn) {
     this.reqRespStream = new TestStream();
         // we cannot keep an old stream, because it already has a 'data' handler
         // for this.dataProvider, and, after attaching it to a new DataProvider below,
         // the handler would have still been invoked
-    if (singleConn) {
-        this.notifyStream = this.reqRespStream;
-    } else {
+    if (doubleConn) {
         this.notifyStream = new TestStream();
+    } else {
+        this.notifyStream = null;
     }
     this.dataProvider = new DataProvider(this.reqRespStream, this.notifyStream, isSnapshotAvailable, credentials);
 }
@@ -39,7 +39,7 @@ exports.tests = {
         this.dataProvider = new DataProvider(this.reqRespStream, this.notifyStream);
         callback();
     },
-    "Initialization" : function(test) {
+    "Initialization on double conn" : function(test) {
         var reqRespStream = this.reqRespStream;
         var notifyStream = this.notifyStream;
         test.expect(7);
@@ -56,9 +56,9 @@ exports.tests = {
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|P1|S|V1|S|ARI.version|S|" + currProtocolVersion + "|S|P2|S|V2|S|keepalive_hint.millis|S|8000\r\n");
     },
-    "Initialization with credentials" : function(test) {
+    "Initialization with credentials on double conn" : function(test) {
         var credentials = { user: "my_user", password: "my_password" };
-        overrideDataWithParameters.apply(this, [ null, credentials, false ]);
+        overrideDataWithParameters.apply(this, [ null, credentials, true ]);
 
         var reqRespStream = this.reqRespStream;
         var notifyStream = this.notifyStream;
@@ -75,9 +75,9 @@ exports.tests = {
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|P1|S|V1|S|ARI.version|S|" + currProtocolVersion + "|S|P2|S|V2\r\n");
     },
-    "Initialization with credentials on single conn" : function(test) {
+    "Initialization with credentials" : function(test) {
         var credentials = { user: "my_user", password: "my_password" };
-        overrideDataWithParameters.apply(this, [ null, credentials, true ]);
+        overrideDataWithParameters.apply(this, [ null, credentials, false ]);
 
         var stream = this.reqRespStream;
         test.expect(5);
@@ -92,8 +92,8 @@ exports.tests = {
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|P1|S|V1|S|ARI.version|S|" + currProtocolVersion + "|S|P2|S|V2\r\n");
     },
-    "Initialization with keepalives" : function(test) {
-        overrideDataWithParameters.apply(this, [ null, null, false ]);
+    "Initialization with keepalives on double conn" : function(test) {
+        overrideDataWithParameters.apply(this, [ null, null, true ]);
 
         var reqRespStream = this.reqRespStream;
         var notifyStream = this.notifyStream;
@@ -121,8 +121,8 @@ exports.tests = {
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "|S|keepalive_hint.millis|S|3000\r\n");
     },
-    "Initialization with keepalives on single conn" : function(test) {
-        overrideDataWithParameters.apply(this, [ null, null, true ]);
+    "Initialization with keepalives" : function(test) {
+        overrideDataWithParameters.apply(this, [ null, null, false ]);
 
         var stream = this.reqRespStream;
         test.expect(7);
@@ -145,7 +145,7 @@ exports.tests = {
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "|S|keepalive_hint.millis|S|3000\r\n");
     },
-    "Initialization 1.8.0 unsupported" : function(test) {
+    "Initialization 1.8.0 unsupported on double conn" : function(test) {
         var reqRespStream = this.reqRespStream;
         var notifyStream = this.notifyStream;
         test.expect(4);
@@ -159,7 +159,7 @@ exports.tests = {
         test.equal(notifyStream.popTestData(), null);
         test.done();
     },
-    "Initialization 1.8.3 to be upgraded" : function(test) {
+    "Initialization 1.8.3 to be upgraded on double conn" : function(test) {
         var reqRespStream = this.reqRespStream;
         var notifyStream = this.notifyStream;
         test.expect(4);
@@ -173,9 +173,9 @@ exports.tests = {
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|1.8.3\r\n");
     },
-    "Credential error with close" : function(test) {
+    "Credential error with close on double conn" : function(test) {
         var credentials = { user: "my_user", password: "wrong_password" };
-        overrideDataWithParameters.apply(this, [ null, credentials, false ]);
+        overrideDataWithParameters.apply(this, [ null, credentials, true ]);
 
         var reqRespStream = this.reqRespStream;
         var notifyStream = this.notifyStream;
@@ -194,7 +194,7 @@ exports.tests = {
         });
         this.reqRespStream.pushTestData("0|CLOSE|S|reason|S|wrong credentials\r\n");
     },
-    "Failed initialization" : function(test) {
+    "Failed initialization on double conn" : function(test) {
         var reqRespStream = this.reqRespStream;
         var notifyStream = this.notifyStream;
         test.expect(4);
@@ -208,7 +208,7 @@ exports.tests = {
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
     },
-    "Missing initialization" : function(test) {
+    "Missing initialization on double conn" : function(test) {
         var reqRespStream = this.reqRespStream;
         var notifyStream = this.notifyStream;
         test.expect(3);
@@ -228,7 +228,7 @@ exports.tests = {
         }, Error);
         this.dataProvider.emit("END");
     },
-    "Late initialization" : function(test) {
+    "Late initialization on double conn" : function(test) {
         var reqRespStream = this.reqRespStream;
         var notifyStream = this.notifyStream;
         test.expect(4);
@@ -244,12 +244,12 @@ exports.tests = {
         }, Error);
         test.done();
     },
-    "Subscribe with snapshot" : function(test) {
+    "Subscribe with snapshot on double conn" : function(test) {
         var isSnapshotAvailable = function(itemName) {
             test.equal(itemName, "An Item Name");
             return true;
         };
-        overrideDataWithParameters.apply(this, [ isSnapshotAvailable, null, false ]);
+        overrideDataWithParameters.apply(this, [ isSnapshotAvailable, null, true ]);
 
         var reqRespStream = this.reqRespStream;
         var notifyStream = this.notifyStream;
@@ -266,10 +266,10 @@ exports.tests = {
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         this.reqRespStream.pushTestData("FAKEID|SUB|S|An Item Name\r\n");
     },
-    "Subscribe without snapshot" : function(test) {
+    "Subscribe without snapshot on double conn" : function(test) {
         // also tests the default handling for 'init'
         var credentials = { user: "my_user", password: "my_password" };
-        overrideDataWithParameters.apply(this, [ null, credentials, false ]);
+        overrideDataWithParameters.apply(this, [ null, credentials, true ]);
 
         var reqRespStream = this.reqRespStream;
         var notifyStream = this.notifyStream;
@@ -442,7 +442,7 @@ exports.tests = {
         this.reqRespStream.pushTestData("ID6|USB|S|item1\n");
         this.reqRespStream.pushTestData("ID7|SUB|S|item1\n");
     },
-    "Failure" : function(test) {
+    "Failure on double conn" : function(test) {
         var notifyStream = this.notifyStream;
         test.expect(2);
         test.equal(notifyStream.popTestData().substring(13), "|RAC|S|enableClosePacket|S|true\n");
@@ -453,7 +453,7 @@ exports.tests = {
         test.equal(notifyStream.popTestData().substring(13), "|FAL|E|An exception\n");
         test.done();
     },
-    "End of snapshot" : function(test) {
+    "End of snapshot on double conn" : function(test) {
         var dataProvider = this.dataProvider;
         var reqRespStream = this.reqRespStream;
         var notifyStream = this.notifyStream;
@@ -475,7 +475,7 @@ exports.tests = {
         }, Error);
         test.done();
     },
-    "Update by hash" : function(test) {
+    "Update by hash on double conn" : function(test) {
         var fake = "";
         var dataProvider = this.dataProvider;
         var reqRespStream = this.reqRespStream;
@@ -515,7 +515,7 @@ exports.tests = {
         }, Error);
         test.done();
     },       
-    "Update by hash, then clear snapshot" : function(test) {
+    "Update by hash, then clear snapshot on double conn" : function(test) {
         var fake = "";
         var dataProvider = this.dataProvider;
         var reqRespStream = this.reqRespStream;
@@ -550,7 +550,7 @@ exports.tests = {
         reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         reqRespStream.pushTestData("FAKEID|SUB|S|AnItemName\r\n");
     },
-    "Update a field which supports JSON Patch and diff-match-patch" : function(test) {
+    "Update a field which supports JSON Patch and diff-match-patch on double conn" : function(test) {
         var fake = "";
         var dataProvider = this.dataProvider;
         var reqRespStream = this.reqRespStream;
@@ -608,7 +608,7 @@ exports.tests = {
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
         this.reqRespStream.pushTestData("FAKEID|SUB|S|An Item Name\r\n");
     },
-    "some activity with close" : function(test) {
+    "some activity with close on double conn" : function(test) {
         // also tests the default handling for 'init'
         var reqRespStream = this.reqRespStream;
         var notifyStream = this.notifyStream;
@@ -635,8 +635,8 @@ exports.tests = {
         this.reqRespStream.pushTestData("FAKEID|SUB|S|An Item Name\r\n");
         this.reqRespStream.pushTestData("0|CLOSE|S|reason|S|keepalive timeout\r\n");
     },
-    "some activity on single conn" : function(test) {
-    overrideDataWithParameters.apply(this, [ null, null, true ]);
+    "some activity" : function(test) {
+        overrideDataWithParameters.apply(this, [ null, null, false ]);
 
         var stream = this.reqRespStream;
         test.expect(4);
