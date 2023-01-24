@@ -35,8 +35,7 @@ function overrideDataWithParameters(isSnapshotAvailable, credentials, doubleConn
 exports.tests = {
     setUp: function (callback) {
         this.reqRespStream = new TestStream();
-        this.notifyStream = null;
-        this.dataProvider = new DataProvider(this.reqRespStream, this.notifyStream);
+        this.dataProvider = new DataProvider(this.reqRespStream);
         callback();
     },
     "Initialization" : function(test) {
