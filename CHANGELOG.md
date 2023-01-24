@@ -1,4 +1,4 @@
-## [1.6.1] (xx Xxx xxxx)
+## [1.7.0] (xx Xxx xxxx)
 
 ### Improvements
 
