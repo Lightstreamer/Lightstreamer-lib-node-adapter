@@ -19,17 +19,12 @@ var DataProvider = require('../lib/lightstreamer-adapter').DataProvider,
 
 var currProtocolVersion = "1.9.0";
 
-function overrideDataWithParameters(isSnapshotAvailable, credentials, doubleConn) {
+function overrideDataWithParameters(isSnapshotAvailable, credentials) {
     this.reqRespStream = new TestStream();
         // we cannot keep an old stream, because it already has a 'data' handler
         // for this.dataProvider, and, after attaching it to a new DataProvider below,
         // the handler would have still been invoked
-    if (doubleConn) {
-        this.notifyStream = new TestStream();
-    } else {
-        this.notifyStream = null;
-    }
-    this.dataProvider = new DataProvider(this.reqRespStream, this.notifyStream, isSnapshotAvailable, credentials);
+    this.dataProvider = new DataProvider(this.reqRespStream, isSnapshotAvailable, credentials);
 }
 
 exports.tests = {
@@ -53,28 +48,9 @@ exports.tests = {
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|P1|S|V1|S|ARI.version|S|" + currProtocolVersion + "|S|P2|S|V2|S|keepalive_hint.millis|S|8000\r\n");
     },
-    "Initialization with credentials on double conn" : function(test) {
-        var credentials = { user: "my_user", password: "my_password" };
-        overrideDataWithParameters.apply(this, [ null, credentials, true ]);
-
-        var reqRespStream = this.reqRespStream;
-        var notifyStream = this.notifyStream;
-        test.expect(6);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|user|S|my_user|S|password|S|my_password|S|enableClosePacket|S|true\n");
-        test.equal(notifyStream.popTestData().substring(13), "|RAC|S|user|S|my_user|S|password|S|my_password|S|enableClosePacket|S|true\n");
-        this.dataProvider.on('init', function(message, response) {
-            test.equal(message.parameters["P1"], "V1");
-            test.equal(message.parameters["P2"], "V2");
-            test.equal(message.initResponseParams, null);
-            response.success();
-            test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\n");
-            test.done();
-        });
-        this.reqRespStream.pushTestData("ID0|DPI|S|P1|S|V1|S|ARI.version|S|" + currProtocolVersion + "|S|P2|S|V2\r\n");
-    },
     "Initialization with credentials" : function(test) {
         var credentials = { user: "my_user", password: "my_password" };
-        overrideDataWithParameters.apply(this, [ null, credentials, false ]);
+        overrideDataWithParameters.apply(this, [ null, credentials ]);
 
         var stream = this.reqRespStream;
         test.expect(5);
@@ -88,35 +64,6 @@ exports.tests = {
             test.done();
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|P1|S|V1|S|ARI.version|S|" + currProtocolVersion + "|S|P2|S|V2\r\n");
-    },
-    "Initialization with keepalives on double conn" : function(test) {
-        overrideDataWithParameters.apply(this, [ null, null, true ]);
-
-        var reqRespStream = this.reqRespStream;
-        var notifyStream = this.notifyStream;
-        test.expect(11);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
-        test.equal(notifyStream.popTestData().substring(13), "|RAC|S|enableClosePacket|S|true\n");
-        this.dataProvider.on('init', function(message, response) {
-            test.equal(message.parameters["keepalive_hint.millis"], null);
-            test.equal(message.keepaliveHint, null);
-            response.success();
-            test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\n");
-            setTimeout(function() {
-                test.equal(reqRespStream.popTestData(), "KEEPALIVE\n");
-                test.equal(notifyStream.popTestData(), "KEEPALIVE\n");
-            }, 500);
-            setTimeout(function() {
-                test.equal(reqRespStream.popTestData(), null);
-                test.equal(notifyStream.popTestData(), null);
-            }, 2500);
-            setTimeout(function() {
-                test.equal(reqRespStream.popTestData(), "KEEPALIVE\n");
-                test.equal(notifyStream.popTestData(), "KEEPALIVE\n");
-                test.done();
-            }, 3500); // the hint of 3000 is used
-        });
-        this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "|S|keepalive_hint.millis|S|3000\r\n");
     },
     "Initialization with keepalives" : function(test) {
         var stream = this.reqRespStream;
@@ -140,62 +87,31 @@ exports.tests = {
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "|S|keepalive_hint.millis|S|3000\r\n");
     },
-    "Initialization 1.8.0 unsupported on double conn" : function(test) {
-        overrideDataWithParameters.apply(this, [ null, null, true ]);
-
+    "Initialization 1.8.0 unsupported" : function(test) {
         var reqRespStream = this.reqRespStream;
-        var notifyStream = this.notifyStream;
-        test.expect(4);
+        test.expect(2);
         test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
-        test.equal(notifyStream.popTestData().substring(13), "|RAC|S|enableClosePacket|S|true\n");
         this.dataProvider.on('init', function(message, response) {
             test.fail();
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|P1|S|V1|S|P2|S|V2\r\n");
         test.equal(reqRespStream.popTestData(), "ID0|DPI|ED|Unsupported+protocol+version\n");
-        test.equal(notifyStream.popTestData(), null);
         test.done();
     },
-    "Initialization 1.8.3 to be upgraded on double conn" : function(test) {
-        overrideDataWithParameters.apply(this, [ null, null, true ]);
-
+    "Initialization 1.8.3 to be upgraded" : function(test) {
         var reqRespStream = this.reqRespStream;
-        var notifyStream = this.notifyStream;
-        test.expect(4);
+        test.expect(2);
         test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
-        test.equal(notifyStream.popTestData().substring(13), "|RAC|S|enableClosePacket|S|true\n");
         this.dataProvider.on('init', function(message, response) {
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\n");
-            test.equal(notifyStream.popTestData(), null);
             test.done();
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|1.8.3\r\n");
     },
-    "Credential error with close on double conn" : function(test) {
-        var credentials = { user: "my_user", password: "wrong_password" };
-        overrideDataWithParameters.apply(this, [ null, credentials, true ]);
-
-        var reqRespStream = this.reqRespStream;
-        var notifyStream = this.notifyStream;
-        test.expect(6);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|user|S|my_user|S|password|S|wrong_password|S|enableClosePacket|S|true\n");
-        test.equal(notifyStream.popTestData().substring(13), "|RAC|S|user|S|my_user|S|password|S|wrong_password|S|enableClosePacket|S|true\n");
-        this.dataProvider.on('closeMessage', function(reason) {
-            // undocumented event
-            test.equal(reason, "wrong credentials");
-            test.equal(reqRespStream.popTestData(), null);
-            test.equal(notifyStream.popTestData(), null);
-        });
-        reqRespStream.on('error', function(exc) {
-            test.equal(exc.message.substring(0, 34), "Close requested by the counterpart");
-            test.done();
-        });
-        this.reqRespStream.pushTestData("0|CLOSE|S|reason|S|wrong credentials\r\n");
-    },
     "Credential error with close" : function(test) {
         var credentials = { user: "my_user", password: "wrong_password" };
-        overrideDataWithParameters.apply(this, [ null, credentials, false ]);
+        overrideDataWithParameters.apply(this, [ null, credentials ]);
 
         var reqRespStream = this.reqRespStream;
         test.expect(4);
@@ -259,7 +175,7 @@ exports.tests = {
             test.equal(itemName, "An Item Name");
             return true;
         };
-        overrideDataWithParameters.apply(this, [ isSnapshotAvailable, null, false ]);
+        overrideDataWithParameters.apply(this, [ isSnapshotAvailable, null ]);
 
         var reqRespStream = this.reqRespStream;
         test.expect(6);
@@ -277,7 +193,7 @@ exports.tests = {
     },
     "Subscribe without snapshot" : function(test) {
         var credentials = { user: "my_user", password: "my_password" };
-        overrideDataWithParameters.apply(this, [ null, credentials, false ]);
+        overrideDataWithParameters.apply(this, [ null, credentials ]);
 
         var reqRespStream = this.reqRespStream;
         test.expect(4);
@@ -516,41 +432,6 @@ exports.tests = {
                 });
             test.equal(reqRespStream.popTestData().substring(13), "|EOS|S|AnItemName|S|FAKEID\n");
             test.equal(reqRespStream.popTestData().substring(13), "|UD3|S|AnItemName|S|FAKEID|B|1|" +
-                "S|field1|S|A string|S|field2|S|$|S|field3|S|#|" +
-                "S|field4|S|12.4|S|field5|S|true|S|field6|S|0|" +
-                "S|field7|S|NaN|S|field8|S|undefined|S|field9|S|false\n");
-            test.done();
-        });
-
-        reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
-        reqRespStream.pushTestData("FAKEID|SUB|S|AnItemName\r\n");
-    },
-    "Update by hash on double conn" : function(test) {
-        overrideDataWithParameters.apply(this, [ null, null, true ]);
-
-        var fake = "";
-        var dataProvider = this.dataProvider;
-        var reqRespStream = this.reqRespStream;
-        var notifyStream = this.notifyStream;
-        test.expect(3);
-        test.equal(notifyStream.popTestData().substring(13), "|RAC|S|enableClosePacket|S|true\n");
-
-        dataProvider.on('subscribe', function(itemName, response) {
-            response.success();
-            dataProvider.update("AnItemName", true,
-                {
-                    "field1" : "A string",
-                    "field2" : "",
-                    "field3" : null,
-                    "field4" : 12.4,
-                    "field5" : true,
-                    "field6" : 0,
-                    "field7" : NaN,
-                    "field8" : fake.undef, //fake does not have an undef property
-                    "field9" : false
-                });
-            test.equal(notifyStream.popTestData().substring(13), "|EOS|S|AnItemName|S|FAKEID\n");
-            test.equal(notifyStream.popTestData().substring(13), "|UD3|S|AnItemName|S|FAKEID|B|1|" +
                 "S|field1|S|A string|S|field2|S|$|S|field3|S|#|" +
                 "S|field4|S|12.4|S|field5|S|true|S|field6|S|0|" +
                 "S|field7|S|NaN|S|field8|S|undefined|S|field9|S|false\n");

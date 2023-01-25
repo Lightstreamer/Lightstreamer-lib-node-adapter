@@ -25,7 +25,7 @@ var Stream = require('stream').Stream,
  * Fake synchronous stream
  * 
  */
-function TestStream(ignoreWrite) {
+function TestStream() {
 
   var that, data = new Array();
 
@@ -38,9 +38,7 @@ function TestStream(ignoreWrite) {
   }
 
   function write(chunk, encoding) {
-    if (!ignoreWrite) {
-      data.push(chunk);
-    }
+    data.push(chunk);
   }
 
   function destroy(error) {

@@ -21,8 +21,7 @@ var DataProvider = require('lightstreamer-adapter').DataProvider,
 
 // Remote proxy host and ports
 var	HOST = 'localhost',
-	REQ_RESP_PORT = 10001,
-	WRITE_PORT = 10002;
+	REQ_RESP_PORT = 10001;
 
 var adapterConf = {
 	bytesPerField: 10,
@@ -43,9 +42,6 @@ var serverConf = {
 
 // Request/response socket channel
 var	reqRespStream;
-
-// Push data socket channel
-var	notifyStream;
 
 // The data provider object
 var	dataProvider;
@@ -74,14 +70,12 @@ var stubStream = true;
 if (!stubStream) {
 	// Create socket connections
 	reqRespStream = net.createConnection(REQ_RESP_PORT, HOST);
-	notifyStream = net.createConnection(WRITE_PORT, HOST);
 } else {
 	reqRespStream =  new TestStream();
-	notifyStream = 	 new TestStream(true	);
 }
 
 // Create the data provider object from the lightstreamer module
-dataProvider = new DataProvider(reqRespStream, notifyStream, function(itemName) {
+dataProvider = new DataProvider(reqRespStream, function(itemName) {
 	return itemName === "CONFIGURATION";	
 });
 

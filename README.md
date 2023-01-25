@@ -30,13 +30,10 @@ for [basic](https://lightstreamer.com/docs/ls-server/latest/remote_adapter_conf_
                     <adapter_class>ROBUST_PROXY_FOR_REMOTE_ADAPTER</adapter_class>
                     <classloader>log-enabled</classloader>
                     <param name="request_reply_port">8001</param>
-                    <!-- <param name="notify_port">8002</param> -->
                     <param name="timeout">36000000</param>
             </data_provider>
     </adapters_conf>
     ```
-
-    NOTE: If you use Lightstreamer Server version earlier than 7.4, you will need to also configure a "notify_port" in the <data_provider> block (see the line commented out). This will require two separate connections for the Remote Data Adapter communication.
 
 4. Take note of the ports configured in the adapters.xml file as those are needed to write the remote part of the adapters.
 
@@ -54,7 +51,7 @@ Create a .js file, let's call it "adapters.js"
    ```js
    var MetadataProvider = require('lightstreamer-adapter').MetadataProvider,
    var DataProvider = require('lightstreamer-adapter').DataProvider,
-   dataProvider = new DataProvider(dataStream, null),
+   dataProvider = new DataProvider(dataStream),
    metadataProvider = new MetadataProvider(metadataStream);
    ```
 
@@ -83,18 +80,6 @@ hence this calls must be bound to the "start/stop sending updates" comments int 
        'field2': valField2
    });
    ```
-
-NOTE: if you had to configure a "notify_port" in adapters.xml, then here you have to open two connections and supply two streams for the Remote Data Adapter. The code in steps 1 and 2 becomes:
-```js
-var net = require('net'),
-dataReqRespStream = net.createConnection(8001, LIGHTSTREAMER_SERVER_HOST),
-dataNotifyStream = net.createConnection(8002, LIGHTSTREAMER_SERVER_HOST),
-metadataStream = net.createConnection(8003, LIGHTSTREAMER_SERVER_HOST);
-var MetadataProvider = require('lightstreamer-adapter').MetadataProvider,
-var DataProvider = require('lightstreamer-adapter').DataProvider,
-dataProvider = new DataProvider(dataReqRespStream, dataNotifyStream),
-metadataProvider = new MetadataProvider(metadataStream);
-```
 
 ### Run ###
 From the command line call
@@ -164,7 +149,8 @@ The API documentation will be available in the docs folder.
 * [Lightstreamer Chat Demo adapter for Node](https://github.com/Lightstreamer/Lightstreamer-example-Chat-adapter-node "Lightstreamer Chat Demo adapter for Node")
 
 ## Lightstreamer Compatibility Notes ##
-Compatible with Adapter Remoting Infrastructure since Server version 7.3.
+Compatible with Adapter Remoting Infrastructure since Server version 7.4.
+- For a version of this library compatible with Adapter Remoting Infrastructure for Server version 7.3, please refer to [this tag](https://github.com/Lightstreamer/Lightstreamer-lib-node-adapter/tree/v1.6.0).
 - For a version of this library compatible with Adapter Remoting Infrastructure for Server version 7.0 (corresponding to Adapter Remoting Infrastructure 1.8), please refer to [this tag](https://github.com/Lightstreamer/Lightstreamer-lib-node-adapter/tree/version-1.5.3).
 - For a version of this library compatible with Adapter Remoting Infrastructure for Server version 6.0 (corresponding to Adapter Remoting Infrastructure 1.7), please refer to [this tag](https://github.com/Lightstreamer/Lightstreamer-lib-node-adapter/tree/version-1.3.4).
 - For a version of this library compatible with Adapter Remoting Infrastructure for Server version 5.1 (corresponding to Adapter Remoting Infrastructure 1.4.3), please refer to [this tag](https://github.com/Lightstreamer/Lightstreamer-lib-node-adapter/tree/version-1.0.2).

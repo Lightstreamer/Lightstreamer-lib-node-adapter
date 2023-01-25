@@ -1,18 +1,21 @@
 ## [1.7.0] (xx Xxx xxxx)
 
-### Improvements
+### New Features ###
 
 Introduced the support for a single stream instead of two for the communication of the Remote Data Adapters.
 In fact, since Server version 7.4, the Proxy Data Adapter can (and should) be configured to use a single connection for the communication.
-Hence, the notifyStream argument of the DataAdapter constructor is now optional and can be set as null;
-it should be used only for backward compatibility when communicating with a Server version earlier than 7.4.
+Hence, the second argument of the DataAdapter constructor (notifyStream) has been removed, as well as the getNotifyStream method of DataAdapter.
 
 Changed most of the supplied tests in dataprovider.test.js to operate in the new single-stream case.
 Tests for the double-stream case have been left only where most significant.
 
 ### Lightstreamer Compatibility Notes ###
 
-Compatible with Adapter Remoting Infrastructure since Server version 7.3
+Compatible with Adapter Remoting Infrastructure since Server version 7.4
+
+If an existing Remote Server based on this SDK launches a Remote Data Adapter, it cannot be upgraded to this new SDK version seamlessly.
+The upgrade will require a change in the code to open a single connection to the Proxy Data Adapter and use the new reduced DataAdapter constructor.
+This, in turn, will require the configuration of a single port on the Proxy Data Adapter, which is only possible with Lightstreamer Server 7.4 or later.
 
 
 
