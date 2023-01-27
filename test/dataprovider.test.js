@@ -33,6 +33,14 @@ exports.tests = {
         this.dataProvider = new DataProvider(this.reqRespStream);
         callback();
     },
+    "Missing alignment to 1.7.0" : function(test) {
+        var oldNotifyStream = new TestStream();
+        var myThis = this;
+        test.throws(function() {
+            overrideDataWithParameters.apply(myThis, [ oldNotifyStream ]);
+        }, Error);
+        test.done();
+    },
     "Initialization" : function(test) {
         var reqRespStream = this.reqRespStream;
         test.expect(6);
