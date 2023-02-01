@@ -17,7 +17,7 @@ Copyright (c) Lightstreamer Srl
 var DataProvider = require('../lib/lightstreamer-adapter').DataProvider,
     TestStream = require('./utils/teststream').TestStream;
 
-var currProtocolVersion = "1.9.0";
+var currProtocolVersion = "1.9.1";
 
 function overrideDataWithParameters(isSnapshotAvailable, credentials) {
     this.reqRespStream = new TestStream();
@@ -95,27 +95,27 @@ exports.tests = {
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "|S|keepalive_hint.millis|S|3000\r\n");
     },
-    "Initialization 1.8.0 unsupported" : function(test) {
+   "Initialization 1.8.3 unsuppoorted" : function(test) {
         var reqRespStream = this.reqRespStream;
         test.expect(2);
         test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         this.dataProvider.on('init', function(message, response) {
             test.fail();
         });
-        this.reqRespStream.pushTestData("ID0|DPI|S|P1|S|V1|S|P2|S|V2\r\n");
+        this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|1.8.3\r\n");
         test.equal(reqRespStream.popTestData(), "ID0|DPI|ED|Unsupported+protocol+version\n");
         test.done();
     },
-    "Initialization 1.8.3 to be upgraded" : function(test) {
+    "Initialization 1.9.0 refused" : function(test) {
         var reqRespStream = this.reqRespStream;
         test.expect(2);
         test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         this.dataProvider.on('init', function(message, response) {
-            response.success();
-            test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\n");
-            test.done();
+            test.fail();
         });
-        this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|1.8.3\r\n");
+        this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|1.9.0\r\n");
+        test.equal(reqRespStream.popTestData(), "ID0|DPI|ED|Unsupported+protocol+version\n");
+        test.done();
     },
     "Credential error with close" : function(test) {
         var credentials = { user: "my_user", password: "wrong_password" };

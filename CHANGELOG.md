@@ -16,6 +16,7 @@ Compatible with Adapter Remoting Infrastructure since Server version 7.4
 If an existing Remote Server based on this SDK launches a Remote Data Adapter, it cannot be upgraded to this new SDK version seamlessly.
 The upgrade will require a change in the code to open a single connection to the Proxy Data Adapter and use the new reduced DataAdapter constructor.
 This, in turn, will require the configuration of a single port on the Proxy Data Adapter, which is only possible with Lightstreamer Server 7.4 or later.
+However, if a Remote Server only launches Remote Metadata Adapters, the compatibility with Server version 7.3 is kept.
 
 
 

@@ -17,7 +17,7 @@ Copyright (c) Lightstreamer Srl
 var metadataProto = require('../lib/metadataprotocol').metadata,
 	MetadataReader = require('../lib/metadataprotocol').MetadataReader;
 
-var currProtocolVersion = "1.9.0";
+var currProtocolVersion = "1.9.1";
 
 exports.metadataReads = {
 	"Read a valid init" : function(test) {
@@ -32,7 +32,7 @@ exports.metadataReads = {
 		test.equal(msg.initResponseParams["ARI.version"], currProtocolVersion);
 		test.done();
 	},
-	"Read a valid init 1.8.2 to upgrade" : function(test) {
+	"Read a valid init 1.8.2 to refuse" : function(test) {
 		var reader = new MetadataReader();
 		reader.parse("FAKEID|MPI|S|P1|S|V1|S|ARI.version|S|1.8.2|S|P2|S|V2|S|keepalive_hint.millis|S|8000\r\n", true, true);
 		var msg = reader.pop();
@@ -41,10 +41,10 @@ exports.metadataReads = {
 		test.equal(msg.parameters["P1"], "V1");
 		test.equal(msg.parameters["P2"], "V2");
 		test.equal(msg.parameters["keepalive_hint.millis"], null);
-		test.equal(msg.initResponseParams["ARI.version"], currProtocolVersion);
+		test.equal(msg.initResponseParams, null);
 		test.done();
 	},
-	"Read a valid init 1.8.0 unsupported" : function(test) {
+	"Read a valid init 1.8.0 to refuse" : function(test) {
 		var reader = new MetadataReader();
 		reader.parse("FAKEID|MPI|S|P1|S|V1|S|P2|S|V2\r\n", true, true);
 		var msg = reader.pop();

@@ -17,7 +17,7 @@ Copyright (c) Lightstreamer Srl
 var MetadataProvider = require('../lib/lightstreamer-adapter').MetadataProvider,
     TestStream = require('./utils/teststream').TestStream;
 
-var currProtocolVersion = "1.9.0";
+var currProtocolVersion = "1.9.1";
 
 function overrideMetadataWithParameters(params, credentials) {
     this.stream = new TestStream();
@@ -89,18 +89,18 @@ exports.tests = {
         });
         s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "|S|keepalive_hint.millis|S|3000\r\n");
     },
-    "Init 1.8.0 unsupported" : function(test) {
+    "Init 1.8.3 unsupported" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
         test.expect(2);
         test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
         mp.on('init', function(msg, resp) {
             test.fail();
         });
-        s.pushTestData("ID0|MPI|S|P1|S|V1|S|P2|S|V2\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.3\r\n");
         test.equal(s.popTestData(), "ID0|MPI|EM|Unsupported+protocol+version\n");
         test.done();
     },
-    "Init 1.8.3 to be upgraded" : function(test) {
+    "Init 1.9.0 accepted" : function(test) {
         var s = this.stream, mp = this.metadataProvider;
         test.expect(2);
         test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
@@ -109,7 +109,7 @@ exports.tests = {
             test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
             test.done();
         });
-        s.pushTestData("ID0|MPI|S|ARI.version|S|1.8.3\r\n");
+        s.pushTestData("ID0|MPI|S|ARI.version|S|1.9.0\r\n");
     },
     "credential error with close" : function(test) {
         var credentials = { user: "my_user", password: "wrong_password" };
