@@ -125,14 +125,6 @@ exports.dataWrites = {
 		test.equal(msg, "1|RAC|S|user|S|my_user|S|password|S|my_password|S|enableClosePacket|S|true\n");
 		test.done();
 	},
-	"Credentials notif write" : function(test) {
-		var params = {};
-		params["user"] = "my_user";
-		params["password"] = "my_password";
-		var msg = dataProto.writeRemoteCredentialsOnNotif(params);
-		test.equal(msg.substring(13), "|RAC|S|user|S|my_user|S|password|S|my_password\n");
-		test.done();
-	},
 	"Init write" : function(test) {
 		var params = {};
 		params["ARI.version"] = currProtocolVersion;
