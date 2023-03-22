@@ -114,7 +114,7 @@ exports.tests = {
             test.fail();
         });
         this.reqRespStream.pushTestData("ID0|DPI|S|ARI.version|S|1.9.0\r\n");
-        test.equal(reqRespStream.popTestData(), "ID0|DPI|ED|Unsupported+proxy+adapter+version\n");
+        test.equal(reqRespStream.popTestData(), "ID0|DPI|ED|Unsupported+Proxy+Adapter+version\n");
         test.done();
     },
     "Credential error with close" : function(test) {
