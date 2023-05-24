@@ -121,8 +121,9 @@ exports.dataWrites = {
 		params["user"] = "my_user";
 		params["password"] = "my_password";
 		params["enableClosePacket"] = "true";
+		params["SDK"] = "Node.js Adapter SDK";
 		var msg = dataProto.writeRemoteCredentials(params);
-		test.equal(msg, "1|RAC|S|user|S|my_user|S|password|S|my_password|S|enableClosePacket|S|true\n");
+		test.equal(msg, "1|RAC|S|user|S|my_user|S|password|S|my_password|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
 		test.done();
 	},
 	"Init write" : function(test) {

@@ -44,7 +44,7 @@ exports.tests = {
     "Initialization" : function(test) {
         var reqRespStream = this.reqRespStream;
         test.expect(6);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
         this.dataProvider.on('init', function(message, response) {
             test.equal(message.parameters["P1"], "V1");
             test.equal(message.parameters["P2"], "V2");
@@ -62,7 +62,7 @@ exports.tests = {
 
         var stream = this.reqRespStream;
         test.expect(5);
-        test.equal(stream.popTestData(), "1|RAC|S|user|S|my_user|S|password|S|my_password|S|enableClosePacket|S|true\n");
+        test.equal(stream.popTestData(), "1|RAC|S|user|S|my_user|S|password|S|my_password|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
         this.dataProvider.on('init', function(message, response) {
             test.equal(message.parameters["P1"], "V1");
             test.equal(message.parameters["P2"], "V2");
@@ -76,7 +76,7 @@ exports.tests = {
     "Initialization with keepalives" : function(test) {
         var stream = this.reqRespStream;
         test.expect(7);
-        test.equal(stream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
+        test.equal(stream.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
         this.dataProvider.on('init', function(message, response) {
             test.equal(message.parameters["keepalive_hint.millis"], null);
             test.equal(message.keepaliveHint, null);
@@ -98,7 +98,7 @@ exports.tests = {
    "Initialization 1.8.3 unsuppoorted" : function(test) {
         var reqRespStream = this.reqRespStream;
         test.expect(2);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
         this.dataProvider.on('init', function(message, response) {
             test.fail();
         });
@@ -109,7 +109,7 @@ exports.tests = {
     "Initialization 1.9.0 refused" : function(test) {
         var reqRespStream = this.reqRespStream;
         test.expect(2);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
         this.dataProvider.on('init', function(message, response) {
             test.fail();
         });
@@ -123,7 +123,7 @@ exports.tests = {
 
         var reqRespStream = this.reqRespStream;
         test.expect(4);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|user|S|my_user|S|password|S|wrong_password|S|enableClosePacket|S|true\n");
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|user|S|my_user|S|password|S|wrong_password|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
         this.dataProvider.on('closeMessage', function(reason) {
             // undocumented event
             test.equal(reason, "wrong credentials");
@@ -138,7 +138,7 @@ exports.tests = {
     "Failed initialization" : function(test) {
         var reqRespStream = this.reqRespStream;
         test.expect(2);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
         this.dataProvider.on('init', function(message, response) {
             response.error("An exception", "data");
             test.equal(reqRespStream.popTestData(), "ID0|DPI|ED|An+exception\n");
@@ -149,7 +149,7 @@ exports.tests = {
     "Missing initialization" : function(test) {
         var reqRespStream = this.reqRespStream;
         test.expect(2);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
         this.dataProvider.on('init', function(message, response) {
             // not expected
             response.success();
@@ -167,7 +167,7 @@ exports.tests = {
     "Late initialization" : function(test) {
         var reqRespStream = this.reqRespStream;
         test.expect(3);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
         this.dataProvider.on('init', function(message, response) {
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\n");
@@ -187,7 +187,7 @@ exports.tests = {
 
         var reqRespStream = this.reqRespStream;
         test.expect(6);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
         this.dataProvider.on('subscribe', function(itemName, response) {
             test.equal(itemName, "An Item Name");
             response.success();
@@ -205,7 +205,7 @@ exports.tests = {
 
         var reqRespStream = this.reqRespStream;
         test.expect(4);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|user|S|my_user|S|password|S|my_password|S|enableClosePacket|S|true\n");
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|user|S|my_user|S|password|S|my_password|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
         this.dataProvider.on('subscribe', function(itemName, response) {
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\n");
@@ -219,7 +219,7 @@ exports.tests = {
     "Failed subscribe" : function(test) {
         var reqRespStream = this.reqRespStream;
         test.expect(3);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
         this.dataProvider.on('subscribe', function(itemName, response) {
             response.error("An exception", "subscription");
             test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\n");
@@ -232,7 +232,7 @@ exports.tests = {
     "Unsubscribe" : function(test) {
         var reqRespStream = this.reqRespStream;
         test.expect(4);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
         this.dataProvider.on('unsubscribe', function(itemName, response) {
             test.equal(itemName, "An Item Name");
             response.success();
@@ -249,7 +249,7 @@ exports.tests = {
         var subNum = 0, unsubNum = 0, subNumQ = 0, unsubNumQ = 0;
         var sub1DelayedResponse;
         test.expect(20);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
         dataProvider.on('init', function(message, response) {
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\n");
@@ -316,7 +316,7 @@ exports.tests = {
         var subNum = 0, unsubNum = 0, subNumQ = 0, unsubNumQ = 0;
         var subDelayedResp;
         test.expect(21);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
         dataProvider.on('init', function(message, response) {
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\n");
@@ -381,7 +381,7 @@ exports.tests = {
         var dataProvider = this.dataProvider;
         var reqRespStream = this.reqRespStream;
         test.expect(3);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
         dataProvider.on('init', function(message, response) {
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\n");
@@ -396,7 +396,7 @@ exports.tests = {
         var dataProvider = this.dataProvider;
         var reqRespStream = this.reqRespStream;
         test.expect(4);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
         dataProvider.on('subscribe', function(itemName, response) {
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\n");
@@ -420,7 +420,7 @@ exports.tests = {
         var dataProvider = this.dataProvider;
         var reqRespStream = this.reqRespStream;
         test.expect(5);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
 
         dataProvider.on('subscribe', function(itemName, response) {
             response.success();
@@ -461,7 +461,7 @@ exports.tests = {
         var dataProvider = this.dataProvider;
         var reqRespStream = this.reqRespStream;
         test.expect(6);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
 
         dataProvider.on('subscribe', function(itemName, response) {
             response.success();
@@ -497,7 +497,7 @@ exports.tests = {
         var dataProvider = this.dataProvider;
         var reqRespStream = this.reqRespStream;
         test.expect(6);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
 
         dataProvider.on('subscribe', function(itemName, response) {
             response.success();
@@ -554,7 +554,7 @@ exports.tests = {
     "some activity with close" : function(test) {
         var reqRespStream = this.reqRespStream;
         test.expect(7);
-        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true\n");
+        test.equal(reqRespStream.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
         this.dataProvider.on('subscribe', function(itemName, response) {
             response.success();
             test.equal(reqRespStream.popTestData(), "ID0|DPI|S|ARI.version|S|" + currProtocolVersion + "\n");
