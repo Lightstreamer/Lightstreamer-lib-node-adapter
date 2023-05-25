@@ -10,6 +10,11 @@ Moreover, for clarity, the first argument of the DataProvider constructor (reqRe
 Changed most of the supplied tests in dataprovider.test.js to operate in the new single-stream case.
 Tests for the double-stream case have been left only where most significant.
 
+### Improvements ###
+
+Clarified the meaning of a null value for a "clientMessage" property supplied in the "exceptionData" parameter on a "error" invocation when "exceptionType" is "credits": an empty string should be sent to the client.
+Note that, before 7.4, the Server used to send the "null" string as a placeholder.
+
 ### Bug Fixes ###
 
 Fixed a bug in the interface, as getReqRespStream and getNotifyStream of DataProvider, and getStream of MetadataProvider were erroneously named reqRespStream, notifyStream, and stream, respectively.
@@ -24,6 +29,8 @@ If an existing Remote Server based on this SDK launches a Remote Data Adapter, i
 The upgrade will require a change in the code to open a single connection to the Proxy Data Adapter and use the new reduced DataAdapter constructor.
 This, in turn, will require the configuration of a single port on the Proxy Data Adapter, which is only possible with Lightstreamer Server 7.4 or later.
 However, if a Remote Server only launches Remote Metadata Adapters, the compatibility with Server version 7.3 is kept.
+
+If a Remote Metadata Adapter supplies a null value for "clientMessage" and relies on the Server sending the "null" string to the clients, now it should supply "null" explicitly.
 
 
 
