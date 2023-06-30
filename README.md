@@ -8,7 +8,7 @@ The adapters will run in a separate process, communicating with the Server throu
 ## Use ##
 Install the package using npm
 ```
-npm install lightstreamer-adapter
+npm install lightstreamer-adapter@1.6.0
 ```
 
 ### Configure Lightstreamer ###
