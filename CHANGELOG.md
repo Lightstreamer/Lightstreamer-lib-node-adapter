@@ -1,4 +1,4 @@
-## [1.7.0] (xx Xxx xxxx)
+## [1.7.0] (15 Jul 2023)
 
 ### New Features ###
 
