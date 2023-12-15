@@ -24,13 +24,15 @@ for [basic](https://lightstreamer.com/docs/ls-server/latest/remote_adapter_conf_
                     <adapter_class>ROBUST_PROXY_FOR_REMOTE_ADAPTER</adapter_class>
                     <classloader>log-enabled</classloader>
                     <param name="request_reply_port">8003</param>
-                    <param name="timeout">36000000</param>
+                    <param name="timeout">10000</param>
+                    <param name="connection_recovery_timeout_millis">10000</param>
             </metadata_provider>
             <data_provider>
                     <adapter_class>ROBUST_PROXY_FOR_REMOTE_ADAPTER</adapter_class>
                     <classloader>log-enabled</classloader>
                     <param name="request_reply_port">8001</param>
-                    <param name="timeout">36000000</param>
+                    <param name="timeout">10000</param>
+                    <param name="connection_recovery_timeout_millis">10000</param>
             </data_provider>
     </adapters_conf>
     ```
