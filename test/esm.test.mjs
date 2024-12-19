@@ -1,4 +1,4 @@
-import { DataProvider } from '../index.js';
+import { DataProvider, MetadataProvider } from '../index.js';
 
 import { TestStream } from './utils/teststream.js';
 import { expect } from './utils/expect.mjs';
@@ -133,6 +133,111 @@ function testUpdateByHash() {
   return test.finished;
 }
 
+function testMDInitSuccess() {
+  const s = new TestStream();
+  const mp = new MetadataProvider(s);
+  const test = expect();
+
+  test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
+  mp.on('init', function(msg, resp) {
+      test.equal(msg.parameters["P1"], "V1");
+      test.equal(msg.parameters["P2"], "V2");
+      test.equal(msg.parameters["keepalive_hint.millis"], null);
+      test.equal(msg.initResponseParams, null);
+      resp.success();
+      test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
+      test.done();
+  });
+  s.pushTestData("ID0|MPI|S|P1|S|V1|S|ARI.version|S|" + currProtocolVersion + "|S|P2|S|V2|S|keepalive_hint.millis|S|8000\r\n");
+  return test.finished
+}
+
+function testMDInitFailure() {
+  const s = new TestStream();
+  const mp = new MetadataProvider(s);
+  const test = expect();
+
+  test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
+  mp.on('init', function(msg, resp) {
+      resp.error("An error");
+      test.equal(s.popTestData(), "ID0|MPI|E|An+error\n");
+      test.done();
+  });
+  s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
+  return test.finished;
+}
+
+function testMDNotifyNewSessionSuccess() {
+  const s = new TestStream();
+  const mp = new MetadataProvider(s);
+  const test = expect();
+
+  test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
+  mp.on("notifyNewSession", function(msg, resp) {
+      test.equal(msg.verb, "notifyNewSession");
+      resp.success();
+      test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
+      test.equal(s.popTestData(), "FAKEID|NNS|V\n");
+      test.done();
+  });
+  s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
+  s.pushTestData("FAKEID|NNS|S|user|S|FAKESESSID|S|prop1|S|val1|S|prop2|S|val2\n");
+  return test.finished;
+}
+
+function testMDNotifyNewSessionFailure() {
+  const s = new TestStream();
+  const mp = new MetadataProvider(s);
+  const test = expect();
+
+  test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
+  mp.on("notifyNewSession", function(msg, resp) {
+      resp.error("An error");
+      test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
+      test.equal(s.popTestData(), "FAKEID|NNS|E|An error\n");
+      test.done();
+  });
+  s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
+  s.pushTestData("FAKEID|NNS|S|user|S|FAKESESSID|S|prop1|S|val1|S|prop2|S|val2\n");
+  return test.finished;
+}
+
+function testMDNotifyMpnDeviceAccessSuccess() {
+  const s = new TestStream();
+  const mp = new MetadataProvider(s);
+  const test = expect();
+
+  test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
+  mp.on("notifyMpnDeviceAccess", function (msg, resp) {
+    test.equal(msg.verb, "notifyMpnDeviceAccess");
+    resp.success();
+    test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
+    test.equal(s.popTestData(), "FAKEID|MDA|V\n");
+    test.done();
+  });
+  s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
+  s.pushTestData("FAKEID|MDA|S|user|S|FAKESESSID|P|A|S|appID|S|deviceToken\n");
+  return test.finished;
+}
+
+function testMDNotifyMpnDeviceAccessFailure() {
+  const s = new TestStream();
+  const mp = new MetadataProvider(s);
+  const test = expect();
+
+  test.equal(s.popTestData(), "1|RAC|S|enableClosePacket|S|true|S|SDK|S|Node.js+Adapter+SDK\n");
+  mp.on("notifyMpnDeviceAccess", function(msg, resp) {
+      var excData = {clientCode: -2, clientMessage: "Message for the client"};
+      resp.error("An error", "credits", excData);
+      test.equal(s.popTestData(), "ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\n");
+      test.equal(s.popTestData(), "FAKEID|MDA|EC|An error|-2|Message for the client\n");
+      test.done();
+  });
+  s.pushTestData("ID0|MPI|S|ARI.version|S|" + currProtocolVersion + "\r\n");
+  s.pushTestData("FAKEID|MDA|S|user|S|FAKESESSID|P|A|S|appID|S|deviceToken\n");
+  return test.finished;
+}
+
 (async function main() {
   const to = setTimeout(() => {
     console.log('TEST FAILURE: timeout expired')
@@ -147,7 +252,12 @@ function testUpdateByHash() {
     await testUnsubscribe()
     await testUpdateByHash()
     // MetaDataProvider tests
-
+    await testMDInitSuccess()
+    await testMDInitFailure()
+    await testMDNotifyNewSessionSuccess()
+    await testMDNotifyNewSessionFailure()
+    await testMDNotifyMpnDeviceAccessSuccess()
+    await testMDNotifyMpnDeviceAccessFailure()
     console.log('OK')
   } catch(e) {
     console.error('TEST FAILURE:', e)
