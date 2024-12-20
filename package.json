@@ -9,37 +9,35 @@
     "real-time",
     "websocket"
   ],
-
   "homepage": "http://www.lightstreamer.com",
-
-  "repository" : {
-    "type" : "git",
-    "url" : "http://github.com/Lightstreamer/Lightstreamer-lib-node-adapter.git"
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/Lightstreamer/Lightstreamer-lib-node-adapter.git"
   },
-
   "bugs": {
-    "url" : "http://forum.lightstreamer.com/",
-    "email" : "support@lightstreamer.com"
+    "url": "http://forum.lightstreamer.com/",
+    "email": "support@lightstreamer.com"
   },
-
   "author": {
-    "name" : "Lightstreamer Srl",
-    "email" : "support@lightstreamer.com"
+    "name": "Lightstreamer Srl",
+    "email": "support@lightstreamer.com"
   },
-
-  "files": ["README.md","architecture.png","index.js","CHANGELOG.md","LICENSE","lib","test"],
-
+  "files": [
+    "README.md",
+    "architecture.png",
+    "index.js",
+    "CHANGELOG.md",
+    "LICENSE",
+    "lib",
+    "test"
+  ],
   "main": "index",
-
   "directories": {
     "lib": "./lib"
   },
-
   "engines": [
     "node"
   ],
-
-  "dependencies": {},
   "devDependencies": {
     "nodeunit": ">=0.6.4"
   }
