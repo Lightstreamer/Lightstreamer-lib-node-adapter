@@ -26,6 +26,7 @@
     "README.md",
     "architecture.png",
     "index.js",
+    "types.d.ts",
     "CHANGELOG.md",
     "LICENSE",
     "lib",
