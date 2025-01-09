@@ -74,7 +74,7 @@ Create a .js file, let's call it "adapters.js"
    ```
 
 4. Send updates for an item. Note that sending updates for items no one has subscribed to will result in an error,
-hence this calls must be bound to the "start/stop sending updates" comments int he subscribe/unsubscribe events:
+hence this calls must be bound to the "start/stop sending updates" comments in the subscribe/unsubscribe events:
 
    ```js
    dataProvider.update(itemName, false, {
@@ -147,8 +147,9 @@ nodeunit metadataprovider.test.js
 The API documentation will be available in the docs folder.
 
 ## See Also ##
-* [Adapter Remoting Infrastructure Network Protocol Specification](https://lightstreamer.com/api/ls-generic-adapter/latest/ARI%20Protocol.pdf "Lightstreamer ARI protocol")
-* [Lightstreamer Chat Demo adapter for Node](https://github.com/Lightstreamer/Lightstreamer-example-Chat-adapter-node "Lightstreamer Chat Demo adapter for Node")
+* [Adapter Remoting Infrastructure Network Protocol Specification](https://lightstreamer.com/api/ls-generic-adapter/latest/ARI%20Protocol.pdf)
+* ["Hello World" Demo adapter](https://github.com/Lightstreamer/Lightstreamer-example-HelloWorld-adapter-node)
+* [Chat Demo adapter](https://github.com/Lightstreamer/Lightstreamer-example-Chat-adapter-node)
 
 ## Lightstreamer Compatibility Notes ##
 Compatible with Adapter Remoting Infrastructure since Server version 7.4.
