@@ -31,7 +31,9 @@
     "lib",
     "test"
   ],
-  "main": "index",
+  "main": "index.js",
+  "type": "commonjs",
+  "types": "types.d.ts",
   "directories": {
     "lib": "./lib"
   },
