@@ -42,22 +42,34 @@ for [basic](https://lightstreamer.com/docs/ls-server/latest/remote_adapter_conf_
 ### Write the Adapters ###
 Create a .js file, let's call it "adapters.js"
 
-1. Get the net package and create the connections to Lightstreamer server. Note that the ports are the same used in the above file; LIGHTSTREAMER_SERVER_HOST is the host of the Lightstreamer server e.g.: "localhost".
+1. Import the `lightstreamer-adapter` package as an ES module or a CommonJS module. Import also the `net` package.
+
    ```js
-   var net = require('net'),
-   dataStream = net.createConnection(8001, LIGHTSTREAMER_SERVER_HOST),
-   metadataStream = net.createConnection(8003, LIGHTSTREAMER_SERVER_HOST);
+   // esm
+   import { DataProvider, MetadataProvider } from 'lightstreamer-adapter';
+   import * as net from 'net';
    ```
 
-2. Get the adapter classes and create the needed instances
    ```js
-   var MetadataProvider = require('lightstreamer-adapter').MetadataProvider,
-   var DataProvider = require('lightstreamer-adapter').DataProvider,
-   dataProvider = new DataProvider(dataStream),
-   metadataProvider = new MetadataProvider(metadataStream);
+   // commonjs
+   var DataProvider = require('lightstreamer-adapter').DataProvider;
+   var MetadataProvider = require('lightstreamer-adapter').MetadataProvider;
+   var net = require('net');
    ```
 
-3. Now you can register the events to respond to the adapters duties; see the documentation for the details
+2. Create the connections to Lightstreamer server. Note that the ports are the same used in the above file; LIGHTSTREAMER_SERVER_HOST is the host of the Lightstreamer server e.g.: "localhost".
+   ```js
+   var dataStream = net.createConnection(8001, LIGHTSTREAMER_SERVER_HOST);
+   var metadataStream = net.createConnection(8003, LIGHTSTREAMER_SERVER_HOST);
+   ```
+
+3. Get the adapter classes and create the needed instances
+   ```js
+   var dataProvider = new DataProvider(dataStream);
+   var metadataProvider = new MetadataProvider(metadataStream);
+   ```
+
+4. Now you can register the events to respond to the adapters duties; see the documentation for the details
    ```js
    dataProvider.on('subscribe', function(itemName, response) {
        //HERE start sending updates for the itemName item
@@ -73,7 +85,7 @@ Create a .js file, let's call it "adapters.js"
    });
    ```
 
-4. Send updates for an item. Note that sending updates for items no one has subscribed to will result in an error,
+5. Send updates for an item. Note that sending updates for items no one has subscribed to will result in an error,
 hence this calls must be bound to the "start/stop sending updates" comments in the subscribe/unsubscribe events:
 
    ```js
