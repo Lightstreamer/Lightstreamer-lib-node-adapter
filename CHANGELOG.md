@@ -1,3 +1,10 @@
+## [1.8.0] (unreleased)
+
+Added Typescript type definitions for better IDE support.
+
+Added a code example in the `README.md` file showing how to import the package as an ES module or a CommonJS module.
+
+
 ## [1.7.0] (15 Jul 2023)
 
 ### New Features ###
