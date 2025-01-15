@@ -1,4 +1,4 @@
-## [1.8.0] (unreleased)
+## [1.8.0] (15 Jan 2025)
 
 Added Typescript type definitions for better IDE support.
 
