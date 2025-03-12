@@ -1,8 +1,2 @@
-docs/
+build/
 node_modules/
-.project
-.settings/
-.svn
-build_resources
-deploy
-public_distr
