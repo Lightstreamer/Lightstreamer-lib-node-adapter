@@ -1,6 +1,7 @@
 {
   "name": "lightstreamer-adapter",
-  "version": "1.8.0",
+  "version": "1.8.1",
+  "license": "Apache-2.0",
   "scripts": {
     "test": "cd test && npx nodeunit *.test.js && node esm.test.mjs"
   },

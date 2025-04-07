@@ -1,3 +1,8 @@
+## [1.8.1] (7 Apr 2025)
+
+Clarified that the package is licensed under Apache License, Version 2.0.
+
+
 ## [1.8.0] (15 Jan 2025)
 
 Added Typescript type definitions for better IDE support.
