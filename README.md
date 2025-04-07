@@ -110,7 +110,7 @@ lsClient.connect();
 Note that the "PROXY_NODE" string is taken from the adapters.xml
 
 ### API Reference ###
-https://lightstreamer.com/sdks/ls-nodejs-adapter/1.8.0/api/index.html
+https://lightstreamer.com/sdks/ls-nodejs-adapter/1.8.1/api/index.html
 
 ## Develop ##
 This section is dedicated to developers who want to extend/modify the library itself, if you're simply looking to use it, ignore it.
